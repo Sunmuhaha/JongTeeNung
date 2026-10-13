@@ -1,1 +1,724 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#eff2fa">
+  <title>จองที่นั่งห้องเรียน</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+  *{
+  -webkit-tap-highlight-color: transparent;
+  }
+    :root {
+      font-family: Anuphan, sans-serif;
+      color-scheme: light;
+      --bg:#eff2fa; --panel:#eff2fa; --text:#24304d; --muted:#56627b;
+      --accent:#4969da; --free:#087e64; --booked:#a6455b; --mine:#6044ba;
+      --line:#cbd3e4; --shine:#ffffff; --shade:#c7cfdd;
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg:#202739; --panel:#273046; --text:#f3f5ff; --muted:#bac6db;
+      --accent:#a7b8ff; --free:#72e5bf; --booked:#ffafba; --mine:#c8b4ff;
+      --line:#4e5a73; --shine:#35425b; --shade:#171e2c;
+    }
+    * { box-sizing:border-box }
+    body { margin:0; background:var(--bg); color:var(--text) }
+    button,input,select { font:inherit }
+    button { cursor:pointer }
+    button:disabled { cursor:not-allowed; opacity:.55 }
+    :focus-visible { outline:3px solid var(--accent); outline-offset:3px }
+    .wrap { max-width:1050px; margin:auto; padding:16px }
+    header { display:flex; justify-content:space-between; align-items:center; gap:12px }
+    h1 { font-size:1.45rem; margin:6px 0 18px }
+    h2 { font-size:1.18rem; margin:0 0 12px }
+    h3 { font-size:1rem; margin:15px 0 8px }
+    p { line-height:1.6 }
+    .card,.btn,.field,.seat,.marker {
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:24px;
+      box-shadow:8px 8px 18px var(--shade),-8px -8px 18px var(--shine);
+    }
+    .card { padding:18px; margin:14px 0 }
+    .btn { color:var(--text); min-height:44px; padding:9px 15px; font-weight:600 }
+    .btn:active,.btn.active {
+      box-shadow:inset 4px 4px 9px var(--shade),inset -4px -4px 9px var(--shine)
+    }
+    .primary { background:var(--accent); color:#fff; border-color:transparent }
+    :root[data-theme="dark"] .primary { color:#1a2440 }
+    .danger { color:var(--booked) }
+    .field { display:block; width:100%; min-height:44px; padding:10px 13px; color:var(--text); outline:none }
+    .field:focus { border-color:var(--accent) }
+    label { display:block; font-weight:600; margin:12px 0 6px }
+    .grid { display:grid; gap:12px }
+    @media(min-width:680px) { .two { grid-template-columns:repeat(2,minmax(0,1fr)) } }
+    .row { display:flex; flex-wrap:wrap; align-items:center; gap:9px }
+    .muted,small { color:var(--muted) }
+    .hidden { display:none!important }
+    #notice { min-height:25px; font-weight:600 }
+    #notice.error { color:var(--booked) }
+    .room-head { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:start }
+    .board {
+      position:relative; width:100%; aspect-ratio:1.35; min-height:310px;
+      overflow:hidden; border:2px dashed var(--line); border-radius:25px;
+      background:repeating-linear-gradient(0deg,transparent 0 48px,var(--line) 49px,transparent 50px),
+                 repeating-linear-gradient(90deg,transparent 0 48px,var(--line) 49px,transparent 50px);
+      margin-top:14px
+    }
+    .seat,.marker {
+      position:absolute; transform:translate(-50%,-50%); touch-action:none;
+      display:grid; place-items:center; text-align:center;
+      min-width:48px; min-height:44px; max-width:100px; padding:5px;
+      border-radius:16px; font-size:.77rem; line-height:1.15;
+      overflow:hidden; overflow-wrap:anywhere;
+    }
+    .seat.free { border:2px solid var(--free); color:var(--free) }
+    .seat.booked { border:2px solid var(--booked); color:var(--booked) }
+    .seat.mine { border:2px solid var(--mine); color:var(--mine) }
+    .seat.off { opacity:.58; border:2px dashed var(--muted) }
+    .seat.selected { outline:3px solid var(--accent); outline-offset:3px }
+    .marker { border:2px solid var(--accent); color:var(--text); background:var(--panel) }
+    .legend { display:flex; gap:12px; flex-wrap:wrap; margin:12px 0 }
+    .legend b { font-size:.85rem }
+    .freeText { color:var(--free) } .bookedText { color:var(--booked) }
+    .mineText { color:var(--mine) }
+    #qr { display:inline-block; padding:10px; background:white; border-radius:16px }
+    #qr img,#qr canvas { display:block }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>จองที่นั่งห้องเรียน</h1>
+    <button class="btn" id="themeBtn" type="button" aria-label="สลับโหมดสี">◐ สี</button>
+  </header>
+  <p id="notice" role="status" aria-live="polite"></p>
 
+  <section class="card" id="entry">
+    <h2>เข้าห้อง</h2>
+    <div class="row">
+      <input class="field" id="joinCode" style="flex:1;min-width:150px" inputmode="numeric"
+             maxlength="6" pattern="[0-9]{4,6}" placeholder="เลขห้อง 4–6 หลัก" aria-label="เลขห้อง">
+      <button class="btn primary" id="joinBtn" type="button">เข้าห้อง</button>
+      <button class="btn" id="newBtn" type="button">สร้างห้องใหม่</button>
+    </div>
+  </section>
+
+  <section class="card hidden" id="createPanel">
+    <h2>สร้างห้อง</h2>
+    <div class="grid two">
+      <div><label for="roomName">ชื่อห้อง</label><input class="field" id="roomName" maxlength="100" required></div>
+      <div>
+        <label for="roomCode">เลขห้อง 4–6 หลัก</label>
+        <input class="field" id="roomCode" inputmode="numeric" maxlength="6" pattern="[0-9]{4,6}" required>
+        <small id="codeStatus" aria-live="polite">พิมพ์เลขห้องเพื่อตรวจสอบ</small>
+      </div>
+      <div><label for="pinCreate">Admin PIN 6–12 หลัก</label><input class="field" id="pinCreate" type="password" inputmode="numeric" autocomplete="new-password" minlength="6" maxlength="12"></div>
+      <div><label for="maxSeats">จำนวนที่จองได้ต่อเบราว์เซอร์</label>
+        <select class="field" id="maxSeats">
+          <option value="1">1 ที่</option><option value="2">2 ที่</option>
+          <option value="3">3 ที่</option><option value="0">ไม่จำกัด</option>
+        </select>
+      </div>
+      <div><label for="openAt">เริ่มเปิดจอง</label><input class="field" id="openAt" type="datetime-local"></div>
+      <div><label for="closeAt">สิ้นสุดการจอง</label><input class="field" id="closeAt" type="datetime-local"></div>
+      <div><label for="rows">แถวเริ่มต้น (1–12)</label><input class="field" id="rows" type="number" min="1" max="12" value="4"></div>
+      <div><label for="cols">คอลัมน์เริ่มต้น (1–12)</label><input class="field" id="cols" type="number" min="1" max="12" value="5"></div>
+    </div>
+    <p class="muted">หลังสร้างห้อง สามารถลากโต๊ะและเพิ่มป้ายในโหมดจัดผังได้</p>
+    <button class="btn primary" id="createBtn" type="button">สร้างห้อง</button>
+    <button class="btn" id="cancelCreate" type="button">ยกเลิก</button>
+  </section>
+
+  <main class="hidden" id="roomPanel">
+    <section class="card">
+      <div class="room-head">
+        <div><h2 id="displayName"></h2><div id="roomMeta" class="muted"></div></div>
+        <button class="btn" id="backBtn" type="button">เปลี่ยนห้อง</button>
+      </div>
+      <p id="windowStatus"></p>
+      <div class="row">
+        <button class="btn" id="copyBtn" type="button">คัดลอกลิงก์</button>
+        <button class="btn" id="qrBtn" type="button">แสดง QR code</button>
+        <button class="btn" id="editBtn" type="button">จัดการห้อง</button>
+      </div>
+      <div class="hidden" id="qrWrap" style="margin-top:14px"><div id="qr"></div></div>
+      <div class="legend" aria-label="คำอธิบายสถานะ">
+        <b class="freeText">● ว่าง</b><b class="bookedText">● ถูกจอง</b>
+        <b class="mineText">● ที่นั่งของฉัน</b><b>◌ ปิดใช้งาน</b>
+      </div>
+      <div class="board" id="board" aria-label="แผนผังที่นั่ง"></div>
+      <p class="muted" id="boardHint"></p>
+    </section>
+
+    <section class="card hidden" id="bookingPanel">
+      <h2 id="bookingTitle">จองที่นั่ง</h2>
+      <p id="chosenSeat"></p>
+      <div id="nameWrap"><label for="bookName">ชื่อจริงหรือชื่อที่ตกลงกัน</label>
+        <input class="field" id="bookName" maxlength="80" autocomplete="name"></div>
+      <div class="row" style="margin-top:14px">
+        <button class="btn primary" id="confirmBook" type="button">ยืนยันการจอง</button>
+        <button class="btn danger hidden" id="cancelBook" type="button">ยกเลิกที่นั่งนี้</button>
+        <button class="btn" id="dismissBook" type="button">ปิด</button>
+      </div>
+      <p class="muted">ต้องการเปลี่ยนที่: เลือกที่นั่งของฉัน แล้วกดที่นั่งว่างอีกที่</p>
+    </section>
+
+    <section class="card hidden" id="adminPanel">
+      <h2>จัดการห้อง</h2>
+      <label for="adminPin">Admin PIN (ใช้ยืนยันทุกคำสั่งที่เปลี่ยนข้อมูล)</label>
+      <input class="field" id="adminPin" type="password" inputmode="numeric" autocomplete="off">
+      <div class="grid two">
+        <div><label for="editName">ชื่อห้อง</label><input class="field" id="editName" maxlength="100"></div>
+        <div><label for="editMax">จำนวนที่จองได้</label><select class="field" id="editMax">
+          <option value="1">1 ที่</option><option value="2">2 ที่</option>
+          <option value="3">3 ที่</option><option value="0">ไม่จำกัด</option>
+        </select></div>
+        <div><label for="editOpen">เริ่มเปิดจอง</label><input class="field" id="editOpen" type="datetime-local"></div>
+        <div><label for="editClose">สิ้นสุดการจอง</label><input class="field" id="editClose" type="datetime-local"></div>
+      </div>
+      <h3>จัดผัง</h3>
+      <p class="muted">ลากโต๊ะหรือป้ายเพื่อย้ายตำแหน่ง แตะโต๊ะเพื่อเลือก จากนั้นปิดใช้งานหรือลบ</p>
+      <div class="row">
+        <button class="btn" id="addSeat" type="button">+ โต๊ะ</button>
+        <button class="btn" id="addBoard" type="button">+ กระดาน</button>
+        <button class="btn" id="addTeacher" type="button">+ โต๊ะครู</button>
+        <button class="btn" id="addDoor" type="button">+ ประตู</button>
+        <button class="btn" id="toggleSeat" type="button">เปิด/ปิดโต๊ะที่เลือก</button>
+        <button class="btn danger" id="removeItem" type="button">ลบสิ่งที่เลือก</button>
+      </div>
+      <div class="row" style="margin-top:15px">
+        <button class="btn primary" id="saveAdmin" type="button">บันทึกการเปลี่ยนแปลง</button>
+        <button class="btn danger" id="deleteRoom" type="button">ลบห้อง</button>
+      </div>
+      <h3>รายชื่อผู้จอง</h3>
+      <div id="adminBookings"></div>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script>
+  // ===== ตั้งค่า 2 ตัวนี้ก่อนนำไปใช้ =====
+  const SUPABASE_URL = 'https://kasgvlwnqriajnxglzmz.supabase.co';
+  const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imthc2d2bHducXJpYWpueGdsem16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MDQxMzIsImV4cCI6MjEwNzQ4MDEzMn0.ydjnk9v2niZP6uP-zgx7fvO2D0ex_2rshEXT71Y7fGA';
+  // =====================================
+
+  const $ = id => document.getElementById(id);
+  const db = window.supabase.createClient(SUPABASE_URL, ANON_KEY);
+  const enc = s => String(s ?? '').replace(/[&<>"']/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const uid = () => crypto.randomUUID();
+  const roomLink = code => {
+    const u = new URL(location.href);
+    u.searchParams.set('room', code);
+    return u.toString();
+  };
+  const localDate = iso => {
+    if (!iso) return '';
+    const d = new Date(iso);
+    return new Date(d.getTime() - d.getTimezoneOffset() * 60000)
+      .toISOString().slice(0, 16);
+  };
+  const isoDate = value => value ? new Date(value).toISOString() : null;
+  const prettyDate = value => new Date(value).toLocaleString('th-TH', {
+    dateStyle:'medium', timeStyle:'short'
+  });
+
+  let room = null, bookings = [], channel = null, draft = null;
+  let editing = false, selected = null, movingFrom = null, codeTimer = null;
+  let pollTimer = null;
+
+  const savedTheme = localStorage.getItem('seat-theme');
+  const initialTheme = savedTheme ||
+    (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.dataset.theme = initialTheme;
+  $('themeBtn').onclick = () => {
+    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem('seat-theme', next);
+  };
+
+  function token() {
+    let t = localStorage.getItem('seat-client-token');
+    if (!t) {
+      const bytes = crypto.getRandomValues(new Uint8Array(32));
+      t = Array.from(bytes, x => x.toString(16).padStart(2, '0')).join('');
+      localStorage.setItem('seat-client-token', t);
+    }
+    return t;
+  }
+  async function tokenHash() {
+    const bytes = new TextEncoder().encode(token());
+    const hash = await crypto.subtle.digest('SHA-256', bytes);
+    return Array.from(new Uint8Array(hash), x => x.toString(16).padStart(2, '0')).join('');
+  }
+  function notice(message, error = false) {
+    $('notice').textContent = message;
+    $('notice').classList.toggle('error', error);
+  }
+  function fail(error) {
+    console.error(error);
+    const message = error?.message || 'เกิดข้อผิดพลาด กรุณาลองใหม่';
+    notice(message.includes('duplicate key') || error?.code === '23505'
+      ? 'มีคนจองที่นั่งนี้ตัดหน้าแล้ว กรุณาเลือกที่อื่น'
+      : message, true);
+  }
+  function windowOpen() {
+    const now = Date.now();
+    return room && now >= new Date(room.open_at).getTime() &&
+      now < new Date(room.close_at).getTime();
+  }
+  function seatLabel(seat) { return seat.label || 'โต๊ะ'; }
+  function initialLayout(rows, cols) {
+    const seats = [];
+    for (let r = 0; r < rows; r++)
+      for (let c = 0; c < cols; c++)
+        seats.push({
+          id:uid(), label:`${r + 1}-${c + 1}`, enabled:true,
+          x:Math.round((c + 1) * 100 / (cols + 1)),
+          y:Math.round((r + 1) * 100 / (rows + 1))
+        });
+    return {seats, markers:[]};
+  }
+  function resetPanels() {
+    $('entry').classList.remove('hidden');
+    $('createPanel').classList.add('hidden');
+    $('roomPanel').classList.add('hidden');
+    $('bookingPanel').classList.add('hidden');
+    $('adminPanel').classList.add('hidden');
+  }
+  function unsubscribe() {
+    if (channel) db.removeChannel(channel);
+    channel = null;
+    clearInterval(pollTimer);
+  }
+  async function loadBookings() {
+    if (!room) return;
+    const id = room.id;
+    const {data, error} = await db.from('bookings_public')
+      .select('id,room_id,seat_id,name,client_token,created_at')
+      .eq('room_id', id).order('created_at');
+    if (error) return fail(error);
+    if (!room || room.id !== id) return;
+    bookings = data || [];
+    render();
+  }
+  async function loadRoom(code, silent = false) {
+    const {data, error} = await db.from('rooms_public').select('*')
+      .eq('code', code).maybeSingle();
+    if (error) return fail(error);
+    if (!data) {
+      if (room?.code === code) {
+        unsubscribe();
+        room = null; resetPanels();
+      }
+      notice('ไม่พบห้องนี้ หรือห้องหมดอายุและถูกลบแล้ว', true);
+      return;
+    }
+    const changed = room?.id !== data.id;
+    if (changed) unsubscribe();
+    room = data;
+    if (!editing) draft = structuredClone(data.layout);
+    $('entry').classList.add('hidden');
+    $('createPanel').classList.add('hidden');
+    $('roomPanel').classList.remove('hidden');
+    if (changed) {
+      bookings = [];
+      await loadBookings();
+      channel = db.channel(`room-bookings-${room.id}`)
+        .on('postgres_changes', {
+          event:'*', schema:'public', table:'bookings',
+          filter:`room_id=eq.${room.id}`
+        }, () => loadBookings())
+        .subscribe();
+      // สำรองกรณีเครือข่าย Realtime ขาดช่วง และอัปเดตเวลาปิดจอง
+      pollTimer = setInterval(async () => {
+        await loadRoom(code, true);
+        await loadBookings();
+      }, 30000);
+    }
+    render();
+    if (!silent) notice('เข้าห้องแล้ว');
+  }
+  function render() {
+    if (!room) return;
+    $('displayName').textContent = room.name;
+    $('roomMeta').textContent = `เลขห้อง ${room.code} · จองได้ ${
+      room.max_seats_per_user === 0 ? 'ไม่จำกัด' : room.max_seats_per_user + ' ที่/เบราว์เซอร์'
+    }`;
+    $('windowStatus').textContent =
+      `เปิดจอง ${prettyDate(room.open_at)} – ${prettyDate(room.close_at)} · ` +
+      (windowOpen() ? 'กำลังเปิดจอง' : 'ดูผังได้ แต่ยังจองไม่ได้');
+    $('boardHint').textContent = editing
+      ? 'โหมดจัดผัง: ลากเพื่อย้ายตำแหน่ง และกดบันทึกเมื่อเสร็จ'
+      : (movingFrom ? 'เลือกที่นั่งว่างเพื่อย้ายการจอง หรือแตะที่นั่งเดิมเพื่อยกเลิกการย้าย'
+                    : 'แตะที่นั่งว่างเพื่อจอง');
+    const map = new Map(bookings.map(b => [b.seat_id, b]));
+    const layout = editing ? draft : room.layout;
+    const board = $('board');
+    board.replaceChildren();
+    for (const seat of layout.seats) {
+      const b = map.get(seat.id);
+      const el = document.createElement('button');
+      el.type = 'button';
+      el.className = 'seat ' + (!seat.enabled ? 'off' :
+        b ? (b.client_token === myHash ? 'mine' : 'booked') : 'free') +
+        (selected?.id === seat.id ? ' selected' : '');
+      el.style.left = `${seat.x}%`;
+      el.style.top = `${seat.y}%`;
+      el.textContent = !seat.enabled ? `${seatLabel(seat)} ปิด` :
+        b ? `${seatLabel(seat)} ${b.name}${b.client_token === myHash ? ' (ฉัน)' : ''}` :
+            `${seatLabel(seat)} ว่าง`;
+      el.setAttribute('aria-label', el.textContent);
+      el.onclick = () => chooseSeat(seat, b);
+      if (editing) attachDrag(el, seat);
+      board.appendChild(el);
+    }
+    for (const marker of layout.markers) {
+      const el = document.createElement(editing ? 'button' : 'div');
+      if (editing) el.type = 'button';
+      el.className = 'marker' + (selected?.id === marker.id ? ' selected' : '');
+      el.style.left = `${marker.x}%`;
+      el.style.top = `${marker.y}%`;
+      el.textContent = marker.type;
+      if (editing) {
+        el.onclick = () => { selected = marker; render(); };
+        attachDrag(el, marker);
+      }
+      board.appendChild(el);
+    }
+    renderAdminBookings();
+  }
+  let myHash = '';
+  function attachDrag(el, item) {
+    let start = null, dragged = false;
+    el.addEventListener('pointerdown', e => {
+      start = {x:e.clientX, y:e.clientY};
+      dragged = false;
+      el.setPointerCapture(e.pointerId);
+    });
+    el.addEventListener('pointermove', e => {
+      if (!start) return;
+      if (Math.hypot(e.clientX - start.x, e.clientY - start.y) < 4 && !dragged) return;
+      dragged = true;
+      const rect = $('board').getBoundingClientRect();
+      item.x = Math.round(Math.max(5, Math.min(95,
+        (e.clientX - rect.left) / rect.width * 100)));
+      item.y = Math.round(Math.max(7, Math.min(93,
+        (e.clientY - rect.top) / rect.height * 100)));
+      el.style.left = item.x + '%';
+      el.style.top = item.y + '%';
+    });
+    el.addEventListener('pointerup', () => {
+      start = null;
+      if (dragged) {
+        selected = item;
+        setTimeout(() => render(), 0);
+      }
+    });
+    el.addEventListener('click', e => {
+      if (dragged) { e.stopImmediatePropagation(); dragged = false; }
+    }, true);
+  }
+  function chooseSeat(seat, b) {
+    if (editing) { selected = seat; render(); return; }
+    if (!windowOpen()) return notice('ขณะนี้อยู่นอกช่วงเปิดจอง', true);
+    if (!seat.enabled) return notice('ที่นั่งนี้ปิดใช้งาน', true);
+    if (b && b.client_token !== myHash) return notice('ที่นั่งนี้มีผู้จองแล้ว', true);
+    if (movingFrom && !b) return moveMine(seat);
+    if (b && b.client_token === myHash) {
+      if (movingFrom?.id === b.id) {
+        movingFrom = null; notice('ยกเลิกการเลือกย้ายที่');
+      } else {
+        movingFrom = b;
+        notice(`เลือกที่นั่งว่างเพื่อย้ายจาก ${seatLabel(seat)} หรือกดยกเลิกด้านล่าง`);
+      }
+      $('bookingPanel').classList.remove('hidden');
+      $('bookingTitle').textContent = 'ที่นั่งของฉัน';
+      $('chosenSeat').textContent = `${seatLabel(seat)} · ${b.name}`;
+      $('nameWrap').classList.add('hidden');
+      $('confirmBook').classList.add('hidden');
+      $('cancelBook').classList.remove('hidden');
+      $('cancelBook').onclick = () => cancelMine(b);
+      render();
+      return;
+    }
+    $('bookingPanel').classList.remove('hidden');
+    $('bookingTitle').textContent = 'จองที่นั่ง';
+    $('chosenSeat').textContent = seatLabel(seat);
+    $('nameWrap').classList.remove('hidden');
+    $('confirmBook').classList.remove('hidden');
+    $('cancelBook').classList.add('hidden');
+    const existing = bookings.find(x => x.client_token === myHash);
+    if (existing) $('bookName').value = existing.name;
+    $('confirmBook').onclick = () => reserve(seat);
+    $('bookName').focus();
+  }
+  async function reserve(seat) {
+    const name = $('bookName').value.trim();
+    if (!name) return notice('กรุณากรอกชื่อผู้จอง', true);
+    $('confirmBook').disabled = true;
+    try {
+      const {error} = await db.rpc('book_seat', {
+        p_room_id:room.id, p_seat_id:seat.id, p_name:name, p_token:token()
+      });
+      if (error) throw error;
+      $('bookingPanel').classList.add('hidden');
+      notice('จองที่นั่งสำเร็จ');
+      await loadBookings();
+    } catch (e) { fail(e); await loadBookings(); }
+    finally { $('confirmBook').disabled = false; }
+  }
+  async function cancelMine(b) {
+    if (!confirm(`ยกเลิกที่นั่งของ ${b.name}?`)) return;
+    try {
+      const {error} = await db.rpc('owner_booking', {
+        p_booking_id:b.id, p_token:token(), p_action:'cancel', p_seat_id:null
+      });
+      if (error) throw error;
+      movingFrom = null;
+      $('bookingPanel').classList.add('hidden');
+      notice('ยกเลิกการจองแล้ว');
+      await loadBookings();
+    } catch (e) { fail(e); await loadBookings(); }
+  }
+  async function moveMine(seat) {
+    const old = movingFrom;
+    if (!old || !confirm(`ย้ายการจองไปที่ ${seatLabel(seat)}?`)) return;
+    try {
+      const {error} = await db.rpc('owner_booking', {
+        p_booking_id:old.id, p_token:token(), p_action:'move', p_seat_id:seat.id
+      });
+      if (error) throw error;
+      movingFrom = null;
+      $('bookingPanel').classList.add('hidden');
+      notice('ย้ายที่นั่งสำเร็จ');
+      await loadBookings();
+    } catch (e) { fail(e); await loadBookings(); }
+  }
+
+  $('joinBtn').onclick = async () => {
+    const code = $('joinCode').value.trim();
+    if (!/^[0-9]{4,6}$/.test(code)) return notice('เลขห้องต้องเป็นตัวเลข 4–6 หลัก', true);
+    editing = false;
+    selected = movingFrom = null;
+    await loadRoom(code);
+    if (room?.code === code) history.replaceState(null, '', roomLink(code));
+  };
+  $('joinCode').addEventListener('keydown', e => {
+    if (e.key === 'Enter') $('joinBtn').click();
+  });
+  $('newBtn').onclick = () => $('createPanel').classList.remove('hidden');
+  $('cancelCreate').onclick = () => $('createPanel').classList.add('hidden');
+  $('backBtn').onclick = () => {
+    unsubscribe(); room = null; editing = false; selected = movingFrom = null;
+    history.replaceState(null, '', location.pathname);
+    resetPanels(); notice('');
+  };
+  $('roomCode').addEventListener('input', () => {
+    clearTimeout(codeTimer);
+    const code = $('roomCode').value.trim();
+    $('codeStatus').textContent = /^[0-9]{4,6}$/.test(code)
+      ? 'กำลังตรวจสอบ…' : 'ต้องเป็นตัวเลข 4–6 หลัก';
+    if (!/^[0-9]{4,6}$/.test(code)) return;
+    codeTimer = setTimeout(async () => {
+      const {data, error} = await db.from('rooms_public')
+        .select('code').eq('code', code).maybeSingle();
+      if ($('roomCode').value.trim() !== code) return;
+      $('codeStatus').textContent = error ? 'ตรวจสอบไม่ได้ กรุณาลองอีกครั้ง' :
+        data ? 'เลขห้องนี้ถูกใช้แล้ว' : 'เลขห้องนี้ว่าง';
+    }, 350);
+  });
+  $('createBtn').onclick = async () => {
+    const code = $('roomCode').value.trim(), name = $('roomName').value.trim();
+    const pin = $('pinCreate').value;
+    const rows = Number($('rows').value), cols = Number($('cols').value);
+    if (!/^[0-9]{4,6}$/.test(code) || !name || !/^[0-9]{6,12}$/.test(pin))
+      return notice('กรุณากรอกชื่อ เลขห้อง และ PIN 6–12 หลักให้ถูกต้อง', true);
+    if (!Number.isInteger(rows) || !Number.isInteger(cols) ||
+        rows < 1 || rows > 12 || cols < 1 || cols > 12)
+      return notice('แถวและคอลัมน์ต้องอยู่ระหว่าง 1–12', true);
+    const open = isoDate($('openAt').value), close = isoDate($('closeAt').value);
+    if (!open || !close || new Date(close) <= new Date(open))
+      return notice('กรุณากำหนดเวลาเริ่มและสิ้นสุดให้ถูกต้อง', true);
+    $('createBtn').disabled = true;
+    try {
+      const {error} = await db.rpc('create_room', {
+        p_code:code, p_name:name, p_pin:pin,
+        p_layout:initialLayout(rows, cols), p_open_at:open, p_close_at:close,
+        p_max_seats:Number($('maxSeats').value)
+      });
+      if (error) throw error;
+      $('pinCreate').value = '';
+      await loadRoom(code);
+      history.replaceState(null, '', roomLink(code));
+      notice('สร้างห้องแล้ว โปรดจำ Admin PIN ให้ดี');
+    } catch (e) {
+      fail(e);
+      if (e.code === '23505') $('codeStatus').textContent = 'เลขห้องนี้ถูกใช้แล้ว';
+    } finally { $('createBtn').disabled = false; }
+  };
+  $('copyBtn').onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(roomLink(room.code));
+      notice('คัดลอกลิงก์แล้ว');
+    } catch { notice('คัดลอกไม่ได้ กรุณาคัดลอกจากแถบที่อยู่', true); }
+  };
+  $('qrBtn').onclick = () => {
+    $('qrWrap').classList.toggle('hidden');
+    $('qr').replaceChildren();
+    if (!$('qrWrap').classList.contains('hidden'))
+      new QRCode($('qr'), {text:roomLink(room.code), width:180, height:180});
+  };
+  $('dismissBook').onclick = () => $('bookingPanel').classList.add('hidden');
+
+  $('editBtn').onclick = () => {
+    const panel = $('adminPanel');
+    const opening = panel.classList.contains('hidden');
+    panel.classList.toggle('hidden');
+    editing = opening;
+    selected = null;
+    draft = structuredClone(room.layout);
+    if (opening) {
+      $('editName').value = room.name;
+      $('editMax').value = room.max_seats_per_user;
+      $('editOpen').value = localDate(room.open_at);
+      $('editClose').value = localDate(room.close_at);
+      $('bookingPanel').classList.add('hidden');
+    }
+    render();
+  };
+  function addMarker(type) {
+    draft.markers.push({id:uid(), type, x:50, y:15});
+    render();
+  }
+  $('addSeat').onclick = () => {
+    const n = draft.seats.length + 1;
+    draft.seats.push({id:uid(), label:String(n), enabled:true, x:50, y:50});
+    render();
+  };
+  $('addBoard').onclick = () => addMarker('กระดาน');
+  $('addTeacher').onclick = () => addMarker('โต๊ะครู');
+  $('addDoor').onclick = () => addMarker('ประตู');
+  $('toggleSeat').onclick = () => {
+    const seat = draft.seats.find(s => s.id === selected?.id);
+    if (!seat) return notice('เลือกโต๊ะก่อน', true);
+    if (seat.enabled && bookings.some(b => b.seat_id === seat.id))
+      return notice('มีผู้จองโต๊ะนี้อยู่ กรุณาจัดการการจองก่อน', true);
+    seat.enabled = !seat.enabled;
+    render();
+  };
+  $('removeItem').onclick = () => {
+    if (!selected) return notice('เลือกโต๊ะหรือป้ายก่อน', true);
+    if (bookings.some(b => b.seat_id === selected.id))
+      return notice('มีผู้จองโต๊ะนี้อยู่ กรุณาจัดการการจองก่อน', true);
+    draft.seats = draft.seats.filter(s => s.id !== selected.id);
+    draft.markers = draft.markers.filter(m => m.id !== selected.id);
+    selected = null;
+    render();
+  };
+  function adminPin() {
+    const pin = $('adminPin').value;
+    if (!/^[0-9]{6,12}$/.test(pin)) throw new Error('กรุณากรอก Admin PIN 6–12 หลัก');
+    return pin;
+  }
+  $('saveAdmin').onclick = async () => {
+    try {
+      const open = isoDate($('editOpen').value), close = isoDate($('editClose').value);
+      if (!open || !close || new Date(close) <= new Date(open))
+        throw new Error('ช่วงเวลาเปิดจองไม่ถูกต้อง');
+      const {error} = await db.rpc('admin_update_room', {
+        p_room_id:room.id, p_pin:adminPin(), p_name:$('editName').value.trim(),
+        p_layout:draft, p_open_at:open, p_close_at:close,
+        p_max_seats:Number($('editMax').value)
+      });
+      if (error) throw error;
+      editing = false; selected = null;
+      $('adminPanel').classList.add('hidden');
+      $('adminPin').value = '';
+      await loadRoom(room.code);
+      notice('บันทึกห้องแล้ว');
+    } catch (e) { fail(e); }
+  };
+  $('deleteRoom').onclick = async () => {
+    try {
+      const pin = adminPin();
+      if (!confirm('ลบห้องและการจองทั้งหมดอย่างถาวร?')) return;
+      const {error} = await db.rpc('admin_delete_room', {
+        p_room_id:room.id, p_pin:pin
+      });
+      if (error) throw error;
+      $('backBtn').click();
+      notice('ลบห้องแล้ว');
+    } catch (e) { fail(e); }
+  };
+  function renderAdminBookings() {
+    if (!room || !editing) return;
+    const box = $('adminBookings');
+    box.replaceChildren();
+    if (!bookings.length) { box.textContent = 'ยังไม่มีผู้จอง'; return; }
+    for (const b of bookings) {
+      const seat = (draft?.seats || []).find(s => s.id === b.seat_id);
+      const line = document.createElement('div');
+      line.className = 'row';
+      line.style.marginBottom = '10px';
+      const label = document.createElement('span');
+      label.textContent = `${b.name} — ${seat?.label || b.seat_id}`;
+      const move = document.createElement('select');
+      move.className = 'field';
+      move.style.width = 'auto';
+      const placeholder = new Option('ย้ายไปที่…', '');
+      move.add(placeholder);
+      for (const s of draft.seats.filter(s =>
+        s.enabled && s.id !== b.seat_id &&
+        !bookings.some(x => x.seat_id === s.id)))
+        move.add(new Option(s.label, s.id));
+      move.onchange = async () => {
+        if (!move.value) return;
+        try {
+          const {error} = await db.rpc('admin_booking', {
+            p_booking_id:b.id, p_pin:adminPin(),
+            p_action:'move', p_seat_id:move.value
+          });
+          if (error) throw error;
+          notice('ย้ายผู้จองแล้ว');
+          await loadBookings();
+        } catch (e) { fail(e); move.value = ''; }
+      };
+      const del = document.createElement('button');
+      del.type = 'button'; del.className = 'btn danger';
+      del.textContent = 'ลบการจอง';
+      del.onclick = async () => {
+        try {
+          const pin = adminPin();
+          if (!confirm(`ลบการจองของ ${b.name}?`)) return;
+          const {error} = await db.rpc('admin_booking', {
+            p_booking_id:b.id, p_pin:pin, p_action:'delete', p_seat_id:null
+          });
+          if (error) throw error;
+          notice('ลบการจองแล้ว');
+          await loadBookings();
+        } catch (e) { fail(e); }
+      };
+      line.append(label, move, del);
+      box.appendChild(line);
+    }
+  }
+  (async () => {
+    myHash = await tokenHash();
+    const code = new URL(location.href).searchParams.get('room');
+    if (code && /^[0-9]{4,6}$/.test(code)) {
+      $('joinCode').value = code;
+      await loadRoom(code);
+    }
+    setInterval(() => { if (room) render(); }, 15000);
+  })();
+</script>
+</body>
+</html>
