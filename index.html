@@ -1,155 +1,367 @@
 <!doctype html>
 <html lang="th">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#eff2fa">
-  <title>จองที่นั่งห้องเรียน</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-  *{
-  -webkit-tap-highlight-color: transparent;
-  }
-    :root {
-      font-family: Anuphan, sans-serif;
-      color-scheme: light;
-      --bg:#eff2fa; --panel:#eff2fa; --text:#24304d; --muted:#56627b;
-      --accent:#4969da; --free:#087e64; --booked:#a6455b; --mine:#6044ba;
-      --line:#cbd3e4; --shine:#ffffff; --shade:#c7cfdd;
-    }
-    :root[data-theme="dark"] {
-      color-scheme: dark;
-      --bg:#202739; --panel:#273046; --text:#f3f5ff; --muted:#bac6db;
-      --accent:#a7b8ff; --free:#72e5bf; --booked:#ffafba; --mine:#c8b4ff;
-      --line:#4e5a73; --shine:#35425b; --shade:#171e2c;
-    }
-    * { box-sizing:border-box }
-    body { margin:0; background:var(--bg); color:var(--text) }
-    button,input,select { font:inherit }
-    button { cursor:pointer }
-    button:disabled { cursor:not-allowed; opacity:.55 }
-    :focus-visible { outline:3px solid var(--accent); outline-offset:3px }
-    .wrap { max-width:1050px; margin:auto; padding:16px }
-    header { display:flex; justify-content:space-between; align-items:center; gap:12px }
-    h1 { font-size:1.45rem; margin:6px 0 18px }
-    h2 { font-size:1.18rem; margin:0 0 12px }
-    h3 { font-size:1rem; margin:15px 0 8px }
-    p { line-height:1.6 }
-    .card,.btn,.field,.seat,.marker {
-      background:var(--panel);
-      border:1px solid var(--line);
-      border-radius:24px;
-      box-shadow:8px 8px 18px var(--shade),-8px -8px 18px var(--shine);
-    }
-    .card { padding:18px; margin:14px 0 }
-    .btn { color:var(--text); min-height:44px; padding:9px 15px; font-weight:600 }
-    .btn:active,.btn.active {
-      box-shadow:inset 4px 4px 9px var(--shade),inset -4px -4px 9px var(--shine)
-    }
-    .primary { background:var(--accent); color:#fff; border-color:transparent }
-    :root[data-theme="dark"] .primary { color:#1a2440 }
-    .danger { color:var(--booked) }
-    .field { display:block; width:100%; min-height:44px; padding:10px 13px; color:var(--text); outline:none }
-    .field:focus { border-color:var(--accent) }
-    label { display:block; font-weight:600; margin:12px 0 6px }
-    .grid { display:grid; gap:12px }
-    @media(min-width:680px) { .two { grid-template-columns:repeat(2,minmax(0,1fr)) } }
-    .row { display:flex; flex-wrap:wrap; align-items:center; gap:9px }
-    .muted,small { color:var(--muted) }
-    .hidden { display:none!important }
-    #notice { min-height:25px; font-weight:600 }
-    #notice.error { color:var(--booked) }
-    .room-head { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:start }
-    .board {
-      position:relative; width:100%; aspect-ratio:1.35; min-height:310px;
-      overflow:hidden; border:2px dashed var(--line); border-radius:25px;
-      background:repeating-linear-gradient(0deg,transparent 0 48px,var(--line) 49px,transparent 50px),
-                 repeating-linear-gradient(90deg,transparent 0 48px,var(--line) 49px,transparent 50px);
-      margin-top:14px
-    }
-    .seat,.marker {
-      position:absolute; transform:translate(-50%,-50%); touch-action:none;
-      display:grid; place-items:center; text-align:center;
-      min-width:48px; min-height:44px; max-width:100px; padding:5px;
-      border-radius:16px; font-size:.77rem; line-height:1.15;
-      overflow:hidden; overflow-wrap:anywhere;
-    }
-    .seat.free { border:2px solid var(--free); color:var(--free) }
-    .seat.booked { border:2px solid var(--booked); color:var(--booked) }
-    .seat.mine { border:2px solid var(--mine); color:var(--mine) }
-    .seat.off { opacity:.58; border:2px dashed var(--muted) }
-    .seat.selected { outline:3px solid var(--accent); outline-offset:3px }
-    .marker { border:2px solid var(--accent); color:var(--text); background:var(--panel) }
-    .legend { display:flex; gap:12px; flex-wrap:wrap; margin:12px 0 }
-    .legend b { font-size:.85rem }
-    .freeText { color:var(--free) } .bookedText { color:var(--booked) }
-    .mineText { color:var(--mine) }
-    #qr { display:inline-block; padding:10px; background:white; border-radius:16px }
-    #qr img,#qr canvas { display:block }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5f6fa">
+<title>จองที่นั่งห้องเรียน</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  font-family:'Anuphan',system-ui,-apple-system,sans-serif;
+  color-scheme:light;
+  --bg:#f5f6fa; --panel:#ffffff; --panel-alt:#f8f9fc; --text:#111827; --muted:#6b7280;
+  --border:#e5e7eb;
+  --accent:#4f46e5; --accent-hover:#4338ca; --accent-ink:#ffffff; --accent-soft:rgba(79,70,229,.08);
+  --free:#059669; --free-soft:rgba(5,150,105,.08);
+  --booked:#dc2626; --booked-soft:rgba(220,38,38,.08);
+  --mine:#7c3aed; --mine-soft:rgba(124,58,237,.1);
+  --radius-lg:14px; --radius-md:10px; --radius-sm:8px;
+  --shadow-xs:0 1px 2px rgba(15,23,42,.04);
+  --shadow-sm:0 1px 3px rgba(15,23,42,.08),0 1px 2px rgba(15,23,42,.04);
+  --shadow-md:0 10px 24px -8px rgba(15,23,42,.18);
+  --ring:rgba(79,70,229,.25);
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0b0f17; --panel:#111827; --panel-alt:#1a2233; --text:#f1f5f9; --muted:#94a3b8;
+  --border:#263142;
+  --accent:#818cf8; --accent-hover:#a5b4fc; --accent-ink:#0b0f17; --accent-soft:rgba(129,140,248,.14);
+  --free:#34d399; --free-soft:rgba(52,211,153,.12);
+  --booked:#f87171; --booked-soft:rgba(248,113,113,.12);
+  --mine:#c4b5fd; --mine-soft:rgba(196,181,253,.14);
+  --shadow-xs:0 1px 2px rgba(0,0,0,.3);
+  --shadow-sm:0 1px 3px rgba(0,0,0,.4);
+  --shadow-md:0 12px 28px -10px rgba(0,0,0,.55);
+  --ring:rgba(129,140,248,.3);
+}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent }
+html{ font-size:15.5px }
+body{ margin:0; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased;
+  transition:background .25s ease,color .25s ease }
+button,input,select{ font:inherit; color:inherit }
+button{ cursor:pointer }
+button:disabled{ cursor:not-allowed; opacity:.5 }
+:focus-visible{ outline:3px solid var(--ring); outline-offset:2px; border-radius:6px }
+::selection{ background:var(--accent-soft) }
+
+.wrap{ max-width:960px; margin:0 auto; padding:0 16px 64px }
+
+header{
+  position:sticky; top:0; z-index:30; display:flex; justify-content:space-between; align-items:center;
+  gap:12px; padding:16px 2px; margin-bottom:4px;
+  background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+}
+.brand{ display:flex; align-items:center; gap:11px }
+.brand-badge{
+  width:36px; height:36px; border-radius:10px; flex-shrink:0;
+  background:var(--accent); display:flex; align-items:center; justify-content:center;
+  box-shadow:var(--shadow-sm);
+}
+.brand-badge .icon{ stroke:var(--accent-ink); width:19px; height:19px }
+h1{ font-size:1.08rem; margin:0; font-weight:700; letter-spacing:-.01em; line-height:1.25 }
+header small{ display:block; color:var(--muted); font-weight:500; font-size:.78rem; margin-top:1px }
+
+h2{ font-size:1.05rem; margin:0 0 4px; font-weight:700; letter-spacing:-.01em }
+h3.section-title{
+  font-size:.74rem; margin:28px 0 14px; font-weight:700; color:var(--muted);
+  text-transform:uppercase; letter-spacing:.07em; padding-bottom:9px; border-bottom:1px solid var(--border);
+}
+h3.section-title:first-of-type{ margin-top:4px }
+p{ line-height:1.65; margin:0 0 10px }
+
+.card{
+  background:var(--panel); border:1px solid var(--border); border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-xs); padding:22px; margin:14px 0;
+}
+.card-head{ margin-bottom:16px }
+.card-head .muted{ font-size:.86rem; margin-top:2px }
+
+@keyframes fadeSlide{ from{ opacity:0; transform:translateY(-4px) } to{ opacity:1; transform:translateY(0) } }
+#bookingPanel:not(.hidden),#adminPanel:not(.hidden),#createPanel:not(.hidden){ animation:fadeSlide .22s ease }
+#bookingPanel{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft) }
+
+.btn{
+  position:relative; display:inline-flex; align-items:center; justify-content:center; gap:7px;
+  background:var(--panel-alt); border:1px solid var(--border); color:var(--text);
+  border-radius:var(--radius-sm); min-height:42px; padding:0 15px; font-weight:600;
+  font-size:.87rem; box-shadow:var(--shadow-xs);
+  transition:transform .1s ease,box-shadow .15s ease,background .15s ease,border-color .15s ease;
+}
+.btn:hover{ border-color:color-mix(in srgb, var(--accent) 40%, var(--border)) }
+.btn:active{ transform:scale(.98) }
+.btn.primary{ background:var(--accent); border-color:transparent; color:var(--accent-ink); box-shadow:var(--shadow-sm) }
+.btn.primary:hover{ background:var(--accent-hover) }
+.btn.ghost{ background:transparent; border-color:transparent; box-shadow:none; color:var(--muted) }
+.btn.ghost:hover{ background:var(--panel-alt); color:var(--text) }
+.btn.danger{ color:var(--booked); border-color:color-mix(in srgb, var(--booked) 30%, var(--border)) }
+.btn.danger:hover{ background:var(--booked-soft) }
+.btn.sm{ min-height:36px; padding:0 12px; font-size:.8rem; border-radius:var(--radius-sm) }
+.btn .icon{ width:16px; height:16px }
+
+.btn.is-loading{ color:transparent!important; pointer-events:none }
+.btn.is-loading .icon,.btn.is-loading span{ visibility:hidden }
+.btn.is-loading::after{
+  content:''; position:absolute; width:16px; height:16px; top:50%; left:50%; margin:-8px 0 0 -8px;
+  border-radius:50%; border:2px solid rgba(120,120,120,.3); border-top-color:var(--text);
+  animation:spin .7s linear infinite;
+}
+.btn.primary.is-loading::after{ border-color:rgba(255,255,255,.35); border-top-color:var(--accent-ink) }
+@keyframes spin{ to{ transform:rotate(360deg) } }
+
+.field{
+  display:block; width:100%; min-height:42px; padding:9px 13px; color:var(--text);
+  background:var(--panel-alt); border:1px solid var(--border); border-radius:var(--radius-sm);
+  outline:none; transition:border-color .15s,box-shadow .15s;
+}
+.field:focus{ border-color:var(--accent); box-shadow:0 0 0 3px var(--ring) }
+.field[readonly]{ color:var(--muted); cursor:default }
+label{ display:block; font-weight:600; margin:0 0 6px; font-size:.84rem }
+.field-group{ margin-bottom:14px }
+.field-group:last-child{ margin-bottom:0 }
+
+.grid{ display:grid; gap:14px }
+@media(min-width:680px){ .two{ grid-template-columns:repeat(2,minmax(0,1fr)) } }
+.row{ display:flex; flex-wrap:wrap; align-items:center; gap:9px }
+.muted,small{ color:var(--muted) }
+.hidden{ display:none!important }
+
+#notice{
+  display:flex; align-items:center; gap:9px; font-weight:600; font-size:.86rem;
+  padding:11px 15px; border-radius:var(--radius-md); margin:14px 0 0;
+  background:var(--accent-soft); color:var(--accent);
+  border:1px solid color-mix(in srgb, var(--accent) 25%, var(--border));
+  border-left:3px solid var(--accent);
+}
+#notice:empty{ display:none; padding:0; margin:0; border:none }
+#notice::before{ content:'ⓘ'; font-size:1rem; flex-shrink:0 }
+#notice.error{
+  background:var(--booked-soft); color:var(--booked);
+  border-color:color-mix(in srgb, var(--booked) 30%, var(--border));
+  border-left-color:var(--booked);
+}
+#notice.error::before{ content:'⚠' }
+
+.room-head{ display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-start }
+.meta-row{ display:flex; flex-wrap:wrap; gap:7px; margin-top:7px }
+.meta-chip{
+  display:inline-flex; align-items:center; padding:3px 11px; border-radius:999px;
+  background:var(--panel-alt); border:1px solid var(--border); font-size:.78rem; font-weight:600; color:var(--muted);
+  font-variant-numeric:tabular-nums;
+}
+
+.status-pill{
+  display:inline-flex; align-items:center; gap:6px; padding:5px 13px; border-radius:999px;
+  font-weight:700; font-size:.8rem; margin-right:10px;
+}
+.status-pill::before{ content:''; width:7px; height:7px; border-radius:50% }
+.status-pill.open{ background:var(--free-soft); color:var(--free) }
+.status-pill.open::before{ background:var(--free) }
+.status-pill.closed{ background:var(--panel-alt); color:var(--muted); border:1px solid var(--border) }
+.status-pill.closed::before{ background:var(--muted) }
+
+.link-box{ display:flex; flex-wrap:wrap; gap:9px; margin:14px 0 }
+.link-box .field{ flex:1; min-width:200px; font-size:.84rem }
+
+#chosenSeat{ font-weight:700; font-size:1.05rem; color:var(--accent); margin-bottom:2px }
+#boardHint{ font-size:.84rem; margin-top:10px }
+
+.legend{ display:flex; flex-wrap:wrap; gap:10px; margin:16px 0 }
+.legend-item{
+  display:inline-flex; align-items:center; gap:7px; font-size:.82rem; font-weight:600; color:var(--muted);
+  background:var(--panel-alt); border:1px solid var(--border); padding:5px 12px 5px 9px; border-radius:999px;
+}
+.legend-item b{ font-weight:700; color:var(--text); font-variant-numeric:tabular-nums }
+.dot{ width:9px; height:9px; border-radius:50%; flex-shrink:0 }
+.dot.free{ background:var(--free) } .dot.booked{ background:var(--booked) }
+.dot.mine{ background:var(--mine) } .dot.off{ background:transparent; border:2px dashed var(--muted) }
+
+.board{
+  position:relative; width:100%; aspect-ratio:1.4; min-height:320px; overflow:hidden;
+  border:1.5px dashed var(--border); border-radius:var(--radius-lg); background-color:var(--panel-alt);
+  background-image:radial-gradient(var(--border) 1.2px,transparent 1.2px);
+  background-size:28px 28px; margin:6px 0 14px;
+}
+.board-empty{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  text-align:center; padding:24px; margin:0; color:var(--muted); font-weight:600; font-size:.9rem;
+}
+.seat,.marker{
+  position:absolute; transform:translate(-50%,-50%); touch-action:none;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+  text-align:center; min-width:52px; min-height:46px; max-width:104px; padding:6px 8px;
+  border-radius:var(--radius-sm); overflow:hidden; overflow-wrap:anywhere;
+  box-shadow:var(--shadow-xs); transition:transform .12s ease,box-shadow .12s ease;
+  background:var(--panel); border:1.5px solid var(--border);
+}
+.seat:hover{ transform:translate(-50%,-50%) scale(1.07); z-index:5; box-shadow:var(--shadow-md) }
+.seat-label{ font-weight:700; font-size:.78rem; line-height:1.1 }
+.seat-status{ font-size:.66rem; font-weight:600; opacity:.85; line-height:1.1 }
+.seat.free{ border-color:var(--free); color:var(--free); background:var(--free-soft) }
+.seat.booked{ border-color:var(--booked); color:var(--booked); background:var(--booked-soft) }
+.seat.mine{ border-color:var(--mine); color:var(--mine); background:var(--mine-soft) }
+.seat.off{ opacity:.55; border-style:dashed; color:var(--muted) }
+.seat.selected,.marker.selected{ outline:3px solid var(--accent); outline-offset:2px }
+
+.marker{ color:var(--text); font-size:.72rem; font-weight:600 }
+.marker .icon{ width:15px; height:15px }
+.marker.type-board{ border-color:var(--accent); color:var(--accent); background:var(--accent-soft) }
+.marker.type-teacher{ border-color:var(--mine); color:var(--mine); background:var(--mine-soft) }
+.marker.type-door{ border-style:dashed; color:var(--muted) }
+
+.icon{ width:17px; height:17px; stroke:currentColor; fill:none; stroke-width:2;
+  stroke-linecap:round; stroke-linejoin:round; flex-shrink:0 }
+
+#qrWrap{ margin-top:14px; display:flex; justify-content:flex-start }
+#qr{ display:inline-block; padding:14px; background:#fff; border-radius:var(--radius-md); box-shadow:var(--shadow-sm) }
+#qr img,#qr canvas{ display:block }
+
+.theme-toggle{ background:none; border:1px solid var(--border); border-radius:999px; padding:3px; box-shadow:none; min-height:auto }
+.theme-toggle .track{ position:relative; width:44px; height:25px; border-radius:999px; background:var(--panel-alt); display:block; transition:background .25s; border:1px solid var(--border) }
+.theme-toggle .thumb{
+  position:absolute; top:1px; left:1px; width:21px; height:21px; border-radius:50%;
+  background:var(--panel); box-shadow:0 1px 3px rgba(0,0,0,.3); transition:transform .25s;
+  display:flex; align-items:center; justify-content:center; font-size:11px;
+}
+.theme-toggle .thumb::before{ content:'☀' }
+:root[data-theme="dark"] .theme-toggle .thumb{ transform:translateX(19px) }
+:root[data-theme="dark"] .theme-toggle .thumb::before{ content:'☾' }
+:root[data-theme="dark"] .theme-toggle .track{ background:var(--accent) }
+
+.toolbar{ display:flex; flex-wrap:wrap; gap:8px; padding:12px; background:var(--panel-alt);
+  border:1px solid var(--border); border-radius:var(--radius-md) }
+
+.table-wrap{ overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius-md) }
+table.data-table{ width:100%; border-collapse:collapse; font-size:.86rem; min-width:480px }
+.data-table thead th{
+  text-align:left; font-weight:700; color:var(--muted); font-size:.74rem; text-transform:uppercase;
+  letter-spacing:.05em; padding:10px 14px; background:var(--panel-alt); border-bottom:1px solid var(--border);
+}
+.data-table tbody td{ padding:10px 14px; border-bottom:1px solid var(--border); vertical-align:middle }
+.data-table tbody tr:last-child td{ border-bottom:none }
+.data-table tbody tr:hover{ background:var(--panel-alt) }
+.data-table .field{ min-height:36px; font-size:.82rem }
+#bookingsEmpty{ padding:18px; text-align:center; border:1px dashed var(--border); border-radius:var(--radius-md); margin:0 }
+
+footer{ text-align:center; color:var(--muted); font-size:.78rem; margin:36px 0 0; padding-top:18px; border-top:1px solid var(--border) }
+
+@media(max-width:560px){
+  .card{ padding:16px; border-radius:12px }
+  h1{ font-size:.98rem }
+  .board{ min-height:260px }
+  html{ font-size:15px }
+}
+</style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<symbol id="i-seat" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="4" rx="1"/><line x1="6" y1="8" x2="6" y2="20"/><line x1="18" y1="8" x2="18" y2="20"/></symbol>
+<symbol id="i-board" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1"/><line x1="12" y1="16" x2="12" y2="20"/><line x1="8" y1="20" x2="16" y2="20"/></symbol>
+<symbol id="i-desk" viewBox="0 0 24 24"><rect x="3" y="10" width="18" height="6" rx="1"/><line x1="6" y1="16" x2="6" y2="20"/><line x1="18" y1="16" x2="18" y2="20"/><line x1="4" y1="10" x2="4" y2="6"/><line x1="8" y1="10" x2="8" y2="7"/></symbol>
+<symbol id="i-door" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="1"/><circle cx="14" cy="12" r="1" fill="currentColor"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+<symbol id="i-qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3"/><rect x="19" y="14" width="2" height="2"/><rect x="14" y="19" width="2" height="2"/><rect x="18" y="18" width="3" height="3"/></symbol>
+<symbol id="i-settings" viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2" fill="var(--panel)"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="16" cy="12" r="2" fill="var(--panel)"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="10" cy="18" r="2" fill="var(--panel)"/></symbol>
+<symbol id="i-back" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></symbol>
+<symbol id="i-enter" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+<symbol id="i-toggle" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="10" rx="5"/><circle cx="8" cy="12" r="3" fill="currentColor"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></symbol>
+<symbol id="i-save" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+</defs>
+</svg>
+
 <div class="wrap">
   <header>
-    <h1>จองที่นั่งห้องเรียน</h1>
-    <button class="btn" id="themeBtn" type="button" aria-label="สลับโหมดสี">◐ สี</button>
+    <div class="brand">
+      <div class="brand-badge"><svg class="icon"><use href="#i-seat"></use></svg></div>
+      <div><h1>จองที่นั่งห้องเรียน</h1><small>ระบบจองที่นั่งแบบเรียลไทม์</small></div>
+    </div>
+    <button class="theme-toggle btn" id="themeBtn" type="button" aria-label="สลับโหมดสี">
+      <span class="track"><span class="thumb"></span></span>
+    </button>
   </header>
+
   <p id="notice" role="status" aria-live="polite"></p>
 
   <section class="card" id="entry">
-    <h2>เข้าห้อง</h2>
+    <div class="card-head"><h2>เข้าห้อง</h2><p class="muted">กรอกเลขห้องที่ได้รับจากผู้สอนหรือผู้จัดงาน</p></div>
     <div class="row">
       <input class="field" id="joinCode" style="flex:1;min-width:150px" inputmode="numeric"
              maxlength="6" pattern="[0-9]{4,6}" placeholder="เลขห้อง 4–6 หลัก" aria-label="เลขห้อง">
-      <button class="btn primary" id="joinBtn" type="button">เข้าห้อง</button>
-      <button class="btn" id="newBtn" type="button">สร้างห้องใหม่</button>
+      <button class="btn primary" id="joinBtn" type="button"><svg class="icon"><use href="#i-enter"></use></svg><span>เข้าห้อง</span></button>
+      <button class="btn" id="newBtn" type="button"><svg class="icon"><use href="#i-plus"></use></svg><span>สร้างห้องใหม่</span></button>
     </div>
   </section>
 
   <section class="card hidden" id="createPanel">
-    <h2>สร้างห้อง</h2>
+    <div class="card-head"><h2>สร้างห้อง</h2><p class="muted">กำหนดข้อมูลพื้นฐาน แล้วปรับผังที่นั่งได้ภายหลัง</p></div>
+
+    <h3 class="section-title">ข้อมูลห้อง</h3>
     <div class="grid two">
-      <div><label for="roomName">ชื่อห้อง</label><input class="field" id="roomName" maxlength="100" required></div>
-      <div>
+      <div class="field-group"><label for="roomName">ชื่อห้อง</label><input class="field" id="roomName" maxlength="100" required></div>
+      <div class="field-group">
         <label for="roomCode">เลขห้อง 4–6 หลัก</label>
         <input class="field" id="roomCode" inputmode="numeric" maxlength="6" pattern="[0-9]{4,6}" required>
         <small id="codeStatus" aria-live="polite">พิมพ์เลขห้องเพื่อตรวจสอบ</small>
       </div>
-      <div><label for="pinCreate">Admin PIN 6–12 หลัก</label><input class="field" id="pinCreate" type="password" inputmode="numeric" autocomplete="new-password" minlength="6" maxlength="12"></div>
-      <div><label for="maxSeats">จำนวนที่จองได้ต่อเบราว์เซอร์</label>
+      <div class="field-group"><label for="pinCreate">Admin PIN 6–12 หลัก</label><input class="field" id="pinCreate" type="password" inputmode="numeric" autocomplete="new-password" minlength="6" maxlength="12"></div>
+      <div class="field-group"><label for="maxSeats">จำนวนที่จองได้ต่อเบราว์เซอร์</label>
         <select class="field" id="maxSeats">
           <option value="1">1 ที่</option><option value="2">2 ที่</option>
           <option value="3">3 ที่</option><option value="0">ไม่จำกัด</option>
         </select>
       </div>
-      <div><label for="openAt">เริ่มเปิดจอง</label><input class="field" id="openAt" type="datetime-local"></div>
-      <div><label for="closeAt">สิ้นสุดการจอง</label><input class="field" id="closeAt" type="datetime-local"></div>
-      <div><label for="rows">แถวเริ่มต้น (1–12)</label><input class="field" id="rows" type="number" min="1" max="12" value="4"></div>
-      <div><label for="cols">คอลัมน์เริ่มต้น (1–12)</label><input class="field" id="cols" type="number" min="1" max="12" value="5"></div>
     </div>
-    <p class="muted">หลังสร้างห้อง สามารถลากโต๊ะและเพิ่มป้ายในโหมดจัดผังได้</p>
-    <button class="btn primary" id="createBtn" type="button">สร้างห้อง</button>
-    <button class="btn" id="cancelCreate" type="button">ยกเลิก</button>
+
+    <h3 class="section-title">ช่วงเวลาเปิดจอง</h3>
+    <div class="grid two">
+      <div class="field-group"><label for="openAt">เริ่มเปิดจอง</label><input class="field" id="openAt" type="datetime-local"></div>
+      <div class="field-group"><label for="closeAt">สิ้นสุดการจอง</label><input class="field" id="closeAt" type="datetime-local"></div>
+    </div>
+
+    <h3 class="section-title">ผังที่นั่งเริ่มต้น</h3>
+    <div class="grid two">
+      <div class="field-group"><label for="rows">แถวเริ่มต้น (1–12)</label><input class="field" id="rows" type="number" min="1" max="12" value="4"></div>
+      <div class="field-group"><label for="cols">คอลัมน์เริ่มต้น (1–12)</label><input class="field" id="cols" type="number" min="1" max="12" value="5"></div>
+    </div>
+    <p class="muted" style="margin-top:6px">หลังสร้างห้อง สามารถลากโต๊ะและเพิ่มป้ายในโหมดจัดผังได้</p>
+
+    <div class="row" style="margin-top:18px">
+      <button class="btn primary" id="createBtn" type="button"><svg class="icon"><use href="#i-save"></use></svg><span>สร้างห้อง</span></button>
+      <button class="btn ghost" id="cancelCreate" type="button"><svg class="icon"><use href="#i-close"></use></svg><span>ยกเลิก</span></button>
+    </div>
   </section>
 
   <main class="hidden" id="roomPanel">
     <section class="card">
       <div class="room-head">
-        <div><h2 id="displayName"></h2><div id="roomMeta" class="muted"></div></div>
-        <button class="btn" id="backBtn" type="button">เปลี่ยนห้อง</button>
+        <div>
+          <h2 id="displayName"></h2>
+          <div class="meta-row" id="roomMeta"></div>
+        </div>
+        <button class="btn" id="backBtn" type="button"><svg class="icon"><use href="#i-back"></use></svg><span>เปลี่ยนห้อง</span></button>
       </div>
-      <p id="windowStatus"></p>
-      <div class="row">
-        <button class="btn" id="copyBtn" type="button">คัดลอกลิงก์</button>
-        <button class="btn" id="qrBtn" type="button">แสดง QR code</button>
-        <button class="btn" id="editBtn" type="button">จัดการห้อง</button>
+      <p id="windowStatus" style="margin-top:14px"></p>
+
+      <div class="link-box">
+        <input class="field" id="roomLinkField" readonly aria-label="ลิงก์ห้อง">
+        <button class="btn" id="copyBtn" type="button"><svg class="icon"><use href="#i-copy"></use></svg><span>คัดลอกลิงก์</span></button>
+        <button class="btn" id="qrBtn" type="button"><svg class="icon"><use href="#i-qr"></use></svg><span>QR code</span></button>
+        <button class="btn" id="editBtn" type="button"><svg class="icon"><use href="#i-settings"></use></svg><span>จัดการห้อง</span></button>
       </div>
-      <div class="hidden" id="qrWrap" style="margin-top:14px"><div id="qr"></div></div>
+      <div class="hidden" id="qrWrap"><div id="qr"></div></div>
+
       <div class="legend" aria-label="คำอธิบายสถานะ">
-        <b class="freeText">● ว่าง</b><b class="bookedText">● ถูกจอง</b>
-        <b class="mineText">● ที่นั่งของฉัน</b><b>◌ ปิดใช้งาน</b>
+        <span class="legend-item"><i class="dot free"></i>ว่าง <b id="countFree">0</b></span>
+        <span class="legend-item"><i class="dot booked"></i>ถูกจองแล้ว <b id="countBooked">0</b></span>
+        <span class="legend-item"><i class="dot mine"></i>ที่นั่งของฉัน <b id="countMine">0</b></span>
+        <span class="legend-item"><i class="dot off"></i>ปิดใช้งาน <b id="countOff">0</b></span>
       </div>
       <div class="board" id="board" aria-label="แผนผังที่นั่ง"></div>
       <p class="muted" id="boardHint"></p>
@@ -158,47 +370,62 @@
     <section class="card hidden" id="bookingPanel">
       <h2 id="bookingTitle">จองที่นั่ง</h2>
       <p id="chosenSeat"></p>
-      <div id="nameWrap"><label for="bookName">ชื่อจริงหรือชื่อที่ตกลงกัน</label>
+      <div id="nameWrap" class="field-group"><label for="bookName">ชื่อจริงหรือชื่อที่ตกลงกัน</label>
         <input class="field" id="bookName" maxlength="80" autocomplete="name"></div>
       <div class="row" style="margin-top:14px">
-        <button class="btn primary" id="confirmBook" type="button">ยืนยันการจอง</button>
-        <button class="btn danger hidden" id="cancelBook" type="button">ยกเลิกที่นั่งนี้</button>
-        <button class="btn" id="dismissBook" type="button">ปิด</button>
+        <button class="btn primary" id="confirmBook" type="button"><svg class="icon"><use href="#i-save"></use></svg><span>ยืนยันการจอง</span></button>
+        <button class="btn danger hidden" id="cancelBook" type="button"><svg class="icon"><use href="#i-trash"></use></svg><span>ยกเลิกที่นั่งนี้</span></button>
+        <button class="btn ghost" id="dismissBook" type="button"><svg class="icon"><use href="#i-close"></use></svg><span>ปิด</span></button>
       </div>
-      <p class="muted">ต้องการเปลี่ยนที่: เลือกที่นั่งของฉัน แล้วกดที่นั่งว่างอีกที่</p>
+      <p class="muted" style="margin-top:12px">ต้องการเปลี่ยนที่: เลือกที่นั่งของฉัน แล้วกดที่นั่งว่างอีกที่</p>
     </section>
 
     <section class="card hidden" id="adminPanel">
-      <h2>จัดการห้อง</h2>
-      <label for="adminPin">Admin PIN (ใช้ยืนยันทุกคำสั่งที่เปลี่ยนข้อมูล)</label>
-      <input class="field" id="adminPin" type="password" inputmode="numeric" autocomplete="off">
+      <div class="card-head"><h2>จัดการห้อง</h2><p class="muted">ทุกคำสั่งที่เปลี่ยนข้อมูลต้องยืนยันด้วย Admin PIN</p></div>
+      <div class="field-group">
+        <label for="adminPin">Admin PIN</label>
+        <input class="field" id="adminPin" type="password" inputmode="numeric" autocomplete="off" style="max-width:260px">
+      </div>
+
+      <h3 class="section-title">ข้อมูลห้อง</h3>
       <div class="grid two">
-        <div><label for="editName">ชื่อห้อง</label><input class="field" id="editName" maxlength="100"></div>
-        <div><label for="editMax">จำนวนที่จองได้</label><select class="field" id="editMax">
+        <div class="field-group"><label for="editName">ชื่อห้อง</label><input class="field" id="editName" maxlength="100"></div>
+        <div class="field-group"><label for="editMax">จำนวนที่จองได้</label><select class="field" id="editMax">
           <option value="1">1 ที่</option><option value="2">2 ที่</option>
           <option value="3">3 ที่</option><option value="0">ไม่จำกัด</option>
         </select></div>
-        <div><label for="editOpen">เริ่มเปิดจอง</label><input class="field" id="editOpen" type="datetime-local"></div>
-        <div><label for="editClose">สิ้นสุดการจอง</label><input class="field" id="editClose" type="datetime-local"></div>
+        <div class="field-group"><label for="editOpen">เริ่มเปิดจอง</label><input class="field" id="editOpen" type="datetime-local"></div>
+        <div class="field-group"><label for="editClose">สิ้นสุดการจอง</label><input class="field" id="editClose" type="datetime-local"></div>
       </div>
-      <h3>จัดผัง</h3>
-      <p class="muted">ลากโต๊ะหรือป้ายเพื่อย้ายตำแหน่ง แตะโต๊ะเพื่อเลือก จากนั้นปิดใช้งานหรือลบ</p>
-      <div class="row">
-        <button class="btn" id="addSeat" type="button">+ โต๊ะ</button>
-        <button class="btn" id="addBoard" type="button">+ กระดาน</button>
-        <button class="btn" id="addTeacher" type="button">+ โต๊ะครู</button>
-        <button class="btn" id="addDoor" type="button">+ ประตู</button>
-        <button class="btn" id="toggleSeat" type="button">เปิด/ปิดโต๊ะที่เลือก</button>
-        <button class="btn danger" id="removeItem" type="button">ลบสิ่งที่เลือก</button>
+
+      <h3 class="section-title">จัดผัง</h3>
+      <p class="muted">ลากโต๊ะหรือป้ายเพื่อย้ายตำแหน่ง แตะเพื่อเลือก จากนั้นปิดใช้งานหรือลบ</p>
+      <div class="toolbar">
+        <button class="btn sm" id="addSeat" type="button"><svg class="icon"><use href="#i-seat"></use></svg><span>โต๊ะ</span></button>
+        <button class="btn sm" id="addBoard" type="button"><svg class="icon"><use href="#i-board"></use></svg><span>กระดาน</span></button>
+        <button class="btn sm" id="addTeacher" type="button"><svg class="icon"><use href="#i-desk"></use></svg><span>โต๊ะครู</span></button>
+        <button class="btn sm" id="addDoor" type="button"><svg class="icon"><use href="#i-door"></use></svg><span>ประตู</span></button>
+        <button class="btn sm" id="toggleSeat" type="button"><svg class="icon"><use href="#i-toggle"></use></svg><span>เปิด/ปิดที่เลือก</span></button>
+        <button class="btn sm danger" id="removeItem" type="button"><svg class="icon"><use href="#i-trash"></use></svg><span>ลบที่เลือก</span></button>
       </div>
-      <div class="row" style="margin-top:15px">
-        <button class="btn primary" id="saveAdmin" type="button">บันทึกการเปลี่ยนแปลง</button>
-        <button class="btn danger" id="deleteRoom" type="button">ลบห้อง</button>
+
+      <div class="row" style="margin-top:18px">
+        <button class="btn primary" id="saveAdmin" type="button"><svg class="icon"><use href="#i-save"></use></svg><span>บันทึกการเปลี่ยนแปลง</span></button>
+        <button class="btn danger" id="deleteRoom" type="button"><svg class="icon"><use href="#i-trash"></use></svg><span>ลบห้อง</span></button>
       </div>
-      <h3>รายชื่อผู้จอง</h3>
-      <div id="adminBookings"></div>
+
+      <h3 class="section-title">รายชื่อผู้จอง <span id="bookingsCount" class="muted" style="text-transform:none;letter-spacing:0;font-weight:600"></span></h3>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>ชื่อผู้จอง</th><th>ที่นั่ง</th><th>ย้ายไปที่</th><th></th></tr></thead>
+          <tbody id="adminBookings"></tbody>
+        </table>
+      </div>
+      <p class="muted hidden" id="bookingsEmpty">ยังไม่มีผู้จอง</p>
     </section>
   </main>
+
+  <footer>จองที่นั่งห้องเรียน · ข้อมูลอัปเดตแบบเรียลไทม์</footer>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -229,6 +456,9 @@
   const prettyDate = value => new Date(value).toLocaleString('th-TH', {
     dateStyle:'medium', timeStyle:'short'
   });
+  const markerIcons = {'กระดาน':'i-board','โต๊ะครู':'i-desk','ประตู':'i-door'};
+  const markerClass = {'กระดาน':'type-board','โต๊ะครู':'type-teacher','ประตู':'type-door'};
+  const setBusy = (btn, busy) => { btn.disabled = busy; btn.classList.toggle('is-loading', busy); };
 
   let room = null, bookings = [], channel = null, draft = null;
   let editing = false, selected = null, movingFrom = null, codeTimer = null;
@@ -349,12 +579,14 @@
   function render() {
     if (!room) return;
     $('displayName').textContent = room.name;
-    $('roomMeta').textContent = `เลขห้อง ${room.code} · จองได้ ${
-      room.max_seats_per_user === 0 ? 'ไม่จำกัด' : room.max_seats_per_user + ' ที่/เบราว์เซอร์'
-    }`;
-    $('windowStatus').textContent =
-      `เปิดจอง ${prettyDate(room.open_at)} – ${prettyDate(room.close_at)} · ` +
-      (windowOpen() ? 'กำลังเปิดจอง' : 'ดูผังได้ แต่ยังจองไม่ได้');
+    $('roomLinkField').value = roomLink(room.code);
+    $('roomMeta').innerHTML =
+      `<span class="meta-chip">เลขห้อง ${enc(room.code)}</span>` +
+      `<span class="meta-chip">${room.max_seats_per_user === 0 ? 'จองได้ไม่จำกัด' : 'จองได้ ' + enc(room.max_seats_per_user) + ' ที่/เบราว์เซอร์'}</span>`;
+    const open = windowOpen();
+    $('windowStatus').innerHTML =
+      `<span class="status-pill ${open ? 'open' : 'closed'}">${open ? 'เปิดรับจองอยู่' : 'ไม่อยู่ในช่วงเปิดจอง'}</span>` +
+      `<span class="muted">${enc(prettyDate(room.open_at))} – ${enc(prettyDate(room.close_at))}</span>`;
     $('boardHint').textContent = editing
       ? 'โหมดจัดผัง: ลากเพื่อย้ายตำแหน่ง และกดบันทึกเมื่อเสร็จ'
       : (movingFrom ? 'เลือกที่นั่งว่างเพื่อย้ายการจอง หรือแตะที่นั่งเดิมเพื่อยกเลิกการย้าย'
@@ -363,35 +595,53 @@
     const layout = editing ? draft : room.layout;
     const board = $('board');
     board.replaceChildren();
+    const counts = {free:0, booked:0, mine:0, off:0};
     for (const seat of layout.seats) {
       const b = map.get(seat.id);
+      let state;
+      if (!seat.enabled) { state = 'off'; counts.off++; }
+      else if (b) { state = b.client_token === myHash ? 'mine' : 'booked'; counts[state]++; }
+      else { state = 'free'; counts.free++; }
       const el = document.createElement('button');
       el.type = 'button';
-      el.className = 'seat ' + (!seat.enabled ? 'off' :
-        b ? (b.client_token === myHash ? 'mine' : 'booked') : 'free') +
-        (selected?.id === seat.id ? ' selected' : '');
+      el.className = 'seat ' + state + (selected?.id === seat.id ? ' selected' : '');
       el.style.left = `${seat.x}%`;
       el.style.top = `${seat.y}%`;
-      el.textContent = !seat.enabled ? `${seatLabel(seat)} ปิด` :
-        b ? `${seatLabel(seat)} ${b.name}${b.client_token === myHash ? ' (ฉัน)' : ''}` :
-            `${seatLabel(seat)} ว่าง`;
-      el.setAttribute('aria-label', el.textContent);
+      const statusText = !seat.enabled ? 'ปิดใช้งาน' :
+        b ? `${b.name}${b.client_token === myHash ? ' (ฉัน)' : ''}` : 'ว่าง';
+      el.setAttribute('aria-label', `${seatLabel(seat)} ${statusText}`);
+      el.innerHTML = `<span class="seat-label">${enc(seatLabel(seat))}</span>` +
+        `<span class="seat-status">${enc(statusText)}</span>`;
       el.onclick = () => chooseSeat(seat, b);
       if (editing) attachDrag(el, seat);
       board.appendChild(el);
     }
+    $('countFree').textContent = counts.free;
+    $('countBooked').textContent = counts.booked;
+    $('countMine').textContent = counts.mine;
+    $('countOff').textContent = counts.off;
     for (const marker of layout.markers) {
       const el = document.createElement(editing ? 'button' : 'div');
       if (editing) el.type = 'button';
-      el.className = 'marker' + (selected?.id === marker.id ? ' selected' : '');
+      el.className = 'marker ' + (markerClass[marker.type] || '') +
+        (selected?.id === marker.id ? ' selected' : '');
       el.style.left = `${marker.x}%`;
       el.style.top = `${marker.y}%`;
-      el.textContent = marker.type;
+      el.innerHTML = `<svg class="icon"><use href="#${markerIcons[marker.type] || 'i-board'}"></use></svg>` +
+        `<span>${enc(marker.type)}</span>`;
       if (editing) {
         el.onclick = () => { selected = marker; render(); };
         attachDrag(el, marker);
       }
       board.appendChild(el);
+    }
+    if (!layout.seats.length && !layout.markers.length) {
+      const empty = document.createElement('p');
+      empty.className = 'board-empty';
+      empty.textContent = editing
+        ? 'ยังไม่มีผังที่นั่ง เริ่มเพิ่มโต๊ะหรือป้ายด้านล่างได้เลย'
+        : 'ห้องนี้ยังไม่มีผังที่นั่ง';
+      board.appendChild(empty);
     }
     renderAdminBookings();
   }
@@ -463,7 +713,7 @@
   async function reserve(seat) {
     const name = $('bookName').value.trim();
     if (!name) return notice('กรุณากรอกชื่อผู้จอง', true);
-    $('confirmBook').disabled = true;
+    setBusy($('confirmBook'), true);
     try {
       const {error} = await db.rpc('book_seat', {
         p_room_id:room.id, p_seat_id:seat.id, p_name:name, p_token:token()
@@ -473,10 +723,11 @@
       notice('จองที่นั่งสำเร็จ');
       await loadBookings();
     } catch (e) { fail(e); await loadBookings(); }
-    finally { $('confirmBook').disabled = false; }
+    finally { setBusy($('confirmBook'), false); }
   }
   async function cancelMine(b) {
     if (!confirm(`ยกเลิกที่นั่งของ ${b.name}?`)) return;
+    setBusy($('cancelBook'), true);
     try {
       const {error} = await db.rpc('owner_booking', {
         p_booking_id:b.id, p_token:token(), p_action:'cancel', p_seat_id:null
@@ -487,6 +738,7 @@
       notice('ยกเลิกการจองแล้ว');
       await loadBookings();
     } catch (e) { fail(e); await loadBookings(); }
+    finally { setBusy($('cancelBook'), false); }
   }
   async function moveMine(seat) {
     const old = movingFrom;
@@ -508,8 +760,11 @@
     if (!/^[0-9]{4,6}$/.test(code)) return notice('เลขห้องต้องเป็นตัวเลข 4–6 หลัก', true);
     editing = false;
     selected = movingFrom = null;
-    await loadRoom(code);
-    if (room?.code === code) history.replaceState(null, '', roomLink(code));
+    setBusy($('joinBtn'), true);
+    try {
+      await loadRoom(code);
+      if (room?.code === code) history.replaceState(null, '', roomLink(code));
+    } finally { setBusy($('joinBtn'), false); }
   };
   $('joinCode').addEventListener('keydown', e => {
     if (e.key === 'Enter') $('joinBtn').click();
@@ -547,7 +802,7 @@
     const open = isoDate($('openAt').value), close = isoDate($('closeAt').value);
     if (!open || !close || new Date(close) <= new Date(open))
       return notice('กรุณากำหนดเวลาเริ่มและสิ้นสุดให้ถูกต้อง', true);
-    $('createBtn').disabled = true;
+    setBusy($('createBtn'), true);
     try {
       const {error} = await db.rpc('create_room', {
         p_code:code, p_name:name, p_pin:pin,
@@ -562,13 +817,13 @@
     } catch (e) {
       fail(e);
       if (e.code === '23505') $('codeStatus').textContent = 'เลขห้องนี้ถูกใช้แล้ว';
-    } finally { $('createBtn').disabled = false; }
+    } finally { setBusy($('createBtn'), false); }
   };
   $('copyBtn').onclick = async () => {
     try {
       await navigator.clipboard.writeText(roomLink(room.code));
       notice('คัดลอกลิงก์แล้ว');
-    } catch { notice('คัดลอกไม่ได้ กรุณาคัดลอกจากแถบที่อยู่', true); }
+    } catch { notice('คัดลอกไม่ได้ กรุณาคัดลอกจากช่องลิงก์ด้านบน', true); }
   };
   $('qrBtn').onclick = () => {
     $('qrWrap').classList.toggle('hidden');
@@ -629,6 +884,7 @@
     return pin;
   }
   $('saveAdmin').onclick = async () => {
+    setBusy($('saveAdmin'), true);
     try {
       const open = isoDate($('editOpen').value), close = isoDate($('editClose').value);
       if (!open || !close || new Date(close) <= new Date(open))
@@ -645,11 +901,14 @@
       await loadRoom(room.code);
       notice('บันทึกห้องแล้ว');
     } catch (e) { fail(e); }
+    finally { setBusy($('saveAdmin'), false); }
   };
   $('deleteRoom').onclick = async () => {
+    let pin;
+    try { pin = adminPin(); } catch (e) { return fail(e); }
+    if (!confirm('ลบห้องและการจองทั้งหมดอย่างถาวร?')) return;
+    setBusy($('deleteRoom'), true);
     try {
-      const pin = adminPin();
-      if (!confirm('ลบห้องและการจองทั้งหมดอย่างถาวร?')) return;
       const {error} = await db.rpc('admin_delete_room', {
         p_room_id:room.id, p_pin:pin
       });
@@ -657,22 +916,27 @@
       $('backBtn').click();
       notice('ลบห้องแล้ว');
     } catch (e) { fail(e); }
+    finally { setBusy($('deleteRoom'), false); }
   };
   function renderAdminBookings() {
     if (!room || !editing) return;
-    const box = $('adminBookings');
-    box.replaceChildren();
-    if (!bookings.length) { box.textContent = 'ยังไม่มีผู้จอง'; return; }
+    const tbody = $('adminBookings');
+    tbody.replaceChildren();
+    $('bookingsCount').textContent = bookings.length ? `(${bookings.length} คน)` : '';
+    $('bookingsEmpty').classList.toggle('hidden', bookings.length > 0);
+    if (!bookings.length) return;
     for (const b of bookings) {
       const seat = (draft?.seats || []).find(s => s.id === b.seat_id);
-      const line = document.createElement('div');
-      line.className = 'row';
-      line.style.marginBottom = '10px';
-      const label = document.createElement('span');
-      label.textContent = `${b.name} — ${seat?.label || b.seat_id}`;
+      const tr = document.createElement('tr');
+
+      const nameTd = document.createElement('td');
+      nameTd.textContent = b.name;
+      const seatTd = document.createElement('td');
+      seatTd.textContent = seat?.label || b.seat_id;
+
+      const moveTd = document.createElement('td');
       const move = document.createElement('select');
       move.className = 'field';
-      move.style.width = 'auto';
       const placeholder = new Option('ย้ายไปที่…', '');
       move.add(placeholder);
       for (const s of draft.seats.filter(s =>
@@ -681,6 +945,7 @@
         move.add(new Option(s.label, s.id));
       move.onchange = async () => {
         if (!move.value) return;
+        move.disabled = true;
         try {
           const {error} = await db.rpc('admin_booking', {
             p_booking_id:b.id, p_pin:adminPin(),
@@ -689,25 +954,32 @@
           if (error) throw error;
           notice('ย้ายผู้จองแล้ว');
           await loadBookings();
-        } catch (e) { fail(e); move.value = ''; }
+        } catch (e) { fail(e); move.value = ''; move.disabled = false; }
       };
+      moveTd.appendChild(move);
+
+      const delTd = document.createElement('td');
       const del = document.createElement('button');
-      del.type = 'button'; del.className = 'btn danger';
-      del.textContent = 'ลบการจอง';
+      del.type = 'button'; del.className = 'btn sm danger';
+      del.innerHTML = '<svg class="icon"><use href="#i-trash"></use></svg><span>ลบ</span>';
       del.onclick = async () => {
+        let pin;
+        try { pin = adminPin(); } catch (e) { return fail(e); }
+        if (!confirm(`ลบการจองของ ${b.name}?`)) return;
+        setBusy(del, true);
         try {
-          const pin = adminPin();
-          if (!confirm(`ลบการจองของ ${b.name}?`)) return;
           const {error} = await db.rpc('admin_booking', {
             p_booking_id:b.id, p_pin:pin, p_action:'delete', p_seat_id:null
           });
           if (error) throw error;
           notice('ลบการจองแล้ว');
           await loadBookings();
-        } catch (e) { fail(e); }
+        } catch (e) { fail(e); setBusy(del, false); }
       };
-      line.append(label, move, del);
-      box.appendChild(line);
+      delTd.appendChild(del);
+
+      tr.append(nameTd, seatTd, moveTd, delTd);
+      tbody.appendChild(tr);
     }
   }
   (async () => {
