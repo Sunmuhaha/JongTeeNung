@@ -377,6 +377,25 @@ header{display:block;padding:8px 0;padding-top:calc(8px + env(safe-area-inset-to
 #boardHint.moving{color:var(--accent);font-weight:700;background:var(--accent-soft);padding:10px 12px;border-radius:var(--radius-sm)}
 @media(max-width:560px){header small{display:none}.link-box .btn{flex:1}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ---------- v3: countdown + board scales to screen ---------- */
+.countdown{display:flex;flex-direction:column;align-items:center;gap:2px;margin:14px 0;padding:16px;text-align:center;
+  background:var(--accent-soft);border:1px solid var(--accent);border-radius:var(--radius-md);font-weight:600}
+.countdown b{font-size:3.4rem;line-height:1.1;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+.countdown.hot b{color:var(--booked);animation:cdPulse 1s ease-in-out infinite}
+@keyframes cdPulse{50%{transform:scale(1.12)}}
+.cd-bar{width:100%;max-width:320px;height:6px;margin-top:10px;border-radius:99px;background:var(--border);overflow:hidden}
+.cd-bar i{display:block;height:100%;width:100%;background:var(--accent);transition:width 1s linear}
+.board-scroll{overflow:visible}
+.board{min-width:0;min-height:0;container-type:inline-size;aspect-ratio:1.45}
+.seat,.marker{min-width:0;min-height:0;max-width:none;padding:2px 3px;gap:1px;
+  width:min(calc(var(--sw,14) * 1cqw),100px);height:min(calc(var(--sh,11) * 1cqw),72px)}
+.marker{width:min(calc(var(--sw,14) * 1.35cqw),130px);height:auto;min-height:calc(var(--sh,11) * 1cqw);flex-direction:column}
+.seat-label{font-size:clamp(8px,calc(var(--sw,14) * .26cqw),14.5px)}
+.seat-status{font-size:clamp(7px,calc(var(--sw,14) * .2cqw),12px)}
+.marker{font-size:clamp(8px,calc(var(--sw,14) * .22cqw),12.5px)}
+.marker .icon{width:clamp(10px,calc(var(--sw,14) * .3cqw),22px);height:clamp(10px,calc(var(--sw,14) * .3cqw),22px)}
+.board.dense .seat-status,.board.dense .marker span{display:none}
 </style>
 </head>
 <body>
@@ -528,6 +547,12 @@ header{display:block;padding:8px 0;padding-top:calc(8px + env(safe-area-inset-to
         <button class="btn" id="backBtn" type="button"><svg class="icon"><use href="#i-back"></use></svg><span>เปลี่ยนห้อง</span></button>
       </div>
       <p id="windowStatus" style="margin-top:14px"></p>
+      <div class="countdown hidden" id="countdown" role="timer">
+        <span>เปิดให้จองในอีก</span>
+        <b id="cdNum">60</b>
+        <span>วินาที เตรียมเลือกที่นั่งได้เลย</span>
+        <div class="cd-bar"><i id="cdBar"></i></div>
+      </div>
 
       <div class="link-box">
         <input class="field" id="roomLinkField" readonly aria-label="ลิงก์ห้อง สำหรับคัดลอกไปแชร์">
@@ -860,16 +885,20 @@ header{display:block;padding:8px 0;padding-top:calc(8px + env(safe-area-inset-to
     if (!silent) notice('เข้าห้องเรียบร้อยแล้ว');
   }
   function fitBoard(board, layout) {
-    const need = (key, size) => {
-      const v = [...new Set(layout.seats.map(i => i[key]))].sort((a, b) => a - b);
+    const gap = key => {
+      const v = [...new Set(layout.seats.map(i => i[key]))].sort((x, y) => x - y);
       let m = 100;
       for (let i = 1; i < v.length; i++) if (v[i] - v[i - 1] >= 3) m = Math.min(m, v[i] - v[i - 1]);
-      return Math.min(1400, size / m * 100);
+      return m;
     };
-    board.style.minWidth = Math.max(320, need('x', 76)) + 'px';
-    board.style.minHeight = Math.max(300, need('y', 68)) + 'px';
-    const sc = board.closest('.board-scroll'), hint = sc.previousElementSibling;
-    requestAnimationFrame(() => hint.classList.toggle('show', sc.scrollWidth > sc.clientWidth + 2));
+    const mx = gap('x'), my = gap('y');
+    const sw = Math.max(4, Math.min(16, mx - 1.5));
+    const bh = Math.max(60, Math.min(220, (sw * .8 + 1.5) / (my / 100)));
+    const sh = Math.max(3, Math.min(sw * .8, my / 100 * bh - 1.2));
+    board.style.setProperty('--sw', sw.toFixed(2));
+    board.style.setProperty('--sh', sh.toFixed(2));
+    board.style.aspectRatio = (100 / bh).toFixed(3);
+    requestAnimationFrame(() => board.classList.toggle('dense', board.clientWidth * sw / 100 < 46));
   }
   function render() {
     if (!room || dragging) return;
@@ -1356,6 +1385,24 @@ header{display:block;padding:8px 0;padding-top:calc(8px + env(safe-area-inset-to
       await loadRoom(code);
     }
     setInterval(() => { if (room && !editing) render(); }, 15000);
+    let lastRoom = null, lastOpen = null;
+    setInterval(() => {
+      if (!room) { lastRoom = null; $('countdown').classList.add('hidden'); return; }
+      const left = new Date(room.open_at).getTime() - Date.now();
+      const show = left > 0 && left <= 60000, open = !!windowOpen();
+      $('countdown').classList.toggle('hidden', !show);
+      if (show) {
+        const sec = Math.ceil(left / 1000);
+        $('cdNum').textContent = sec;
+        $('cdBar').style.width = (left / 600) + '%';
+        $('countdown').classList.toggle('hot', sec <= 10);
+      }
+      if (room.id !== lastRoom) { lastRoom = room.id; lastOpen = open; return; }
+      if (open !== lastOpen) {
+        lastOpen = open; render();
+        if (open) notice('เปิดให้จองแล้ว เลือกที่นั่งได้เลย!');
+      }
+    }, 1000);
     addEventListener('resize', () => { if (room) { const l = editing && draft ? draft : room.layout; fitBoard($('board'), l); } });
   })();
 </script>
