@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f5f6fa">
-<title>จองที่นั่งห้องเรียน - by : https://discord.gg/JvHpQBK6</title>
- <meta property="og:title" content="ระบบจองที่นั่งห้องเรียน - by : https://discord.gg/JvHpQBK6">
+<title>จองที่นั่งห้องเรียน - by : discord.gg/JvHpQBK6</title>
+ <meta property="og:title" content="ระบบจองที่นั่งห้องเรียน - by : discord.gg/JvHpQBK6">
 <meta property="og:description" content="สร้างห้อง วางตำแหน่งโต๊ะให้เหมือนห้องจริง แล้วแชร์ลิงก์หรือรหัสห้องให้ทุกคนเลือกที่นั่งเอง ทุกคนจะเห็นผังอัปเดตพร้อมกันแบบทันที ไม่ต้องติดตั้งแอปเพิ่ม">
 <link rel="icon" type="image/x-icon" href="https://i.ibb.co/FkNYQrmW/20261014-161635-0000.png">
 <meta property="og:image" content="https://i.ibb.co/5hkcf86M/20261014-150559-0000.png">
@@ -986,7 +986,7 @@ a.btn{text-decoration:none}
     $('createPanel').classList.toggle('hidden', v !== 'create');
     $('roomPanel').classList.toggle('hidden', v !== 'room');
   }
-  function resetPanels() { showView('home'); document.title = 'จองที่นั่งห้องเรียน'; }
+  function resetPanels() { showView('home'); document.title = 'จองที่นั่งห้องเรียน - by : discord.gg/JvHpQBK6'; }
   function unsubscribe() {
     if (channel) db.removeChannel(channel);
     channel = null;
@@ -1056,7 +1056,7 @@ a.btn{text-decoration:none}
   }
   function render() {
     if (!room || dragging) return;
-    document.title = room.name + ' · จองที่นั่ง - by : https://discord.gg/JvHpQBK6';
+    document.title = room.name + ' · จองที่นั่ง - by : discord.gg/JvHpQBK6';
     $('displayName').textContent = room.name;
     $('roomLinkField').value = roomLink(room.code);
     $('roomMeta').innerHTML =
