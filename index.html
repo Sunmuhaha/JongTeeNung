@@ -396,6 +396,54 @@ header{display:block;padding:8px 0;padding-top:calc(8px + env(safe-area-inset-to
 .marker{font-size:clamp(8px,calc(var(--sw,14) * .22cqw),12.5px)}
 .marker .icon{width:clamp(10px,calc(var(--sw,14) * .3cqw),22px);height:clamp(10px,calc(var(--sw,14) * .3cqw),22px)}
 .board.dense .seat-status,.board.dense .marker span{display:none}
+
+/* ---------- v4: modern look + expand controls ---------- */
+:root{--radius-lg:22px;--radius-md:15px;--radius-sm:12px;--grad:linear-gradient(135deg,var(--accent),var(--mine));
+  --shadow-sm:0 2px 10px -3px rgba(15,23,42,.12);--shadow-md:0 20px 44px -18px rgba(15,23,42,.3)}
+body{background:radial-gradient(60% 45% at 8% -5%,color-mix(in srgb,var(--accent) 22%,transparent),transparent),
+  radial-gradient(50% 40% at 100% 2%,color-mix(in srgb,var(--mine) 18%,transparent),transparent),var(--bg);background-attachment:fixed}
+header{background:color-mix(in srgb,var(--panel) 70%,transparent);backdrop-filter:saturate(1.6) blur(16px);-webkit-backdrop-filter:saturate(1.6) blur(16px);
+  border-bottom:1px solid color-mix(in srgb,var(--border) 70%,transparent)}
+.brand-badge{background:var(--grad)}.brand-badge .icon{stroke:#fff}
+h1{font-size:1.15rem}
+.card{background:color-mix(in srgb,var(--panel) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-color:color-mix(in srgb,var(--border) 75%,transparent);box-shadow:var(--shadow-sm)}
+.option-card{transition:transform .2s ease,box-shadow .2s ease}
+@media(hover:hover){.option-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}}
+.option-icon{background:var(--grad);color:#fff}.option-icon.accent2{background:linear-gradient(135deg,var(--mine),var(--accent));color:#fff}
+.hero-title{font-size:clamp(1.6rem,5.5vw,2.4rem);line-height:1.25}
+.btn{border-radius:13px;min-height:46px;background:var(--panel)}
+.btn.primary{background:var(--grad);color:#fff;box-shadow:0 10px 22px -10px color-mix(in srgb,var(--accent) 80%,transparent)}
+.btn.primary:hover{background:var(--grad);filter:brightness(1.08)}
+:root[data-theme="dark"] .btn.primary{color:#0b0f17}
+.btn.sm{min-height:42px;border-radius:12px}
+.btn.icon-only{width:42px;padding:0}
+.field{border-radius:13px;background:var(--panel);min-height:48px}
+.meta-chip,.legend-item,.status-pill{backdrop-filter:blur(6px)}
+.countdown{border-radius:22px;border-color:transparent;background:linear-gradient(135deg,var(--accent-soft),var(--mine-soft))}
+.board{border-radius:24px;border:1px solid var(--border);background-color:color-mix(in srgb,var(--panel-alt) 80%,transparent);
+  background-image:radial-gradient(color-mix(in srgb,var(--muted) 30%,transparent) 1.2px,transparent 1.2px);background-size:24px 24px}
+.board.editing{border:1.5px dashed var(--accent);background-color:color-mix(in srgb,var(--accent) 5%,var(--panel-alt))}
+.seat,.marker{border-radius:14px;box-shadow:var(--shadow-xs)}
+.seat::before{content:'';position:absolute;top:5px;right:5px;width:6px;height:6px;border-radius:50%;background:currentColor}
+.board.dense .seat::before{width:4px;height:4px;top:3px;right:3px}
+.seat.mine{box-shadow:0 0 0 3px var(--mine-soft)}
+.seat.free{background:linear-gradient(180deg,var(--panel),var(--free-soft))}
+.seat.booked{background:linear-gradient(180deg,var(--panel),var(--booked-soft))}
+.layout-toolbar{border-radius:var(--radius-md);backdrop-filter:blur(10px)}
+.tool-sep{width:1px;height:28px;background:var(--border);margin:0 4px;align-self:center}
+.expand-group{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.expand-label{font-size:.8rem;font-weight:600;color:var(--muted);margin-right:2px}
+.rot-up{transform:rotate(90deg)}.rot-down{transform:rotate(-90deg)}.rot-right{transform:rotate(180deg)}
+.modal-overlay{background:rgba(15,23,42,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.modal-card{border-radius:26px}
+.toast{border-radius:16px;backdrop-filter:blur(10px)}
+@media(max-width:560px){
+  .modal-overlay{align-items:flex-end;padding:0}
+  .modal-card,.modal-card.wide{max-width:none;border-radius:26px 26px 0 0;padding-bottom:calc(22px + env(safe-area-inset-bottom));animation:sheetIn .28s cubic-bezier(.2,.8,.2,1)}
+  .tool-sep{display:none}
+}
+@keyframes sheetIn{from{transform:translateY(48px);opacity:0}}
 </style>
 </head>
 <body>
@@ -522,6 +570,7 @@ header{display:block;padding:8px 0;padding-top:calc(8px + env(safe-area-inset-to
           <button class="btn sm" id="createAddDoor" type="button"><svg class="icon"><use href="#i-door"></use></svg><span>ประตู</span></button>
           <button class="btn sm" id="createToggleSeat" type="button"><svg class="icon"><use href="#i-toggle"></use></svg><span>เปิด/ปิดที่เลือก</span></button>
           <button class="btn sm danger" id="createRemoveItem" type="button"><svg class="icon"><use href="#i-trash"></use></svg><span>ลบที่เลือก</span></button>
+          <span class="tool-sep"></span><div class="expand-group" role="group" aria-label="ขยายพื้นที่ผัง"><span class="expand-label">ขยายผัง</span><button class="btn sm icon-only" type="button" data-expand="top" aria-label="ขยายพื้นที่ด้านบน" title="ขยายพื้นที่ด้านบน"><svg class="icon rot-up"><use href="#i-back"></use></svg></button><button class="btn sm icon-only" type="button" data-expand="bottom" aria-label="ขยายพื้นที่ด้านล่าง" title="ขยายพื้นที่ด้านล่าง"><svg class="icon rot-down"><use href="#i-back"></use></svg></button><button class="btn sm icon-only" type="button" data-expand="left" aria-label="ขยายพื้นที่ด้านซ้าย" title="ขยายพื้นที่ด้านซ้าย"><svg class="icon "><use href="#i-back"></use></svg></button><button class="btn sm icon-only" type="button" data-expand="right" aria-label="ขยายพื้นที่ด้านขวา" title="ขยายพื้นที่ด้านขวา"><svg class="icon rot-right"><use href="#i-back"></use></svg></button><button class="btn sm" type="button" data-expand="trim" title="ตัดพื้นที่ว่างรอบผังออก"><span>จัดพอดี</span></button></div>
         </div>
 
         <p class="scroll-hint">↔ ปัดซ้าย-ขวาเพื่อดูผังที่นั่งทั้งหมด</p>
@@ -577,6 +626,7 @@ header{display:block;padding:8px 0;padding-top:calc(8px + env(safe-area-inset-to
           <button class="btn sm" id="addDoor" type="button"><svg class="icon"><use href="#i-door"></use></svg><span>ประตู</span></button>
           <button class="btn sm" id="toggleSeat" type="button"><svg class="icon"><use href="#i-toggle"></use></svg><span>เปิด/ปิดที่เลือก</span></button>
           <button class="btn sm danger" id="removeItem" type="button"><svg class="icon"><use href="#i-trash"></use></svg><span>ลบที่เลือก</span></button>
+          <span class="tool-sep"></span><div class="expand-group" role="group" aria-label="ขยายพื้นที่ผัง"><span class="expand-label">ขยายผัง</span><button class="btn sm icon-only" type="button" data-expand="top" aria-label="ขยายพื้นที่ด้านบน" title="ขยายพื้นที่ด้านบน"><svg class="icon rot-up"><use href="#i-back"></use></svg></button><button class="btn sm icon-only" type="button" data-expand="bottom" aria-label="ขยายพื้นที่ด้านล่าง" title="ขยายพื้นที่ด้านล่าง"><svg class="icon rot-down"><use href="#i-back"></use></svg></button><button class="btn sm icon-only" type="button" data-expand="left" aria-label="ขยายพื้นที่ด้านซ้าย" title="ขยายพื้นที่ด้านซ้าย"><svg class="icon "><use href="#i-back"></use></svg></button><button class="btn sm icon-only" type="button" data-expand="right" aria-label="ขยายพื้นที่ด้านขวา" title="ขยายพื้นที่ด้านขวา"><svg class="icon rot-right"><use href="#i-back"></use></svg></button><button class="btn sm" type="button" data-expand="trim" title="ตัดพื้นที่ว่างรอบผังออก"><span>จัดพอดี</span></button></div>
         </div>
         <div class="row">
           <input class="field pin-field" id="layoutPin" type="password" inputmode="numeric" placeholder="รหัสผ่านผู้ดูแล" aria-label="รหัสผ่านผู้ดูแล สำหรับบันทึกผัง">
@@ -913,7 +963,7 @@ header{display:block;padding:8px 0;padding-top:calc(8px + env(safe-area-inset-to
       `<span class="status-pill ${open ? 'open' : 'closed'}">${open ? 'เปิดให้จองอยู่ตอนนี้' : (Date.now() < new Date(room.open_at).getTime() ? 'ยังไม่ถึงเวลาเปิดจอง' : 'ปิดรับจองแล้ว')}</span>` +
       `<span class="muted">${enc(prettyDate(room.open_at))} – ${enc(prettyDate(room.close_at))}</span>`;
     $('boardHint').textContent = editing
-      ? 'โหมดแก้ไขผัง: ลากค้างเพื่อย้ายตำแหน่งโต๊ะหรือป้าย แตะเพื่อเลือก แล้วกด "บันทึกผัง" เมื่อเสร็จ'
+      ? 'โหมดแก้ไขผัง: ลากค้างเพื่อย้าย แตะเพื่อเลือก ใช้ปุ่ม "ขยายผัง" เพิ่มพื้นที่ว่างโดยโต๊ะไม่ขยับ แล้วกด "บันทึกผัง" เมื่อเสร็จ'
       : (movingFrom ? 'เลือกที่นั่งว่างที่ต้องการย้ายไป หรือแตะที่นั่งเดิมอีกครั้งเพื่อยกเลิก'
                     : 'แตะที่นั่งว่างเพื่อเลือกจอง');
     const map = new Map(bookings.map(b => [b.seat_id, b]));
@@ -1373,6 +1423,32 @@ header{display:block;padding:8px 0;padding-top:calc(8px + env(safe-area-inset-to
     }
   }
 
+  // ---------- ขยายพื้นที่ผัง: โต๊ะคงตำแหน่งเดิมเมื่อเทียบกัน ----------
+  const r1 = v => Math.round(v * 10) / 10;
+  function expandLayout(L, side) {
+    const items = [...L.seats, ...L.markers];
+    if (side === 'trim') {
+      if (!items.length) return;
+      for (const k of ['x', 'y']) {
+        const v = items.map(i => i[k]), lo = Math.min(...v), hi = Math.max(...v);
+        for (const i of items) i[k] = hi === lo ? 50 : r1(8 + (i[k] - lo) / (hi - lo) * 84);
+      }
+      return;
+    }
+    const f = .25, k = 1 / (1 + f);
+    for (const i of items) {
+      if (side === 'right') i.x = r1(i.x * k);
+      if (side === 'left') i.x = r1((i.x + 100 * f) * k);
+      if (side === 'bottom') i.y = r1(i.y * k);
+      if (side === 'top') i.y = r1((i.y + 100 * f) * k);
+    }
+  }
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('[data-expand]');
+    if (!btn || !draft) return;
+    expandLayout(draft, btn.dataset.expand);
+    if (!$('createPanel').classList.contains('hidden')) renderCreateBoard(); else render();
+  });
   $('bookName').addEventListener('keydown', e => { if (e.key === 'Enter') $('confirmBook').click(); });
   for (const id of ['joinCode', 'roomCode'])
     $(id).addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, ''); });
