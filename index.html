@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f5f6fa">
 <title>จองที่นั่งห้องเรียน</title>
+ <meta property="og:title" content="ระบบจองที่นั่งห้องเรียน">
+<meta property="og:description" content="สร้างห้อง วางตำแหน่งโต๊ะให้เหมือนห้องจริง แล้วแชร์ลิงก์หรือรหัสห้องให้ทุกคนเลือกที่นั่งเอง ทุกคนจะเห็นผังอัปเดตพร้อมกันแบบทันที ไม่ต้องติดตั้งแอปเพิ่ม">
+<link rel="icon" type="image/x-icon" href="https://i.ibb.co/9m66j1mW/20261014-144608-0000.png">
+<meta property="og:image" content="https://i.ibb.co/5hkcf86M/20261014-150559-0000.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -450,6 +454,7 @@ h1{font-size:1.15rem}
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <defs>
 <symbol id="i-seat" viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="8" rx="2"/><rect x="5" y="12" width="14" height="4" rx="1.5"/><line x1="7" y1="16" x2="7" y2="21"/><line x1="17" y1="16" x2="17" y2="21"/></symbol>
+<symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 9"/></symbol>
 <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
 <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
 <symbol id="i-board" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1"/><line x1="12" y1="16" x2="12" y2="20"/><line x1="8" y1="20" x2="16" y2="20"/></symbol>
@@ -607,6 +612,7 @@ h1{font-size:1.15rem}
         <input class="field" id="roomLinkField" readonly aria-label="ลิงก์ห้อง สำหรับคัดลอกไปแชร์">
         <button class="btn" id="copyBtn" type="button"><svg class="icon"><use href="#i-copy"></use></svg><span>คัดลอกลิงก์</span></button>
         <button class="btn" id="qrBtn" type="button"><svg class="icon"><use href="#i-qr"></use></svg><span>QR code</span></button>
+        <button class="btn" id="exportBtn" type="button"><svg class="icon"><use href="#i-image"></use></svg><span>บันทึกเป็นภาพ</span></button>
         <button class="btn" id="editBtn" type="button"><svg class="icon"><use href="#i-settings"></use></svg><span>จัดการห้อง</span></button>
       </div>
       <div class="hidden" id="qrWrap"><div id="qr"></div></div>
@@ -1422,6 +1428,98 @@ h1{font-size:1.15rem}
       tbody.appendChild(tr);
     }
   }
+
+  // ---------- ส่งออกแผนผังเป็นภาพ PNG ----------
+  $('exportBtn').onclick = async () => {
+    if (!room) return;
+    const btn = $('exportBtn');
+    setBusy(btn, true);
+    try {
+      await document.fonts.load('600 20px Anuphan');
+      const board = $('board'), bw = board.clientWidth, bh = board.clientHeight;
+      const layout = editing && draft ? draft : room.layout;
+      const map = new Map(bookings.map(b => [b.seat_id, b]));
+      const sw = parseFloat(board.style.getPropertyValue('--sw')) || 14;
+      const sh = parseFloat(board.style.getPropertyValue('--sh')) || 11;
+      const W = 1600, k = W / bw, pad = 48, head = 150, bH = Math.round(bh * k), foot = 110;
+      const c = document.createElement('canvas');
+      c.width = W + pad * 2; c.height = head + bH + foot;
+      const g = c.getContext('2d');
+      const F = (w, n) => `${w} ${n}px Anuphan, system-ui, sans-serif`;
+      const clamp = (lo, v, hi) => Math.max(lo, Math.min(hi, v));
+      const col = {
+        free:['#059669','#e3f5ee'], booked:['#dc2626','#fdeaea'], off:['#6b7280','#f1f2f6'],
+        board:['#4f46e5','#e9e8fc'], teacher:['#7c3aed','#efe8fd'], door:['#6b7280','#f1f2f6']
+      };
+      g.fillStyle = '#f5f6fa'; g.fillRect(0, 0, c.width, c.height);
+      g.textBaseline = 'alphabetic'; g.textAlign = 'left';
+      g.fillStyle = '#111827'; g.font = F(700, 54);
+      g.fillText(room.name, pad, pad + 56, W);
+      g.fillStyle = '#6b7280'; g.font = F(500, 28);
+      g.fillText(`รหัสห้อง ${room.code}  ·  ${prettyDate(room.open_at)} – ${prettyDate(room.close_at)}`, pad, pad + 104, W);
+      // พื้นผัง
+      g.beginPath(); g.roundRect(pad, head, W, bH, 36); g.fillStyle = '#ffffff'; g.fill();
+      g.lineWidth = 2; g.strokeStyle = '#d9dce5'; g.stroke();
+      g.save(); g.clip();
+      g.fillStyle = '#e1e4ec';
+      for (let x = pad + 24; x < pad + W; x += 40) for (let y = head + 24; y < head + bH; y += 40) g.fillRect(x, y, 3, 3);
+      g.restore();
+      const box = (cx, cy, w, h, [line, fill], dashed) => {
+        g.beginPath(); g.roundRect(cx - w / 2, cy - h / 2, w, h, 22 * Math.min(1, w / (90 * k)) + 6);
+        g.fillStyle = fill; g.fill();
+        g.setLineDash(dashed ? [12, 8] : []); g.lineWidth = 3; g.strokeStyle = line; g.stroke(); g.setLineDash([]);
+      };
+      g.textAlign = 'center'; g.textBaseline = 'middle';
+      const counts = {free:0, booked:0, off:0};
+      const ls = clamp(8, sw * .26 * bw / 100, 14.5) * k, ss = clamp(7, sw * .2 * bw / 100, 12) * k;
+      const sW = Math.min(sw * bw / 100, 100) * k, sH = Math.min(sh * bw / 100, 72) * k;
+      const dense = sW / k < 46;
+      for (const seat of layout.seats) {
+        const b = map.get(seat.id);
+        const cls = !seat.enabled ? 'off' : b ? 'booked' : 'free';
+        counts[cls]++;
+        const cx = pad + seat.x / 100 * W, cy = head + seat.y / 100 * bH;
+        box(cx, cy, sW, sH, col[cls], cls === 'off');
+        g.fillStyle = '#111827'; g.font = F(700, ls);
+        g.fillText(seatLabel(seat), cx, dense ? cy : cy - ls * .55, sW - 10);
+        if (!dense) {
+          g.fillStyle = col[cls][0]; g.font = F(600, ss);
+          g.fillText(b ? b.name : (seat.enabled ? 'ว่าง' : 'ปิดใช้งาน'), cx, cy + ss * 1.05, sW - 12);
+        }
+      }
+      const mW = Math.min(sw * 1.35 * bw / 100, 130) * k, mH = clamp(36, sh * bw / 100, 64) * k;
+      const mk = {'กระดาน':'board', 'โต๊ะครู':'teacher', 'ประตู':'door'};
+      for (const m of layout.markers) {
+        const cx = pad + m.x / 100 * W, cy = head + m.y / 100 * bH, kind = mk[m.type] || 'board';
+        box(cx, cy, mW, mH, col[kind], kind === 'door');
+        g.fillStyle = col[kind][0]; g.font = F(700, clamp(8, sw * .24 * bw / 100, 13) * k);
+        g.fillText(m.type, cx, cy, mW - 12);
+      }
+      // คำอธิบายสี
+      const ly = head + bH + 62;
+      g.textAlign = 'left'; g.font = F(600, 28);
+      let lx = pad;
+      for (const [cls, label] of [['free','ว่าง'], ['booked','จองแล้ว'], ['off','ปิดใช้งาน']]) {
+        g.fillStyle = col[cls][0]; g.beginPath(); g.arc(lx + 11, ly, 11, 0, 7); g.fill();
+        g.fillStyle = '#111827'; const t = `${label} ${counts[cls]}`;
+        g.fillText(t, lx + 32, ly); lx += 32 + g.measureText(t).width + 44;
+      }
+      g.textAlign = 'right'; g.fillStyle = '#6b7280'; g.font = F(500, 24);
+      g.fillText(`ส่งออกเมื่อ ${prettyDate(Date.now())}`, pad + W, ly);
+
+      const blob = await new Promise(r => c.toBlob(r, 'image/png'));
+      const file = new File([blob], `ผังที่นั่ง-${room.code}.png`, {type:'image/png'});
+      if (matchMedia('(pointer:coarse)').matches && navigator.canShare?.({files:[file]})) {
+        try { await navigator.share({files:[file], title:room.name}); }
+        catch (e) { if (e.name !== 'AbortError') throw e; }
+      } else {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob); a.download = file.name; a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+        notice('บันทึกภาพผังที่นั่งแล้ว');
+      }
+    } catch (e) { fail(e); } finally { setBusy(btn, false); }
+  };
 
   // ---------- ขยายพื้นที่ผัง: โต๊ะคงตำแหน่งเดิมเมื่อเทียบกัน ----------
   const r1 = v => Math.round(v * 10) / 10;
