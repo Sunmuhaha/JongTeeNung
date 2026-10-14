@@ -448,6 +448,47 @@ h1{font-size:1.15rem}
   .tool-sep{display:none}
 }
 @keyframes sheetIn{from{transform:translateY(48px);opacity:0}}
+
+/* ---------- v5: compat + mobile UX ---------- */
+a.btn{text-decoration:none}
+.board{container-type:normal;width:100%}
+.board-scroll{overflow-x:auto;overflow-y:hidden;padding:4px;margin:-4px;-webkit-overflow-scrolling:touch;position:relative;z-index:0;isolation:isolate}
+#boardHint,#seatCountHint{position:relative;z-index:1}
+.seat,.marker{width:min(calc(var(--sw,14) * var(--u,4px)),100px);height:min(calc(var(--sh,11) * var(--u,4px)),72px)}
+.marker{width:min(calc(var(--sw,14) * 1.35 * var(--u,4px)),130px);height:auto;min-height:calc(var(--sh,11) * var(--u,4px))}
+.seat-label{font-size:clamp(8px,calc(var(--sw,14) * .26 * var(--u,4px)),14.5px)}
+.seat-status{font-size:clamp(7px,calc(var(--sw,14) * .2 * var(--u,4px)),12px)}
+.marker{font-size:clamp(8px,calc(var(--sw,14) * .22 * var(--u,4px)),12.5px)}
+.marker .icon{width:clamp(10px,calc(var(--sw,14) * .3 * var(--u,4px)),22px);height:clamp(10px,calc(var(--sw,14) * .3 * var(--u,4px)),22px)}
+.seat.selected,.marker.selected{outline-width:4px}
+.zoom-bar{display:flex;align-items:center;gap:8px;margin:0 0 8px;font-size:.82rem;color:var(--muted);font-weight:600}
+.zoom-bar .btn{min-height:42px;min-width:46px;padding:0 12px;font-size:1.2rem;line-height:1}
+.zoom-bar output{min-width:50px;text-align:center;color:var(--text);font-variant-numeric:tabular-nums}
+.zoom-bar .zhint{margin-left:auto;font-size:.74rem;font-weight:500;text-align:right}
+@media(max-width:680px){
+  .field{font-size:16px}
+  .card{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--panel)}
+  .btn{min-height:50px}
+  .toolbar{flex-wrap:nowrap;overflow-x:auto;gap:8px;padding:2px 2px 8px;margin:0 -2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .toolbar::-webkit-scrollbar{display:none}
+  .toolbar .btn,.toolbar .expand-group{flex:0 0 auto}
+  .toolbar .btn.sm{flex-direction:column;gap:3px;min-width:68px;min-height:58px;padding:6px 10px;font-size:.72rem;white-space:nowrap}
+  .toolbar .btn.sm .icon{width:22px;height:22px}
+  .toolbar .btn.icon-only{min-width:54px;width:54px}
+  .expand-group{flex-wrap:nowrap}.expand-label,.tool-sep{display:none}
+  #createStep2 .toolbar,.layout-toolbar .toolbar{position:sticky;top:calc(58px + env(safe-area-inset-top));z-index:20;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px;box-shadow:var(--shadow-sm)}
+  .layout-toolbar{display:contents}
+  .layout-toolbar .row{position:fixed;left:0;right:0;bottom:0;z-index:40;flex-wrap:nowrap;margin:0;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:var(--panel);border-top:1px solid var(--border);box-shadow:0 -8px 24px -12px rgba(15,23,42,.3)}
+  .layout-toolbar .pin-field{max-width:none;flex:1;min-width:0}
+  .layout-toolbar .row .btn{flex:0 0 auto}
+  body.editing-layout .wrap{padding-bottom:120px}
+  .link-box .field{flex:1 1 100%}
+  .link-box .btn{flex:1 1 calc(50% - 5px);min-width:0;padding:0 10px}
+  .legend{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .room-head .btn{width:100%}
+  .row>.btn:not(.sm):not(.icon-only){flex:1 1 auto}
+  .modal-card .row .btn{flex:1 1 100%}
+}
 </style>
 </head>
 <body>
@@ -510,7 +551,7 @@ h1{font-size:1.15rem}
         <h2>ต้องการสร้างห้องใหม่?</h2>
         <p class="muted">เหมาะสำหรับครู ผู้บรรยาย หรือผู้จัดกิจกรรม ที่ต้องการจัดที่นั่งเอง และดูว่าใครเลือกที่นั่งไหนแบบทันที</p>
         <button class="btn primary block" id="newBtn" type="button"><svg class="icon"><use href="#i-plus"></use></svg><span>สร้างห้องใหม่</span></button>
-      </section>
+   </section>
     </div>
 
     <section class="card hidden" id="createPanel">
@@ -558,7 +599,7 @@ h1{font-size:1.15rem}
 
       <div class="hidden" id="createStep2">
         <h3 class="section-title">จัดผังที่นั่ง (ขั้นตอนบังคับ)</h3>
-        <p class="muted">ลากโต๊ะให้ตรงกับตำแหน่งจริงในห้องของคุณ ต้องมีที่นั่งอย่างน้อย 1 ที่ จึงจะเผยแพร่ห้องได้</p>
+        <p class="muted">แตะโต๊ะเพื่อเลือก แล้วแตะที่ว่างบนผังเพื่อย้ายไปวาง (หรือลากก็ได้) ต้องมีที่นั่งอย่างน้อย 1 ที่ จึงจะเผยแพร่ห้องได้</p>
 
         <div class="row" style="margin-bottom:14px">
           <input class="field" id="createRows" type="number" min="1" max="12" value="4" style="max-width:88px" aria-label="จำนวนแถว">
@@ -578,7 +619,7 @@ h1{font-size:1.15rem}
           <span class="tool-sep"></span><div class="expand-group" role="group" aria-label="ขยายพื้นที่ผัง"><span class="expand-label">ขยายผัง</span><button class="btn sm icon-only" type="button" data-expand="top" aria-label="ขยายพื้นที่ด้านบน" title="ขยายพื้นที่ด้านบน"><svg class="icon rot-up"><use href="#i-back"></use></svg></button><button class="btn sm icon-only" type="button" data-expand="bottom" aria-label="ขยายพื้นที่ด้านล่าง" title="ขยายพื้นที่ด้านล่าง"><svg class="icon rot-down"><use href="#i-back"></use></svg></button><button class="btn sm icon-only" type="button" data-expand="left" aria-label="ขยายพื้นที่ด้านซ้าย" title="ขยายพื้นที่ด้านซ้าย"><svg class="icon "><use href="#i-back"></use></svg></button><button class="btn sm icon-only" type="button" data-expand="right" aria-label="ขยายพื้นที่ด้านขวา" title="ขยายพื้นที่ด้านขวา"><svg class="icon rot-right"><use href="#i-back"></use></svg></button><button class="btn sm" type="button" data-expand="trim" title="ตัดพื้นที่ว่างรอบผังออก"><span>จัดพอดี</span></button></div>
         </div>
 
-        <p class="scroll-hint">↔ ปัดซ้าย-ขวาเพื่อดูผังที่นั่งทั้งหมด</p>
+        <div class="zoom-bar" data-zoom="createBoard"><button class="btn sm icon-only" type="button" data-z="-1" aria-label="ย่อผัง">−</button><output>100%</output><button class="btn sm icon-only" type="button" data-z="1" aria-label="ซูมผังเข้า">+</button><span class="zhint">ซูมให้แตะง่ายขึ้น แล้วปัดเลื่อนดู</span></div>
         <div class="board-scroll"><div class="board" id="createBoard" aria-label="ผังที่นั่งที่กำลังจัด"></div></div>
         <p class="muted" id="seatCountHint" style="margin-top:8px"></p>
 
@@ -641,13 +682,15 @@ h1{font-size:1.15rem}
         </div>
       </div>
 
-      <p class="scroll-hint">↔ ปัดซ้าย-ขวาเพื่อดูผังที่นั่งทั้งหมด</p>
+      <div class="zoom-bar" data-zoom="board"><button class="btn sm icon-only" type="button" data-z="-1" aria-label="ย่อผัง">−</button><output>100%</output><button class="btn sm icon-only" type="button" data-z="1" aria-label="ซูมผังเข้า">+</button><span class="zhint">ซูมให้แตะง่ายขึ้น แล้วปัดเลื่อนดู</span></div>
       <div class="board-scroll"><div class="board" id="board" aria-label="แผนผังที่นั่ง"></div></div>
       <p class="muted" id="boardHint" style="margin-top:10px"></p>
     </section>
   </main>
 
-  <footer>จองที่นั่งห้องเรียน · ข้อมูลอัปเดตให้ทุกคนเห็นพร้อมกันแบบทันที</footer>
+  <footer>จองที่นั่งห้องเรียน · ข้อมูลอัปเดตให้ทุกคนเห็นพร้อมกันแบบทันที
+ <h4 style="line-height:2;">ระบบมีปัญหาใช่ไหม? ติดต่อผู้พัฒนาที่นี่ : <a href="https://discord.gg/JvHpQBK6">https://discord.gg/JvHpQBK6</a></h4>
+</footer>
 </div>
 
 <!-- ========== Pop-up: จองที่นั่ง ========== -->
@@ -711,6 +754,19 @@ h1{font-size:1.15rem}
   </div>
 </div>
 
+<div class="modal-overlay hidden" id="exportOverlay">
+  <div class="modal-card wide" role="dialog" aria-modal="true">
+    <button class="modal-close" id="closeExport" type="button" aria-label="ปิดหน้าต่างนี้"><svg class="icon"><use href="#i-close"></use></svg></button>
+    <h2>บันทึกภาพผังที่นั่ง</h2>
+    <p class="muted">กดปุ่มด้านล่าง หรือ <b>กดค้างที่รูป</b> แล้วเลือก “บันทึกรูปภาพ”</p>
+    <img id="exportImg" alt="ภาพผังที่นั่ง" style="width:100%;height:auto;border-radius:12px;border:1px solid var(--border);-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto">
+    <div class="row" style="margin-top:14px">
+      <button class="btn primary" id="exportSave" type="button"><svg class="icon"><use href="#i-save"></use></svg><span>บันทึก / แชร์ภาพ</span></button>
+      <a class="btn hidden" id="exportExt" target="_blank" rel="noopener"><span>เปิดในเบราว์เซอร์หลัก</span></a>
+    </div>
+  </div>
+</div>
+
 <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="false"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -721,6 +777,14 @@ h1{font-size:1.15rem}
   const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imthc2d2bHducXJpYWpueGdsem16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MDQxMzIsImV4cCI6MjEwNzQ4MDEzMn0.ydjnk9v2niZP6uP-zgx7fvO2D0ex_2rshEXT71Y7fGA';
   // =====================================
 
+  // ---- polyfills สำหรับเบราว์เซอร์เก่า (LINE, Samsung ฯลฯ) ----
+  if (!window.structuredClone) window.structuredClone = o => JSON.parse(JSON.stringify(o));
+  if (window.CanvasRenderingContext2D && !CanvasRenderingContext2D.prototype.roundRect)
+    CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+      r = Math.min(Array.isArray(r) ? r[0] : (r || 0), w / 2, h / 2);
+      this.moveTo(x + r, y); this.arcTo(x + w, y, x + w, y + h, r); this.arcTo(x + w, y + h, x, y + h, r);
+      this.arcTo(x, y + h, x, y, r); this.arcTo(x, y, x + w, y, r); this.closePath();
+    };
   const $ = id => document.getElementById(id);
   const db = window.supabase.createClient(SUPABASE_URL, ANON_KEY);
   const enc = s => String(s ?? '').replace(/[&<>"']/g, c =>
@@ -954,6 +1018,7 @@ h1{font-size:1.15rem}
     board.style.setProperty('--sw', sw.toFixed(2));
     board.style.setProperty('--sh', sh.toFixed(2));
     board.style.aspectRatio = (100 / bh).toFixed(3);
+    board._bh = bh; sizeBoard(board);
     requestAnimationFrame(() => board.classList.toggle('dense', board.clientWidth * sw / 100 < 46));
   }
   function render() {
@@ -969,7 +1034,7 @@ h1{font-size:1.15rem}
       `<span class="status-pill ${open ? 'open' : 'closed'}">${open ? 'เปิดให้จองอยู่ตอนนี้' : (Date.now() < new Date(room.open_at).getTime() ? 'ยังไม่ถึงเวลาเปิดจอง' : 'ปิดรับจองแล้ว')}</span>` +
       `<span class="muted">${enc(prettyDate(room.open_at))} – ${enc(prettyDate(room.close_at))}</span>`;
     $('boardHint').textContent = editing
-      ? 'โหมดแก้ไขผัง: ลากค้างเพื่อย้าย แตะเพื่อเลือก ใช้ปุ่ม "ขยายผัง" เพิ่มพื้นที่ว่างโดยโต๊ะไม่ขยับ แล้วกด "บันทึกผัง" เมื่อเสร็จ'
+      ? 'โหมดแก้ไขผัง: แตะโต๊ะเพื่อเลือก แล้วแตะที่ว่างบนผังเพื่อย้ายไปวาง (หรือลากก็ได้) ใช้ปุ่ม "ขยายผัง" เพิ่มพื้นที่ว่างโดยโต๊ะไม่ขยับ แล้วกด "บันทึกผัง" เมื่อเสร็จ'
       : (movingFrom ? 'เลือกที่นั่งว่างที่ต้องการย้ายไป หรือแตะที่นั่งเดิมอีกครั้งเพื่อยกเลิก'
                     : 'แตะที่นั่งว่างเพื่อเลือกจอง');
     const map = new Map(bookings.map(b => [b.seat_id, b]));
@@ -979,6 +1044,7 @@ h1{font-size:1.15rem}
     board.classList.toggle('editing', editing);
     fitBoard(board, layout);
     $('boardHint').classList.toggle('moving', !!movingFrom && !editing);
+    document.body.classList.toggle('editing-layout', editing);
     const counts = {free:0, booked:0, mine:0, off:0};
     for (const seat of layout.seats) {
       const b = map.get(seat.id);
@@ -1435,8 +1501,8 @@ h1{font-size:1.15rem}
     const btn = $('exportBtn');
     setBusy(btn, true);
     try {
-      await document.fonts.load('600 20px Anuphan');
-      const board = $('board'), bw = board.clientWidth, bh = board.clientHeight;
+      try { await Promise.race([document.fonts?.load('600 20px Anuphan'), new Promise(r => setTimeout(r, 2500))]); } catch {}
+      const board = $('board'), z = board._z || 1, bw = board.clientWidth / z, bh = board.clientHeight / z;
       const layout = editing && draft ? draft : room.layout;
       const map = new Map(bookings.map(b => [b.seat_id, b]));
       const sw = parseFloat(board.style.getPropertyValue('--sw')) || 14;
@@ -1507,19 +1573,72 @@ h1{font-size:1.15rem}
       g.textAlign = 'right'; g.fillStyle = '#6b7280'; g.font = F(500, 24);
       g.fillText(`ส่งออกเมื่อ ${prettyDate(Date.now())}`, pad + W, ly);
 
-      const blob = await new Promise(r => c.toBlob(r, 'image/png'));
-      const file = new File([blob], `ผังที่นั่ง-${room.code}.png`, {type:'image/png'});
-      if (matchMedia('(pointer:coarse)').matches && navigator.canShare?.({files:[file]})) {
-        try { await navigator.share({files:[file], title:room.name}); }
-        catch (e) { if (e.name !== 'AbortError') throw e; }
-      } else {
+      const dataUrl = c.toDataURL('image/png');
+      const blob = c.toBlob ? await new Promise(r => c.toBlob(r, 'image/png')) : null;
+      const fname = `ผังที่นั่ง-${room.code}.png`;
+      const file = blob && window.File ? new File([blob], fname, {type:'image/png'}) : null;
+      const inApp = /Line\/|FBAN|FBAV|Instagram|MicroMessenger|; wv\)/i.test(navigator.userAgent);
+      if (!inApp && !matchMedia('(pointer:coarse)').matches) {
         const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob); a.download = file.name; a.click();
-        setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+        a.href = dataUrl; a.download = fname; document.body.appendChild(a); a.click(); a.remove();
         notice('บันทึกภาพผังที่นั่งแล้ว');
-      }
+      } else showExport(dataUrl, file, fname);
     } catch (e) { fail(e); } finally { setBusy(btn, false); }
   };
+
+  function showExport(dataUrl, file, fname) {
+    $('exportImg').src = dataUrl;
+    const line = /Line\//i.test(navigator.userAgent);
+    $('exportExt').classList.toggle('hidden', !line);
+    $('exportExt').href = roomLink(room.code) + '&openExternalBrowser=1';
+    $('exportSave').onclick = async () => {
+      try {
+        if (file && navigator.canShare?.({files:[file]})) { await navigator.share({files:[file], title:room.name}); return; }
+      } catch (e) { if (e.name === 'AbortError') return; }
+      const a = document.createElement('a');
+      a.href = dataUrl; a.download = fname; document.body.appendChild(a); a.click(); a.remove();
+      notice('ถ้าภาพไม่ถูกบันทึก ให้กดค้างที่รูปแล้วเลือก “บันทึกรูปภาพ”');
+    };
+    openModal('exportOverlay');
+  }
+  $('closeExport').onclick = () => closeModal('exportOverlay');
+
+  // ---------- ขนาดผัง (ไม่พึ่ง aspect-ratio / cqw) + ซูม + แตะเพื่อวาง ----------
+  function sizeBoard(b) {
+    const w = b.clientWidth; if (!w) return;
+    b.style.setProperty('--u', (w / 100) + 'px');
+    if (b._bh) b.style.height = (w * b._bh / 100) + 'px';
+  }
+  const ZL = [1, 1.5, 2, 3];
+  function setZoom(id, dir, bar) {
+    const b = $(id), sc = b.parentElement, old = b._z || 1;
+    const i = Math.max(0, Math.min(ZL.length - 1, ZL.indexOf(old) + dir)); b._z = ZL[i];
+    const mid = (sc.scrollLeft + sc.clientWidth / 2) / b.clientWidth;
+    b.style.width = (b._z * 100) + '%';
+    bar.querySelector('output').textContent = Math.round(b._z * 100) + '%';
+    requestAnimationFrame(() => {
+      sizeBoard(b); sc.scrollLeft = mid * b.clientWidth - sc.clientWidth / 2;
+      b.classList.toggle('dense', b.clientWidth * (parseFloat(b.style.getPropertyValue('--sw')) || 14) / 100 < 46);
+    });
+  }
+  document.addEventListener('click', e => {
+    const bt = e.target.closest('[data-z]'); if (!bt) return;
+    const bar = bt.closest('[data-zoom]'); setZoom(bar.dataset.zoom, +bt.dataset.z, bar);
+  });
+  const ro = window.ResizeObserver ? new ResizeObserver(es => es.forEach(x => sizeBoard(x.target))) : null;
+  for (const id of ['board', 'createBoard']) {
+    const b = $(id); b._z = 1;
+    if (ro) ro.observe(b); else addEventListener('resize', () => sizeBoard(b));
+  }
+  function tapPlace(e, layout, redraw) {
+    if (e.target !== e.currentTarget || !selected || !layout) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    selected.x = Math.round(Math.max(5, Math.min(95, (e.clientX - r.left) / r.width * 100)));
+    selected.y = Math.round(Math.max(7, Math.min(93, (e.clientY - r.top) / r.height * 100)));
+    redraw();
+  }
+  $('board').addEventListener('click', e => editing && draft && tapPlace(e, draft, render));
+  $('createBoard').addEventListener('click', e => draft && tapPlace(e, draft, renderCreateBoard));
 
   // ---------- ขยายพื้นที่ผัง: โต๊ะคงตำแหน่งเดิมเมื่อเทียบกัน ----------
   const r1 = v => Math.round(v * 10) / 10;
