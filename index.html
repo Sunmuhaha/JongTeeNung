@@ -494,12 +494,32 @@ a.btn{text-decoration:none}
   .row>.btn:not(.sm):not(.icon-only){flex:1 1 auto}
   .modal-card .row .btn{flex:1 1 100%}
 }
+
+/* ---------- v6: ที่นั่งเหลือ / เต็มแล้ว ---------- */
+.remain{display:inline-flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px;margin-top:12px;padding:10px 18px;border-radius:var(--radius-md);
+  background:var(--free-soft);border:1px solid color-mix(in srgb,var(--free) 45%,transparent);color:var(--free);font-weight:700;font-size:.95rem}
+.remain b{font-size:1.7rem;line-height:1;font-variant-numeric:tabular-nums}
+.remain .remain-sub{font-size:.82rem;font-weight:600;opacity:.85}
+.remain.full{background:var(--booked-soft);border-color:color-mix(in srgb,var(--booked) 50%,transparent);color:var(--booked);font-size:1.15rem}
+
+/* ---------- v7: หน้า "ระบบจะเปิดให้จองในวันที่ ..." ---------- */
+.opens{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;margin:18px 0;padding:30px 16px 26px;
+  border-radius:var(--radius-lg);border:1px solid color-mix(in srgb,var(--accent) 30%,var(--border));
+  background:linear-gradient(180deg,var(--accent-soft),transparent)}
+.opens .icon{width:76px;height:76px;stroke-width:1.5;color:var(--accent);opacity:.9}
+.opens p{margin:0}
+.opens-title{font-size:clamp(1.15rem,4.8vw,1.65rem);font-weight:700;margin-top:6px!important}
+.opens-date{font-size:clamp(1.3rem,6vw,2.3rem);font-weight:700;line-height:1.35;color:var(--accent);
+  padding:12px 24px;border-radius:var(--radius-md);background:var(--accent-soft)}
+.opens-left{color:var(--muted);font-weight:600;font-size:.95rem;margin-top:6px!important}
+.opens-left b{color:var(--text);font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <defs>
 <symbol id="i-seat" viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="8" rx="2"/><rect x="5" y="12" width="14" height="4" rx="1.5"/><line x1="7" y1="16" x2="7" y2="21"/><line x1="17" y1="16" x2="17" y2="21"/></symbol>
+<symbol id="i-cal-clock" viewBox="0 0 24 24"><path d="M16 14v2.2l1.6 1"/><path d="M16 2v4"/><path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"/><path d="M3 10h5"/><path d="M8 2v4"/><circle cx="16" cy="16" r="6"/></symbol>
 <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 9"/></symbol>
 <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
 <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
@@ -643,10 +663,17 @@ a.btn{text-decoration:none}
         <div>
           <h2 id="displayName"></h2>
           <div class="meta-row" id="roomMeta"></div>
+          <div class="remain hidden" id="remainBadge" role="status" aria-live="polite"></div>
         </div>
         <button class="btn" id="backBtn" type="button"><svg class="icon"><use href="#i-back"></use></svg><span>เปลี่ยนห้อง</span></button>
       </div>
       <p id="windowStatus" style="margin-top:14px"></p>
+      <div class="opens hidden" id="opensPanel" role="timer">
+        <svg class="icon" aria-hidden="true"><use href="#i-cal-clock"></use></svg>
+        <p class="opens-title">ระบบจะเปิดให้จองที่นั่งในวันที่</p>
+        <div class="opens-date" id="opensDate"></div>
+        <p class="opens-left">เหลือเวลาอีก: <b id="opensLeft"></b></p>
+      </div>
       <div class="countdown hidden" id="countdown" role="timer">
         <span>เปิดให้จองในอีก</span>
         <b id="cdNum">60</b>
@@ -763,10 +790,11 @@ a.btn{text-decoration:none}
   <div class="modal-card wide" role="dialog" aria-modal="true">
     <button class="modal-close" id="closeExport" type="button" aria-label="ปิดหน้าต่างนี้"><svg class="icon"><use href="#i-close"></use></svg></button>
     <h2>บันทึกภาพผังที่นั่ง</h2>
-    <p class="muted">กดปุ่มด้านล่าง หรือ <b>กดค้างที่รูป</b> แล้วเลือก “บันทึกรูปภาพ”</p>
+    <p class="muted">กด “บันทึกลงเครื่อง” หรือ <b>กดค้างที่รูป</b> แล้วเลือก “บันทึกรูปภาพ”</p>
     <img id="exportImg" alt="ภาพผังที่นั่ง" style="width:100%;height:auto;border-radius:12px;border:1px solid var(--border);-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto">
     <div class="row" style="margin-top:14px">
-      <button class="btn primary" id="exportSave" type="button"><svg class="icon"><use href="#i-save"></use></svg><span>บันทึก / แชร์ภาพ</span></button>
+      <button class="btn primary" id="exportSave" type="button"><svg class="icon"><use href="#i-save"></use></svg><span>บันทึกลงเครื่อง</span></button>
+      <button class="btn hidden" id="exportShare" type="button"><svg class="icon"><use href="#i-image"></use></svg><span>แชร์ / บันทึกลงอัลบั้ม</span></button>
       <a class="btn hidden" id="exportExt" target="_blank" rel="noopener"><span>เปิดในเบราว์เซอร์หลัก</span></a>
     </div>
   </div>
@@ -1064,6 +1092,15 @@ a.btn{text-decoration:none}
     $('countBooked').textContent = counts.booked;
     $('countMine').textContent = counts.mine;
     $('countOff').textContent = counts.off;
+    updateOpens();
+    {
+      const total = counts.free + counts.booked + counts.mine, rb = $('remainBadge');
+      rb.classList.toggle('hidden', total === 0);
+      rb.classList.toggle('full', total > 0 && counts.free === 0);
+      rb.innerHTML = counts.free === 0
+        ? `<span>เต็มแล้ว</span><span class="remain-sub">ที่นั่งทั้งหมด ${total} ที่ถูกจองครบแล้ว</span>`
+        : `<span>ที่นั่งเหลือ</span><b>${counts.free}</b><span class="remain-sub">จาก ${total} ที่</span>`;
+    }
     for (const marker of layout.markers) {
       const el = buildMarkerEl(marker, editing, selected?.id);
       if (editing) {
@@ -1501,6 +1538,14 @@ a.btn{text-decoration:none}
   }
 
   // ---------- ส่งออกแผนผังเป็นภาพ PNG ----------
+  let exportUrl = null;
+  const isIOS = () => /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  function saveToDevice(url, fname) {
+    const a = document.createElement('a');
+    a.href = url; a.download = fname; a.rel = 'noopener'; a.style.display = 'none';
+    document.body.appendChild(a); a.click();
+    setTimeout(() => a.remove(), 0);
+  }
   $('exportBtn').onclick = async () => {
     if (!room) return;
     const btn = $('exportBtn');
@@ -1512,7 +1557,7 @@ a.btn{text-decoration:none}
       const map = new Map(bookings.map(b => [b.seat_id, b]));
       const sw = parseFloat(board.style.getPropertyValue('--sw')) || 14;
       const sh = parseFloat(board.style.getPropertyValue('--sh')) || 11;
-      const W = 1600, k = W / bw, pad = 48, head = 150, bH = Math.round(bh * k), foot = 110;
+      const W = 1600, k = W / bw, pad = 48, head = 210, bH = Math.round(bh * k), foot = 110;
       const c = document.createElement('canvas');
       c.width = W + pad * 2; c.height = head + bH + foot;
       const g = c.getContext('2d');
@@ -1522,12 +1567,29 @@ a.btn{text-decoration:none}
         free:['#059669','#e3f5ee'], booked:['#dc2626','#fdeaea'], off:['#6b7280','#f1f2f6'],
         board:['#4f46e5','#e9e8fc'], teacher:['#7c3aed','#efe8fd'], door:['#6b7280','#f1f2f6']
       };
+      const counts = {free:0, booked:0, off:0};
+      for (const s of layout.seats) counts[!s.enabled ? 'off' : map.get(s.id) ? 'booked' : 'free']++;
+      const totalSeats = counts.free + counts.booked;
       g.fillStyle = '#f5f6fa'; g.fillRect(0, 0, c.width, c.height);
       g.textBaseline = 'alphabetic'; g.textAlign = 'left';
+      // ป้ายที่นั่งเหลือ / เต็มแล้ว (มุมขวาบน)
+      let titleMax = W;
+      if (totalSeats > 0) {
+        const full = counts.free === 0, bt = full ? 'เต็มแล้ว' : `เหลือ ${counts.free} ที่`;
+        g.font = F(700, 40);
+        const bwid = g.measureText(bt).width + 64, bx = pad + W - bwid, by = pad + 4;
+        g.beginPath(); g.roundRect(bx, by, bwid, 78, 39);
+        g.fillStyle = full ? '#fdeaea' : '#e3f5ee'; g.fill();
+        g.lineWidth = 3; g.strokeStyle = full ? '#dc2626' : '#059669'; g.stroke();
+        g.fillStyle = full ? '#dc2626' : '#059669'; g.textAlign = 'center'; g.textBaseline = 'middle';
+        g.fillText(bt, bx + bwid / 2, by + 41);
+        g.textAlign = 'left'; g.textBaseline = 'alphabetic';
+        titleMax = bx - pad - 28;
+      }
       g.fillStyle = '#111827'; g.font = F(700, 54);
-      g.fillText(room.name, pad, pad + 56, W);
+      g.fillText(room.name, pad, pad + 56, titleMax);
       g.fillStyle = '#6b7280'; g.font = F(500, 28);
-      g.fillText(`รหัสห้อง ${room.code}  ·  ${prettyDate(room.open_at)} – ${prettyDate(room.close_at)}`, pad, pad + 104, W);
+      g.fillText(`รหัสห้อง ${room.code}  ·  ${prettyDate(room.open_at)} – ${prettyDate(room.close_at)}`, pad, pad + 108, W);
       // พื้นผัง
       g.beginPath(); g.roundRect(pad, head, W, bH, 36); g.fillStyle = '#ffffff'; g.fill();
       g.lineWidth = 2; g.strokeStyle = '#d9dce5'; g.stroke();
@@ -1541,14 +1603,12 @@ a.btn{text-decoration:none}
         g.setLineDash(dashed ? [12, 8] : []); g.lineWidth = 3; g.strokeStyle = line; g.stroke(); g.setLineDash([]);
       };
       g.textAlign = 'center'; g.textBaseline = 'middle';
-      const counts = {free:0, booked:0, off:0};
       const ls = clamp(8, sw * .26 * bw / 100, 14.5) * k, ss = clamp(7, sw * .2 * bw / 100, 12) * k;
       const sW = Math.min(sw * bw / 100, 100) * k, sH = Math.min(sh * bw / 100, 72) * k;
       const dense = sW / k < 46;
       for (const seat of layout.seats) {
         const b = map.get(seat.id);
         const cls = !seat.enabled ? 'off' : b ? 'booked' : 'free';
-        counts[cls]++;
         const cx = pad + seat.x / 100 * W, cy = head + seat.y / 100 * bH;
         box(cx, cy, sW, sH, col[cls], cls === 'off');
         g.fillStyle = '#111827'; g.font = F(700, ls);
@@ -1578,31 +1638,35 @@ a.btn{text-decoration:none}
       g.textAlign = 'right'; g.fillStyle = '#6b7280'; g.font = F(500, 24);
       g.fillText(`ส่งออกเมื่อ ${prettyDate(Date.now())}`, pad + W, ly);
 
-      const dataUrl = c.toDataURL('image/png');
-      const blob = c.toBlob ? await new Promise(r => c.toBlob(r, 'image/png')) : null;
+      const blob = await new Promise(r => { try { c.toBlob ? c.toBlob(r, 'image/png') : r(null); } catch { r(null); } });
+      if (exportUrl && exportUrl.startsWith('blob:')) URL.revokeObjectURL(exportUrl);
+      const url = blob ? URL.createObjectURL(blob) : c.toDataURL('image/png');
+      exportUrl = url;
       const fname = `ผังที่นั่ง-${room.code}.png`;
       const file = blob && window.File ? new File([blob], fname, {type:'image/png'}) : null;
       const inApp = /Line\/|FBAN|FBAV|Instagram|MicroMessenger|; wv\)/i.test(navigator.userAgent);
-      if (!inApp && !matchMedia('(pointer:coarse)').matches) {
-        const a = document.createElement('a');
-        a.href = dataUrl; a.download = fname; document.body.appendChild(a); a.click(); a.remove();
-        notice('บันทึกภาพผังที่นั่งแล้ว');
-      } else showExport(dataUrl, file, fname);
+      if (!inApp && 'download' in HTMLAnchorElement.prototype) {
+        // ดาวน์โหลดลงเครื่องทันที ไม่ต้องผ่านหน้าต่างพรีวิว
+        saveToDevice(url, fname);
+        notice(isIOS() ? 'บันทึกภาพแล้ว ดูได้ในแอป “ไฟล์” › ดาวน์โหลด' : 'บันทึกภาพผังที่นั่งลงเครื่องแล้ว (ดูในโฟลเดอร์ดาวน์โหลด)');
+      } else showExport(url, file, fname); // เบราว์เซอร์ในแอป (LINE/Facebook ฯลฯ) มักบล็อกการดาวน์โหลด
     } catch (e) { fail(e); } finally { setBusy(btn, false); }
   };
 
-  function showExport(dataUrl, file, fname) {
-    $('exportImg').src = dataUrl;
+  function showExport(url, file, fname) {
+    $('exportImg').src = url;
     const line = /Line\//i.test(navigator.userAgent);
     $('exportExt').classList.toggle('hidden', !line);
     $('exportExt').href = roomLink(room.code) + '&openExternalBrowser=1';
-    $('exportSave').onclick = async () => {
-      try {
-        if (file && navigator.canShare?.({files:[file]})) { await navigator.share({files:[file], title:room.name}); return; }
-      } catch (e) { if (e.name === 'AbortError') return; }
-      const a = document.createElement('a');
-      a.href = dataUrl; a.download = fname; document.body.appendChild(a); a.click(); a.remove();
-      notice('ถ้าภาพไม่ถูกบันทึก ให้กดค้างที่รูปแล้วเลือก “บันทึกรูปภาพ”');
+    $('exportSave').onclick = () => {
+      saveToDevice(url, fname);
+      notice('กำลังบันทึกภาพลงเครื่อง ถ้าไม่มีไฟล์ขึ้น ให้กดค้างที่รูปแล้วเลือก “บันทึกรูปภาพ”');
+    };
+    const canShare = !!(file && navigator.canShare?.({files:[file]}));
+    $('exportShare').classList.toggle('hidden', !canShare);
+    $('exportShare').onclick = async () => {
+      try { await navigator.share({files:[file], title:room.name}); }
+      catch (e) { if (e.name !== 'AbortError') fail(e); }
     };
     openModal('exportOverlay');
   }
@@ -1675,6 +1739,18 @@ a.btn{text-decoration:none}
   for (const id of ['joinCode', 'roomCode'])
     $(id).addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, ''); });
 
+  function updateOpens() {
+    const panel = $('opensPanel');
+    const left = room ? new Date(room.open_at).getTime() - Date.now() : 0;
+    panel.classList.toggle('hidden', !(left > 0));
+    if (!(left > 0)) return;
+    const t = new Date(room.open_at), p2 = n => String(n).padStart(2, '0');
+    const txt = `${t.toLocaleDateString('th-TH', {day:'numeric', month:'short', year:'numeric'})} เวลา ${p2(t.getHours())}:${p2(t.getMinutes())} น.`;
+    if ($('opensDate').textContent !== txt) $('opensDate').textContent = txt;
+    const s = Math.floor(left / 1000), d = Math.floor(s / 86400);
+    $('opensLeft').textContent = `${d ? d + ' วัน ' : ''}${Math.floor(s % 86400 / 3600)} ชม. ${Math.floor(s % 3600 / 60)} นาที ${s % 60} วินาที`;
+  }
+
   (async () => {
     myHash = await tokenHash();
     const code = new URL(location.href).searchParams.get('room');
@@ -1685,6 +1761,7 @@ a.btn{text-decoration:none}
     setInterval(() => { if (room && !editing) render(); }, 15000);
     let lastRoom = null, lastOpen = null;
     setInterval(() => {
+      updateOpens();
       if (!room) { lastRoom = null; $('countdown').classList.add('hidden'); return; }
       const left = new Date(room.open_at).getTime() - Date.now();
       const show = left > 0 && left <= 60000, open = !!windowOpen();
