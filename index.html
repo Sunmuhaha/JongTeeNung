@@ -513,6 +513,26 @@ a.btn{text-decoration:none}
   padding:12px 24px;border-radius:var(--radius-md);background:var(--accent-soft)}
 .opens-left{color:var(--muted);font-weight:600;font-size:.95rem;margin-top:6px!important}
 .opens-left b{color:var(--text);font-variant-numeric:tabular-nums}
+/* ---------- v8: mobile UX fixes ---------- */
+.board:not(.editing) .marker{pointer-events:none}
+.modal-overlay{inset:auto;left:0;right:0;top:var(--vvt,0px);height:var(--vvh,100dvh)}
+.modal-card{max-height:calc(var(--vvh,100dvh) - 16px);overscroll-behavior:contain}
+.field.invalid{box-shadow:0 0 0 3px var(--booked-soft)}
+.zoom-bar{flex-wrap:wrap}.zoom-bar .zhint{flex:1 1 130px}.zoom-bar .btn:disabled{opacity:.35}
+@keyframes toastInTop{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
+@media(max-width:680px){
+  .toast-container{top:calc(env(safe-area-inset-top,0px) + 66px);bottom:auto}
+  .toast{animation-name:toastInTop}
+  .opens{padding:18px 12px}.opens .icon{width:52px;height:52px}
+  .table-wrap{overflow:visible}
+  .data-table,.data-table tbody{display:block}.data-table{min-width:0}.data-table thead{display:none}
+  .data-table tr{display:grid;grid-template-columns:1fr auto;gap:8px 10px;align-items:center;padding:12px;border-bottom:1px solid var(--border)}
+  .data-table tbody td{padding:0;border:0}
+  .data-table td:nth-child(1){font-weight:700}.data-table td:nth-child(2){text-align:right;color:var(--muted)}
+  .data-table .field{min-height:44px}
+}
+@media(max-width:480px){#cancelLayoutEdit{width:50px;padding:0}#cancelLayoutEdit span{display:none}}
+@media(max-width:680px) and (max-height:700px){#createStep2 .toolbar,.layout-toolbar .toolbar{position:static}}
 </style>
 </head>
 <body>
@@ -708,7 +728,7 @@ a.btn{text-decoration:none}
           <span class="tool-sep"></span><div class="expand-group" role="group" aria-label="ขยายพื้นที่ผัง"><span class="expand-label">ขยายผัง</span><button class="btn sm icon-only" type="button" data-expand="top" aria-label="ขยายพื้นที่ด้านบน" title="ขยายพื้นที่ด้านบน"><svg class="icon rot-up"><use href="#i-back"></use></svg></button><button class="btn sm icon-only" type="button" data-expand="bottom" aria-label="ขยายพื้นที่ด้านล่าง" title="ขยายพื้นที่ด้านล่าง"><svg class="icon rot-down"><use href="#i-back"></use></svg></button><button class="btn sm icon-only" type="button" data-expand="left" aria-label="ขยายพื้นที่ด้านซ้าย" title="ขยายพื้นที่ด้านซ้าย"><svg class="icon "><use href="#i-back"></use></svg></button><button class="btn sm icon-only" type="button" data-expand="right" aria-label="ขยายพื้นที่ด้านขวา" title="ขยายพื้นที่ด้านขวา"><svg class="icon rot-right"><use href="#i-back"></use></svg></button><button class="btn sm" type="button" data-expand="trim" title="ตัดพื้นที่ว่างรอบผังออก"><span>จัดพอดี</span></button></div>
         </div>
         <div class="row">
-          <input class="field pin-field" id="layoutPin" type="password" inputmode="numeric" placeholder="รหัสผ่านผู้ดูแล" aria-label="รหัสผ่านผู้ดูแล สำหรับบันทึกผัง">
+          <input class="field pin-field" id="layoutPin" type="password" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="รหัสผู้ดูแล" aria-label="รหัสผ่านผู้ดูแล สำหรับบันทึกผัง">
           <button class="btn primary sm" id="saveLayout" type="button"><svg class="icon"><use href="#i-save"></use></svg><span>บันทึกผัง</span></button>
           <button class="btn ghost sm" id="cancelLayoutEdit" type="button"><svg class="icon"><use href="#i-close"></use></svg><span>ยกเลิก</span></button>
         </div>
@@ -721,7 +741,7 @@ a.btn{text-decoration:none}
   </main>
 
   <footer>จองที่นั่งห้องเรียน · ข้อมูลอัปเดตให้ทุกคนเห็นพร้อมกันแบบทันที
- <h4 style="line-height:2;">ระบบมีปัญหาใช่ไหม? ติดต่อผู้พัฒนาที่นี่ : <a target="blank" href="https://discord.gg/JvHpQBK6">https://discord.gg/JvHpQBK6</a></h4>
+ <h4 style="line-height:2;">ระบบมีปัญหาใช่ไหม? ติดต่อผู้พัฒนาที่นี่ : <a target="_blank" rel="noopener" href="https://discord.gg/JvHpQBK6">https://discord.gg/JvHpQBK6</a></h4>
 </footer>
 </div>
 
@@ -753,7 +773,7 @@ a.btn{text-decoration:none}
 
     <div class="field-group" style="max-width:260px">
       <label for="adminPin">รหัสผ่านผู้ดูแล</label>
-      <input class="field" id="adminPin" type="password" inputmode="numeric" autocomplete="off" placeholder="กรอกก่อนบันทึกหรือลบข้อมูล">
+      <input class="field" id="adminPin" type="password" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="กรอกก่อนบันทึกหรือลบข้อมูล">
     </div>
 
     <h3 class="section-title">ข้อมูลห้อง</h3>
@@ -800,6 +820,12 @@ a.btn{text-decoration:none}
   </div>
 </div>
 
+<div class="modal-overlay hidden" id="confirmOverlay">
+  <div class="modal-card" role="alertdialog" aria-modal="true" aria-labelledby="confirmMsg">
+    <p id="confirmMsg" style="font-weight:600;font-size:1.02rem;margin:4px 0 18px"></p>
+    <div class="row"><button class="btn danger" id="confirmOk" type="button"><span>ยืนยัน</span></button><button class="btn" id="confirmNo" type="button"><span>ยกเลิก</span></button></div>
+  </div>
+</div>
 <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="false"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -822,7 +848,13 @@ a.btn{text-decoration:none}
   const db = window.supabase.createClient(SUPABASE_URL, ANON_KEY);
   const enc = s => String(s ?? '').replace(/[&<>"']/g, c =>
     ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const uid = () => crypto.randomUUID();
+  const mem = {};
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch { return mem[k] ?? null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch { mem[k] = v; } }
+  };
+  const uid = () => crypto.randomUUID ? crypto.randomUUID() :
+    'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); });
   const roomLink = code => {
     const u = new URL(location.href);
     u.searchParams.set('room', code);
@@ -845,9 +877,10 @@ a.btn{text-decoration:none}
   let room = null, bookings = [], channel = null, draft = null;
   let editing = false, selected = null, movingFrom = null, codeTimer = null;
   let pollTimer = null, myHash = '', dragging = false;
+  let bkSig = '', bkSeq = 0, rmSig = '', bkTimer = null;
 
   // ---------- ธีมสี ----------
-  const savedTheme = localStorage.getItem('seat-theme');
+  const savedTheme = store.get('seat-theme');
   const initialTheme = savedTheme ||
     (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   document.documentElement.dataset.theme = initialTheme;
@@ -857,10 +890,15 @@ a.btn{text-decoration:none}
   $('themeBtn').onclick = () => {
     const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
     document.documentElement.dataset.theme = next;
-    localStorage.setItem('seat-theme', next);
+    store.set('seat-theme', next);
     syncMeta();
   };
 
+  if (window.visualViewport) {   // ให้ bottom-sheet อยู่เหนือคีย์บอร์ดบนมือถือ
+    const vv = visualViewport, st = document.documentElement.style;
+    const upd = () => { st.setProperty('--vvh', vv.height + 'px'); st.setProperty('--vvt', vv.offsetTop + 'px'); };
+    vv.addEventListener('resize', upd); vv.addEventListener('scroll', upd); upd();
+  }
   // ---------- Toast ----------
   function notice(message, error = false) {
     if (!message) return;
@@ -870,11 +908,13 @@ a.btn{text-decoration:none}
     $('toastContainer').appendChild(el);
     const remove = () => { el.classList.add('leaving'); setTimeout(() => el.remove(), 200); };
     el.querySelector('.toast-close').onclick = remove;
-    setTimeout(remove, 4200);
+    setTimeout(remove, error ? 7000 : 4200);
   }
   function fail(error) {
     console.error(error);
-    const message = error?.message || 'เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่อีกครั้ง';
+    const message = (!navigator.onLine || /Failed to fetch|NetworkError|Load failed/i.test(error?.message || ''))
+      ? 'เชื่อมต่ออินเทอร์เน็ตไม่ได้ กรุณาตรวจสอบสัญญาณแล้วลองใหม่'
+      : (error?.message || 'เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่อีกครั้ง');
     notice(message.includes('duplicate key') || error?.code === '23505'
       ? 'มีคนจองที่นั่งนี้ไปก่อนหน้าคุณเพียงเสี้ยววินาที กรุณาเลือกที่นั่งอื่น'
       : message, true);
@@ -898,6 +938,15 @@ a.btn{text-decoration:none}
       document.querySelectorAll('.modal-overlay:not(.hidden)').forEach(ov => closeModal(ov.id));
   });
 
+  function askConfirm(msg, ok = 'ยืนยัน') {
+    return new Promise(res => {
+      $('confirmMsg').textContent = msg; $('confirmOk').querySelector('span').textContent = ok;
+      const done = v => { $('confirmOk').onclick = $('confirmNo').onclick = $('confirmOverlay').onclick = null; closeModal('confirmOverlay'); res(v); };
+      $('confirmOk').onclick = () => done(true); $('confirmNo').onclick = () => done(false);
+      $('confirmOverlay').onclick = e => { if (e.target.id === 'confirmOverlay') done(false); };
+      openModal('confirmOverlay'); $('confirmNo').focus();
+    });
+  }
   function windowOpen() {
     const now = Date.now();
     return room && now >= new Date(room.open_at).getTime() &&
@@ -965,7 +1014,7 @@ a.btn{text-decoration:none}
     });
     const end = () => {
       start = null; dragging = false;
-      if (dragged) { selected = item; setTimeout(after, 0); }
+      if (dragged) { selected = item; el.parentElement._lock = true; setTimeout(after, 0); }
     };
     el.addEventListener('pointerup', end);
     el.addEventListener('pointercancel', end);
@@ -975,7 +1024,10 @@ a.btn{text-decoration:none}
   }
   function adminPin(fieldId) {
     const pin = $(fieldId).value;
-    if (!/^[0-9]{6,12}$/.test(pin)) throw new Error('กรุณากรอกรหัสผ่านผู้ดูแลห้อง (6-12 หลัก) ให้ถูกต้อง');
+    if (!/^[0-9]{6,12}$/.test(pin)) {
+      const f = $(fieldId); f.classList.add('invalid'); f.focus(); f.scrollIntoView({block: 'center', behavior: 'smooth'});
+      throw new Error('กรุณากรอกรหัสผ่านผู้ดูแลห้อง (6-12 หลัก) ให้ถูกต้อง');
+    }
     return pin;
   }
 
@@ -994,19 +1046,21 @@ a.btn{text-decoration:none}
   }
   async function loadBookings() {
     if (!room) return;
-    const id = room.id;
+    const id = room.id, seq = ++bkSeq;
     const {data, error} = await db.from('bookings_public')
       .select('id,room_id,seat_id,name,client_token,created_at')
       .eq('room_id', id).order('created_at');
-    if (error) return fail(error);
-    if (!room || room.id !== id) return;
-    bookings = data || [];
+    if (error) return navigator.onLine ? fail(error) : null;
+    if (!room || room.id !== id || seq !== bkSeq) return;
+    const sig = JSON.stringify((data || []).map(b => [b.id, b.seat_id, b.name, b.client_token]));
+    if (sig === bkSig) return;
+    bkSig = sig; bookings = data || [];
     render();
   }
   async function loadRoom(code, silent = false) {
     const {data, error} = await db.from('rooms_public').select('*')
       .eq('code', code).maybeSingle();
-    if (error) return fail(error);
+    if (error) return silent ? console.error(error) : fail(error);
     if (!data) {
       if (room?.code === code) {
         unsubscribe();
@@ -1017,16 +1071,18 @@ a.btn{text-decoration:none}
     }
     const changed = room?.id !== data.id;
     if (changed) unsubscribe();
+    const sig = JSON.stringify([data.id, data.name, data.layout, data.open_at, data.close_at, data.max_seats_per_user]);
+    const same = !changed && sig === rmSig; rmSig = sig;
     room = data;
     showView('room');
     if (changed) {
-      bookings = [];
+      bookings = []; bkSig = ''; $('board')._userZ = false;
       await loadBookings();
       channel = db.channel(`room-bookings-${room.id}`)
         .on('postgres_changes', {
           event:'*', schema:'public', table:'bookings',
           filter:`room_id=eq.${room.id}`
-        }, () => loadBookings())
+        }, () => { clearTimeout(bkTimer); bkTimer = setTimeout(loadBookings, 250); })
         .subscribe();
       // สำรองกรณีเครือข่าย Realtime ขาดช่วง และอัปเดตเวลาปิดจอง
       pollTimer = setInterval(async () => {
@@ -1034,24 +1090,35 @@ a.btn{text-decoration:none}
         await loadBookings();
       }, 30000);
     }
-    render();
-    if (!silent) notice('เข้าห้องเรียบร้อยแล้ว');
+    if (!same || !silent) render();
+    if (!silent && changed) notice('เข้าห้องเรียบร้อยแล้ว');
   }
   function fitBoard(board, layout) {
+    const keep = board._lock && board._fit;
     const gap = key => {
       const v = [...new Set(layout.seats.map(i => i[key]))].sort((x, y) => x - y);
       let m = 100;
       for (let i = 1; i < v.length; i++) if (v[i] - v[i - 1] >= 3) m = Math.min(m, v[i] - v[i - 1]);
       return m;
     };
-    const mx = gap('x'), my = gap('y');
-    const sw = Math.max(4, Math.min(16, mx - 1.5));
-    const bh = Math.max(60, Math.min(220, (sw * .8 + 1.5) / (my / 100)));
-    const sh = Math.max(3, Math.min(sw * .8, my / 100 * bh - 1.2));
+    let sw, bh, sh;
+    if (keep) ({sw, bh, sh} = keep);
+    else {
+      const mx = gap('x'), my = gap('y');
+      sw = Math.max(4, Math.min(16, mx - 1.5));
+      bh = Math.max(60, Math.min(220, (sw * .8 + 1.5) / (my / 100)));
+      sh = Math.max(3, Math.min(sw * .8, my / 100 * bh - 1.2));
+      board._fit = {sw, bh, sh};
+    }
     board.style.setProperty('--sw', sw.toFixed(2));
     board.style.setProperty('--sh', sh.toFixed(2));
     board.style.aspectRatio = (100 / bh).toFixed(3);
     board._bh = bh; sizeBoard(board);
+    if (board.id === 'board' && !editing && !board._userZ) {
+      const px = board.parentElement.clientWidth * sw / 100;
+      const z = ZL.find(v => v >= Math.min(3, 44 / px)) || 3;
+      if (z !== board._z) { applyZoom(board, z); return; }
+    }
     requestAnimationFrame(() => board.classList.toggle('dense', board.clientWidth * sw / 100 < 46));
   }
   function render() {
@@ -1075,6 +1142,7 @@ a.btn{text-decoration:none}
     const board = $('board');
     board.replaceChildren();
     board.classList.toggle('editing', editing);
+    if (!editing) board._lock = false;
     fitBoard(board, layout);
     $('boardHint').classList.toggle('moving', !!movingFrom && !editing);
     document.body.classList.toggle('editing-layout', editing);
@@ -1145,6 +1213,8 @@ a.btn{text-decoration:none}
       openModal('bookingOverlay');
       return;
     }
+    const mineN = bookings.filter(x => x.client_token === myHash).length, maxN = room.max_seats_per_user;
+    if (maxN > 0 && mineN >= maxN) return notice(`คุณจองครบ ${maxN} ที่แล้ว แตะที่นั่งของคุณเพื่อยกเลิกหรือย้ายที่นั่ง`, true);
     $('bookingTitle').textContent = 'จองที่นั่งนี้';
     $('chosenSeat').textContent = seatLabel(seat);
     $('nameWrap').classList.remove('hidden');
@@ -1152,10 +1222,10 @@ a.btn{text-decoration:none}
     $('cancelBook').classList.add('hidden');
     $('moveBook').classList.add('hidden');
     const existing = bookings.find(x => x.client_token === myHash);
-    $('bookName').value = existing?.name || localStorage.getItem('seat-name') || '';
+    $('bookName').value = existing?.name || store.get('seat-name') || '';
     $('confirmBook').onclick = () => reserve(seat);
     openModal('bookingOverlay');
-    setTimeout(() => $('bookName').focus(), 60);
+    setTimeout(() => ($('bookName').value ? $('confirmBook') : $('bookName')).focus(), 60);
   }
   async function reserve(seat) {
     const name = $('bookName').value.trim();
@@ -1166,7 +1236,7 @@ a.btn{text-decoration:none}
         p_room_id:room.id, p_seat_id:seat.id, p_name:name, p_token:token()
       });
       if (error) throw error;
-      localStorage.setItem('seat-name', name);
+      store.set('seat-name', name);
       closeModal('bookingOverlay');
       notice('จองที่นั่งเรียบร้อยแล้ว 🎉');
       await loadBookings();
@@ -1174,7 +1244,7 @@ a.btn{text-decoration:none}
     finally { setBusy($('confirmBook'), false); }
   }
   async function cancelMine(b) {
-    if (!confirm(`ต้องการยกเลิกที่นั่งของ ${b.name} ใช่หรือไม่?`)) return;
+    if (!await askConfirm(`ต้องการยกเลิกที่นั่งของ ${b.name} ใช่หรือไม่?`)) return;
     setBusy($('cancelBook'), true);
     try {
       const {error} = await db.rpc('owner_booking', {
@@ -1190,7 +1260,7 @@ a.btn{text-decoration:none}
   }
   async function moveMine(seat) {
     const old = movingFrom;
-    if (!old || !confirm(`ต้องการย้ายที่นั่งของคุณไปที่ ${seatLabel(seat)} ใช่หรือไม่?`)) return;
+    if (!old || !await askConfirm(`ต้องการย้ายที่นั่งของคุณไปที่ ${seatLabel(seat)} ใช่หรือไม่?`)) return;
     try {
       const {error} = await db.rpc('owner_booking', {
         p_booking_id:old.id, p_token:token(), p_action:'move', p_seat_id:seat.id
@@ -1204,11 +1274,11 @@ a.btn{text-decoration:none}
   }
 
   function token() {
-    let t = localStorage.getItem('seat-client-token');
+    let t = store.get('seat-client-token');
     if (!t) {
       const bytes = crypto.getRandomValues(new Uint8Array(32));
       t = Array.from(bytes, x => x.toString(16).padStart(2, '0')).join('');
-      localStorage.setItem('seat-client-token', t);
+      store.set('seat-client-token', t);
     }
     return t;
   }
@@ -1227,7 +1297,7 @@ a.btn{text-decoration:none}
     setBusy($('joinBtn'), true);
     try {
       await loadRoom(code);
-      if (room?.code === code) history.replaceState(null, '', roomLink(code));
+      if (room?.code === code) goUrl(code);
     } finally { setBusy($('joinBtn'), false); }
   };
   $('joinCode').addEventListener('keydown', e => { if (e.key === 'Enter') $('joinBtn').click(); });
@@ -1298,24 +1368,25 @@ a.btn{text-decoration:none}
     const code = $('roomCode').value.trim();
     const pin = $('pinCreate').value;
     const open = isoDate($('openAt').value), close = isoDate($('closeAt').value);
-    if (!/^[0-9]{4,6}$/.test(code) || !name || !/^[0-9]{6,12}$/.test(pin))
-      return notice('กรุณากรอกชื่อห้อง รหัสห้อง และรหัสผ่านผู้ดูแลให้ครบและถูกต้อง', true);
-    if (!open || !close || new Date(close) <= new Date(open))
-      return notice('กรุณาระบุเวลาที่เปิด-ปิดให้จองให้ถูกต้อง (เวลาสิ้นสุดต้องอยู่หลังเวลาเริ่ม)', true);
+    const bad = [['roomName', !name], ['roomCode', !/^[0-9]{4,6}$/.test(code)], ['pinCreate', !/^[0-9]{6,12}$/.test(pin)]].filter(x => x[1]).map(x => x[0]);
+    document.querySelectorAll('#createStep1 .field').forEach(f => f.classList.toggle('invalid', bad.includes(f.id)));
+    if (bad.length) { $(bad[0]).focus(); return notice('กรุณากรอกชื่อห้อง รหัสห้อง (4-6 หลัก) และรหัสผ่านผู้ดูแล (6-12 หลัก) ให้ถูกต้อง', true); }
+    if (!open || !close || new Date(close) <= new Date(open) || new Date(close) <= Date.now())
+      return notice('กรุณาระบุเวลาให้ถูกต้อง: เวลาปิดต้องอยู่หลังเวลาเริ่ม และต้องยังไม่ผ่านไปแล้ว', true);
     if (!draft || (!draft.seats.length && !draft.markers.length))
       draft = initialLayout(Number($('createRows').value) || 4, Number($('createCols').value) || 5);
-    selected = null;
+    selected = null; $('createBoard')._lock = false;
     showStep(2);
     renderCreateBoard();
     window.scrollTo({top:0});
   };
   $('backStep1').onclick = () => showStep(1);
-  $('createGenerate').onclick = () => {
+  $('createGenerate').onclick = async () => {
     const rows = Number($('createRows').value), cols = Number($('createCols').value);
     if (!Number.isInteger(rows) || !Number.isInteger(cols) || rows < 1 || rows > 12 || cols < 1 || cols > 12)
       return notice('จำนวนแถวและคอลัมน์ต้องอยู่ระหว่าง 1-12', true);
-    if (draft && draft.seats.length && !confirm('การสร้างผังใหม่จะลบโต๊ะที่จัดไว้ก่อนหน้า ต้องการดำเนินการต่อหรือไม่?')) return;
-    draft = initialLayout(rows, cols);
+    if (draft && draft.seats.length && !await askConfirm('การสร้างผังใหม่จะลบโต๊ะที่จัดไว้ก่อนหน้า ต้องการดำเนินการต่อหรือไม่?')) return;
+    draft = initialLayout(rows, cols); $('createBoard')._lock = false;
     selected = null;
     renderCreateBoard();
   };
@@ -1347,8 +1418,10 @@ a.btn{text-decoration:none}
       });
       if (error) throw error;
       $('pinCreate').value = '';
+      ['roomName', 'roomCode', 'openAt', 'closeAt'].forEach(i => $(i).value = '');
+      $('codeStatus').textContent = 'พิมพ์รหัสห้องเพื่อตรวจสอบว่าใช้ได้หรือไม่';
       await loadRoom(code);
-      history.replaceState(null, '', roomLink(code));
+      goUrl(code);
       notice('เผยแพร่ห้องเรียบร้อยแล้ว อย่าลืมจดรหัสผ่านผู้ดูแลไว้ให้ดี');
       $('createPanel').classList.add('hidden');
       draft = null;
@@ -1359,13 +1432,26 @@ a.btn{text-decoration:none}
   };
 
   // ---------- ปุ่มในหน้าห้อง ----------
-  $('backBtn').onclick = () => {
-    unsubscribe(); room = null; editing = false; selected = movingFrom = null; draft = null;
+  function leaveRoom() {
+    unsubscribe(); room = null; editing = false; selected = movingFrom = null; draft = null; rmSig = '';
     $('layoutToolbar').classList.add('hidden');
+    document.body.classList.remove('editing-layout');
     closeModal('bookingOverlay'); closeModal('settingsOverlay');
-    history.replaceState(null, '', location.pathname);
     resetPanels();
+  }
+  const goUrl = code => {
+    const same = new URL(location.href).searchParams.get('room') === code;
+    history[same ? 'replaceState' : 'pushState']({room: code}, '', roomLink(code));
   };
+  $('backBtn').onclick = () => {
+    if (history.state?.room) history.back();
+    else { history.replaceState(null, '', location.pathname); leaveRoom(); }
+  };
+  addEventListener('popstate', () => {
+    const code = new URL(location.href).searchParams.get('room');
+    if (!code && room) leaveRoom();
+    else if (code && /^[0-9]{4,6}$/.test(code) && room?.code !== code) loadRoom(code);
+  });
   $('copyBtn').onclick = async () => {
     try {
       await navigator.clipboard.writeText(roomLink(room.code));
@@ -1411,7 +1497,7 @@ a.btn{text-decoration:none}
   $('deleteRoom').onclick = async () => {
     let pin;
     try { pin = adminPin('adminPin'); } catch (e) { return fail(e); }
-    if (!confirm('ต้องการลบห้องนี้และข้อมูลการจองทั้งหมดอย่างถาวรใช่หรือไม่?')) return;
+    if (!await askConfirm('ต้องการลบห้องนี้และข้อมูลการจองทั้งหมดอย่างถาวรใช่หรือไม่?')) return;
     setBusy($('deleteRoom'), true);
     try {
       const {error} = await db.rpc('admin_delete_room', { p_room_id:room.id, p_pin:pin });
@@ -1429,7 +1515,7 @@ a.btn{text-decoration:none}
     draft = structuredClone(room.layout);
     $('layoutToolbar').classList.remove('hidden');
     render();
-    $('layoutToolbar').scrollIntoView({behavior:'smooth', block:'center'});
+    ($('layoutToolbar').offsetParent ? $('layoutToolbar') : $('board')).scrollIntoView({behavior:'smooth', block:'center'});
     notice('โหมดแก้ไขผัง: ลากโต๊ะหรือป้ายบนแผนผังด้านล่างเพื่อจัดตำแหน่งได้เลย');
   };
   $('cancelLayoutEdit').onclick = () => {
@@ -1519,7 +1605,7 @@ a.btn{text-decoration:none}
       del.onclick = async () => {
         let pin;
         try { pin = adminPin('adminPin'); } catch (e) { return fail(e); }
-        if (!confirm(`ต้องการลบการจองของ ${b.name} ใช่หรือไม่?`)) return;
+        if (!await askConfirm(`ต้องการลบการจองของ ${b.name} ใช่หรือไม่?`)) return;
         setBusy(del, true);
         try {
           const {error} = await db.rpc('admin_booking', {
@@ -1679,16 +1765,20 @@ a.btn{text-decoration:none}
     if (b._bh) b.style.height = (w * b._bh / 100) + 'px';
   }
   const ZL = [1, 1.5, 2, 3];
-  function setZoom(id, dir, bar) {
-    const b = $(id), sc = b.parentElement, old = b._z || 1;
-    const i = Math.max(0, Math.min(ZL.length - 1, ZL.indexOf(old) + dir)); b._z = ZL[i];
+  function applyZoom(b, z, keepMid) {
+    const sc = b.parentElement, bar = document.querySelector(`[data-zoom="${b.id}"]`);
     const mid = (sc.scrollLeft + sc.clientWidth / 2) / b.clientWidth;
-    b.style.width = (b._z * 100) + '%';
-    bar.querySelector('output').textContent = Math.round(b._z * 100) + '%';
+    b._z = z; b.style.width = (z * 100) + '%';
+    bar.querySelector('output').textContent = Math.round(z * 100) + '%';
+    bar.querySelectorAll('[data-z]').forEach(x => x.disabled = (x.dataset.z < 0 && z <= ZL[0]) || (x.dataset.z > 0 && z >= ZL[ZL.length - 1]));
     requestAnimationFrame(() => {
-      sizeBoard(b); sc.scrollLeft = mid * b.clientWidth - sc.clientWidth / 2;
+      sizeBoard(b); if (keepMid) sc.scrollLeft = mid * b.clientWidth - sc.clientWidth / 2;
       b.classList.toggle('dense', b.clientWidth * (parseFloat(b.style.getPropertyValue('--sw')) || 14) / 100 < 46);
     });
+  }
+  function setZoom(id, dir) {
+    const b = $(id), i = Math.max(0, Math.min(ZL.length - 1, ZL.indexOf(b._z || 1) + dir));
+    b._userZ = true; applyZoom(b, ZL[i], true);
   }
   document.addEventListener('click', e => {
     const bt = e.target.closest('[data-z]'); if (!bt) return;
@@ -1704,7 +1794,7 @@ a.btn{text-decoration:none}
     const r = e.currentTarget.getBoundingClientRect();
     selected.x = Math.round(Math.max(5, Math.min(95, (e.clientX - r.left) / r.width * 100)));
     selected.y = Math.round(Math.max(7, Math.min(93, (e.clientY - r.top) / r.height * 100)));
-    redraw();
+    e.currentTarget._lock = true; redraw();
   }
   $('board').addEventListener('click', e => editing && draft && tapPlace(e, draft, render));
   $('createBoard').addEventListener('click', e => draft && tapPlace(e, draft, renderCreateBoard));
@@ -1733,17 +1823,23 @@ a.btn{text-decoration:none}
     const btn = e.target.closest('[data-expand]');
     if (!btn || !draft) return;
     expandLayout(draft, btn.dataset.expand);
+    $('board')._lock = $('createBoard')._lock = false;
     if (!$('createPanel').classList.contains('hidden')) renderCreateBoard(); else render();
   });
   $('bookName').addEventListener('keydown', e => { if (e.key === 'Enter') $('confirmBook').click(); });
-  for (const id of ['joinCode', 'roomCode'])
+  for (const id of ['joinCode', 'roomCode', 'pinCreate', 'adminPin', 'layoutPin'])
     $(id).addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, ''); });
+  $('joinCode').addEventListener('paste', e => {
+    const m = (e.clipboardData?.getData('text') || '').match(/room=(\d{4,6})/);
+    if (m) { e.preventDefault(); $('joinCode').value = m[1]; }
+  });
+  document.addEventListener('input', e => e.target.classList?.remove('invalid'));
 
   function updateOpens() {
     const panel = $('opensPanel');
     const left = room ? new Date(room.open_at).getTime() - Date.now() : 0;
-    panel.classList.toggle('hidden', !(left > 0));
-    if (!(left > 0)) return;
+    panel.classList.toggle('hidden', !(left > 60000));
+    if (!(left > 60000)) return;
     const t = new Date(room.open_at), p2 = n => String(n).padStart(2, '0');
     const txt = `${t.toLocaleDateString('th-TH', {day:'numeric', month:'short', year:'numeric'})} เวลา ${p2(t.getHours())}:${p2(t.getMinutes())} น.`;
     if ($('opensDate').textContent !== txt) $('opensDate').textContent = txt;
@@ -1752,13 +1848,16 @@ a.btn{text-decoration:none}
   }
 
   (async () => {
-    myHash = await tokenHash();
+    try { myHash = await tokenHash(); } catch (e) { console.error(e); }
     const code = new URL(location.href).searchParams.get('room');
     if (code && /^[0-9]{4,6}$/.test(code)) {
       $('joinCode').value = code;
       await loadRoom(code);
     }
-    setInterval(() => { if (room && !editing) render(); }, 15000);
+    const refresh = () => { if (room) { loadRoom(room.code, true); loadBookings(); } };
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+    addEventListener('online', () => { notice('กลับมาออนไลน์แล้ว กำลังอัปเดตผัง'); refresh(); });
+    addEventListener('offline', () => notice('ออฟไลน์อยู่ ผังอาจไม่เป็นปัจจุบัน', true));
     let lastRoom = null, lastOpen = null;
     setInterval(() => {
       updateOpens();
