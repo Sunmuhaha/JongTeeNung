@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f5f6fa">
 <title>จองที่นั่งห้องเรียน</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,8 +39,16 @@
 }
 *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent }
 html{ font-size:15.5px }
-body{ margin:0; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased;
-  transition:background .25s ease,color .25s ease }
+body{
+  margin:0; color:var(--text); -webkit-font-smoothing:antialiased;
+  transition:background .25s ease,color .25s ease;
+  background:
+    radial-gradient(circle at 12% -10%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 55%),
+    radial-gradient(circle at 110% 8%, color-mix(in srgb, var(--mine) 12%, transparent), transparent 50%),
+    var(--bg);
+  background-attachment:fixed;
+  min-height:100vh; min-height:100dvh;
+}
 button,input,select{ font:inherit; color:inherit }
 button{ cursor:pointer }
 button:disabled{ cursor:not-allowed; opacity:.5 }
@@ -61,11 +69,12 @@ header{
   background:var(--accent); display:flex; align-items:center; justify-content:center;
   box-shadow:var(--shadow-sm);
 }
-.brand-badge .icon{ stroke:var(--accent-ink); width:19px; height:19px }
+.brand-badge .icon{ stroke:var(--accent-ink); width:20px; height:20px }
 h1{ font-size:1.08rem; margin:0; font-weight:700; letter-spacing:-.01em; line-height:1.25 }
 header small{ display:block; color:var(--muted); font-weight:500; font-size:.78rem; margin-top:1px }
 
 h2{ font-size:1.05rem; margin:0 0 4px; font-weight:700; letter-spacing:-.01em }
+h3{ font-size:1rem; margin:16px 0 8px; font-weight:700 }
 h3.section-title{
   font-size:.74rem; margin:28px 0 14px; font-weight:700; color:var(--muted);
   text-transform:uppercase; letter-spacing:.07em; padding-bottom:9px; border-bottom:1px solid var(--border);
@@ -78,17 +87,13 @@ p{ line-height:1.65; margin:0 0 10px }
   box-shadow:var(--shadow-xs); padding:22px; margin:14px 0;
 }
 .card-head{ margin-bottom:16px }
-.card-head .muted{ font-size:.86rem; margin-top:2px }
-
-@keyframes fadeSlide{ from{ opacity:0; transform:translateY(-4px) } to{ opacity:1; transform:translateY(0) } }
-#bookingPanel:not(.hidden),#adminPanel:not(.hidden),#createPanel:not(.hidden){ animation:fadeSlide .22s ease }
-#bookingPanel{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft) }
+.card-head .muted{ font-size:.88rem; margin-top:2px }
 
 .btn{
   position:relative; display:inline-flex; align-items:center; justify-content:center; gap:7px;
   background:var(--panel-alt); border:1px solid var(--border); color:var(--text);
-  border-radius:var(--radius-sm); min-height:42px; padding:0 15px; font-weight:600;
-  font-size:.87rem; box-shadow:var(--shadow-xs);
+  border-radius:var(--radius-sm); min-height:44px; padding:0 16px; font-weight:600;
+  font-size:.88rem; box-shadow:var(--shadow-xs);
   transition:transform .1s ease,box-shadow .15s ease,background .15s ease,border-color .15s ease;
 }
 .btn:hover{ border-color:color-mix(in srgb, var(--accent) 40%, var(--border)) }
@@ -99,8 +104,10 @@ p{ line-height:1.65; margin:0 0 10px }
 .btn.ghost:hover{ background:var(--panel-alt); color:var(--text) }
 .btn.danger{ color:var(--booked); border-color:color-mix(in srgb, var(--booked) 30%, var(--border)) }
 .btn.danger:hover{ background:var(--booked-soft) }
-.btn.sm{ min-height:36px; padding:0 12px; font-size:.8rem; border-radius:var(--radius-sm) }
-.btn .icon{ width:16px; height:16px }
+.btn.sm{ min-height:38px; padding:0 12px; font-size:.81rem }
+.btn.block{ width:100% }
+.btn .icon{ width:18px; height:18px }
+.btn.sm .icon{ width:16px; height:16px }
 
 .btn.is-loading{ color:transparent!important; pointer-events:none }
 .btn.is-loading .icon,.btn.is-loading span{ visibility:hidden }
@@ -112,16 +119,23 @@ p{ line-height:1.65; margin:0 0 10px }
 .btn.primary.is-loading::after{ border-color:rgba(255,255,255,.35); border-top-color:var(--accent-ink) }
 @keyframes spin{ to{ transform:rotate(360deg) } }
 
+.icon-btn{
+  width:40px; height:40px; padding:0; display:inline-flex; align-items:center; justify-content:center;
+  border-radius:999px; background:var(--panel-alt); border:1px solid var(--border); flex-shrink:0;
+}
+.icon-btn .icon{ width:17px; height:17px }
+
 .field{
-  display:block; width:100%; min-height:42px; padding:9px 13px; color:var(--text);
+  display:block; width:100%; min-height:44px; padding:9px 13px; color:var(--text);
   background:var(--panel-alt); border:1px solid var(--border); border-radius:var(--radius-sm);
   outline:none; transition:border-color .15s,box-shadow .15s;
 }
 .field:focus{ border-color:var(--accent); box-shadow:0 0 0 3px var(--ring) }
 .field[readonly]{ color:var(--muted); cursor:default }
-label{ display:block; font-weight:600; margin:0 0 6px; font-size:.84rem }
+label{ display:block; font-weight:600; margin:0 0 6px; font-size:.86rem }
 .field-group{ margin-bottom:14px }
 .field-group:last-child{ margin-bottom:0 }
+small{ display:block; margin-top:5px; font-size:.78rem; line-height:1.5 }
 
 .grid{ display:grid; gap:14px }
 @media(min-width:680px){ .two{ grid-template-columns:repeat(2,minmax(0,1fr)) } }
@@ -129,21 +143,53 @@ label{ display:block; font-weight:600; margin:0 0 6px; font-size:.84rem }
 .muted,small{ color:var(--muted) }
 .hidden{ display:none!important }
 
-#notice{
-  display:flex; align-items:center; gap:9px; font-weight:600; font-size:.86rem;
-  padding:11px 15px; border-radius:var(--radius-md); margin:14px 0 0;
-  background:var(--accent-soft); color:var(--accent);
-  border:1px solid color-mix(in srgb, var(--accent) 25%, var(--border));
-  border-left:3px solid var(--accent);
+/* ---------- Toast ---------- */
+.toast-container{
+  position:fixed; left:50%; bottom:22px; transform:translateX(-50%); z-index:300;
+  display:flex; flex-direction:column; gap:10px; width:min(92vw,420px); pointer-events:none;
 }
-#notice:empty{ display:none; padding:0; margin:0; border:none }
-#notice::before{ content:'ⓘ'; font-size:1rem; flex-shrink:0 }
-#notice.error{
-  background:var(--booked-soft); color:var(--booked);
-  border-color:color-mix(in srgb, var(--booked) 30%, var(--border));
-  border-left-color:var(--booked);
+.toast{
+  pointer-events:auto; display:flex; align-items:flex-start; gap:10px; padding:13px 14px; border-radius:var(--radius-md);
+  background:var(--panel); border:1px solid var(--border); box-shadow:var(--shadow-md); font-size:.87rem; font-weight:600;
+  border-left:4px solid var(--accent); color:var(--text); animation:toastIn .25s ease;
 }
-#notice.error::before{ content:'⚠' }
+.toast.error{ border-left-color:var(--booked) }
+.toast .toast-icon{ color:var(--accent); flex-shrink:0; margin-top:1px; font-size:1rem; line-height:1 }
+.toast.error .toast-icon{ color:var(--booked) }
+.toast span.msg{ flex:1 }
+.toast .toast-close{
+  margin-left:auto; background:none; border:none; color:var(--muted); cursor:pointer;
+  width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center;
+  font-size:16px; line-height:1; flex-shrink:0; padding:0;
+}
+@keyframes toastIn{ from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:translateY(0)} }
+.toast.leaving{ animation:toastOut .2s ease forwards }
+@keyframes toastOut{ to{opacity:0; transform:translateY(8px)} }
+
+/* ---------- Landing / hero ---------- */
+.hero{ text-align:center; padding:44px 12px 8px }
+.hero-badge{
+  width:56px; height:56px; border-radius:16px; margin:0 auto 18px;
+  background:linear-gradient(135deg,var(--accent),var(--mine)); display:flex; align-items:center; justify-content:center;
+  box-shadow:var(--shadow-md);
+}
+.hero-badge .icon{ width:28px; height:28px; stroke:#fff }
+.hero-title{ font-size:1.65rem; font-weight:700; margin:0 0 10px; letter-spacing:-.02em }
+.hero-desc{ color:var(--muted); max-width:560px; margin:0 auto; font-size:.95rem; line-height:1.75 }
+
+.option-grid{ display:grid; gap:16px; margin-top:28px }
+@media(min-width:680px){ .option-grid{ grid-template-columns:1fr 1fr } }
+.option-card{ display:flex; flex-direction:column; gap:10px; text-align:left }
+.option-icon{
+  width:44px; height:44px; border-radius:12px; background:var(--accent-soft); color:var(--accent);
+  display:flex; align-items:center; justify-content:center; margin-bottom:2px;
+}
+.option-icon .icon{ width:22px; height:22px }
+.option-icon.accent2{ background:var(--mine-soft); color:var(--mine) }
+.option-card h2{ margin-bottom:2px }
+.option-card .muted{ font-size:.87rem; margin-bottom:6px; min-height:42px }
+
+/* ---------- Notice (toast handles messages; kept minimal unused class removed) ---------- */
 
 .room-head{ display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-start }
 .meta-row{ display:flex; flex-wrap:wrap; gap:7px; margin-top:7px }
@@ -152,7 +198,6 @@ label{ display:block; font-weight:600; margin:0 0 6px; font-size:.84rem }
   background:var(--panel-alt); border:1px solid var(--border); font-size:.78rem; font-weight:600; color:var(--muted);
   font-variant-numeric:tabular-nums;
 }
-
 .status-pill{
   display:inline-flex; align-items:center; gap:6px; padding:5px 13px; border-radius:999px;
   font-weight:700; font-size:.8rem; margin-right:10px;
@@ -166,9 +211,6 @@ label{ display:block; font-weight:600; margin:0 0 6px; font-size:.84rem }
 .link-box{ display:flex; flex-wrap:wrap; gap:9px; margin:14px 0 }
 .link-box .field{ flex:1; min-width:200px; font-size:.84rem }
 
-#chosenSeat{ font-weight:700; font-size:1.05rem; color:var(--accent); margin-bottom:2px }
-#boardHint{ font-size:.84rem; margin-top:10px }
-
 .legend{ display:flex; flex-wrap:wrap; gap:10px; margin:16px 0 }
 .legend-item{
   display:inline-flex; align-items:center; gap:7px; font-size:.82rem; font-weight:600; color:var(--muted);
@@ -179,12 +221,28 @@ label{ display:block; font-weight:600; margin:0 0 6px; font-size:.84rem }
 .dot.free{ background:var(--free) } .dot.booked{ background:var(--booked) }
 .dot.mine{ background:var(--mine) } .dot.off{ background:transparent; border:2px dashed var(--muted) }
 
+/* ---------- Layout editor floating toolbar ---------- */
+.layout-toolbar{
+  display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between; align-items:center;
+  padding:12px; background:var(--accent-soft); border:1px dashed var(--accent); border-radius:var(--radius-md);
+  margin:14px 0 8px;
+}
+.layout-toolbar .pin-field{ max-width:150px }
+.toolbar{ display:flex; flex-wrap:wrap; gap:8px }
+
+.scroll-hint{
+  display:none; align-items:center; gap:6px; font-size:.78rem; color:var(--muted); margin:0 0 8px;
+}
+@media(max-width:680px){ .scroll-hint{ display:flex } }
+
+.board-scroll{ overflow-x:auto; overflow-y:hidden; border-radius:var(--radius-lg); -webkit-overflow-scrolling:touch }
 .board{
-  position:relative; width:100%; aspect-ratio:1.4; min-height:320px; overflow:hidden;
+  position:relative; width:100%; min-width:620px; aspect-ratio:1.45; min-height:300px; overflow:hidden;
   border:1.5px dashed var(--border); border-radius:var(--radius-lg); background-color:var(--panel-alt);
   background-image:radial-gradient(var(--border) 1.2px,transparent 1.2px);
-  background-size:28px 28px; margin:6px 0 14px;
+  background-size:28px 28px; margin:0;
 }
+@media(max-width:680px){ .board{ min-width:560px } }
 .board-empty{
   position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
   text-align:center; padding:24px; margin:0; color:var(--muted); font-weight:600; font-size:.9rem;
@@ -205,15 +263,19 @@ label{ display:block; font-weight:600; margin:0 0 6px; font-size:.84rem }
 .seat.mine{ border-color:var(--mine); color:var(--mine); background:var(--mine-soft) }
 .seat.off{ opacity:.55; border-style:dashed; color:var(--muted) }
 .seat.selected,.marker.selected{ outline:3px solid var(--accent); outline-offset:2px }
-
-.marker{ color:var(--text); font-size:.72rem; font-weight:600 }
-.marker .icon{ width:15px; height:15px }
+.marker{ color:var(--text); font-size:.72rem; font-weight:600; gap:4px }
+.marker .icon{ width:16px; height:16px }
 .marker.type-board{ border-color:var(--accent); color:var(--accent); background:var(--accent-soft) }
 .marker.type-teacher{ border-color:var(--mine); color:var(--mine); background:var(--mine-soft) }
 .marker.type-door{ border-style:dashed; color:var(--muted) }
 
-.icon{ width:17px; height:17px; stroke:currentColor; fill:none; stroke-width:2;
-  stroke-linecap:round; stroke-linejoin:round; flex-shrink:0 }
+@media(max-width:680px){
+  .seat,.marker{ min-width:44px; min-height:40px; padding:4px 6px }
+  .seat-label{ font-size:.7rem } .seat-status{ font-size:.6rem } .marker{ font-size:.66rem }
+}
+
+.icon{ width:18px; height:18px; display:block; flex-shrink:0; stroke:currentColor; fill:none; stroke-width:2;
+  stroke-linecap:round; stroke-linejoin:round; }
 
 #qrWrap{ margin-top:14px; display:flex; justify-content:flex-start }
 #qr{ display:inline-block; padding:14px; background:#fff; border-radius:var(--radius-md); box-shadow:var(--shadow-sm) }
@@ -231,11 +293,30 @@ label{ display:block; font-weight:600; margin:0 0 6px; font-size:.84rem }
 :root[data-theme="dark"] .theme-toggle .thumb::before{ content:'☾' }
 :root[data-theme="dark"] .theme-toggle .track{ background:var(--accent) }
 
-.toolbar{ display:flex; flex-wrap:wrap; gap:8px; padding:12px; background:var(--panel-alt);
-  border:1px solid var(--border); border-radius:var(--radius-md) }
+/* ---------- Modals ---------- */
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(15,23,42,.55); backdrop-filter:blur(2px);
+  display:flex; align-items:center; justify-content:center; padding:20px; z-index:200;
+}
+.modal-overlay.hidden{ display:none }
+.modal-card{
+  position:relative; background:var(--panel); border:1px solid var(--border); border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-md); padding:28px 22px 22px; width:100%; max-width:480px; max-height:88vh; overflow-y:auto;
+  animation:modalIn .22s ease;
+}
+.modal-card.wide{ max-width:680px }
+@keyframes modalIn{ from{ opacity:0; transform:translateY(10px) scale(.98) } to{ opacity:1; transform:translateY(0) scale(1) } }
+body.modal-open{ overflow:hidden }
+.modal-close{
+  position:absolute; top:14px; right:14px; width:36px; height:36px; padding:0;
+  display:inline-flex; align-items:center; justify-content:center; border-radius:999px;
+  background:var(--panel-alt); border:1px solid var(--border);
+}
+.modal-close .icon{ width:16px; height:16px }
 
+/* ---------- Table ---------- */
 .table-wrap{ overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius-md) }
-table.data-table{ width:100%; border-collapse:collapse; font-size:.86rem; min-width:480px }
+table.data-table{ width:100%; border-collapse:collapse; font-size:.86rem; min-width:460px }
 .data-table thead th{
   text-align:left; font-weight:700; color:var(--muted); font-size:.74rem; text-transform:uppercase;
   letter-spacing:.05em; padding:10px 14px; background:var(--panel-alt); border-bottom:1px solid var(--border);
@@ -251,21 +332,65 @@ footer{ text-align:center; color:var(--muted); font-size:.78rem; margin:36px 0 0
 @media(max-width:560px){
   .card{ padding:16px; border-radius:12px }
   h1{ font-size:.98rem }
-  .board{ min-height:260px }
+  .hero-title{ font-size:1.3rem }
   html{ font-size:15px }
+  .modal-card{ padding:22px 16px 18px }
 }
+
+/* ---------- v2: fixes & polish ---------- */
+.icon{width:20px;height:20px}
+.btn .icon{width:20px;height:20px}
+.btn.sm{min-height:42px}.btn.sm .icon{width:18px;height:18px}
+header{display:block;padding:8px 0;padding-top:calc(8px + env(safe-area-inset-top));margin:0}
+.header-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.header-inner,.wrap{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+.wrap{padding-top:8px}
+.brand-badge{width:42px;height:42px;border-radius:12px}.brand-badge .icon{width:24px;height:24px}
+.icon-btn{width:44px;height:44px;cursor:pointer}.icon-btn .icon{width:22px;height:22px}
+.i-moon{display:none}:root[data-theme="dark"] .i-sun{display:none}:root[data-theme="dark"] .i-moon{display:block}
+.modal-close{width:42px;height:42px}.modal-close .icon{width:20px;height:20px}
+.modal-card{max-height:88vh;max-height:88dvh}
+.option-icon{width:54px;height:54px;border-radius:14px}.option-icon .icon{width:28px;height:28px}
+.hero{padding:32px 0 4px}
+.hero-art{display:block;width:min(100%,320px);height:auto;margin:0 auto 22px}
+.toast-container{bottom:calc(22px + env(safe-area-inset-bottom))}
+.toast .toast-icon{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;margin-top:0}
+.toast .toast-close{width:32px;height:32px;margin:-6px -6px 0 auto;font-size:20px}
+#joinCode{font-size:1.25rem;font-weight:700;letter-spacing:.2em;text-align:center}
+#joinCode::placeholder{font-size:.9rem;letter-spacing:0;font-weight:400}
+.field.invalid{border-color:var(--booked)}
+.board{min-width:min(100%,320px)}
+.seat,.marker{min-width:64px;min-height:56px;max-width:112px;padding:7px 9px}
+.seat{touch-action:auto}
+.board.editing .seat,.board.editing .marker{touch-action:none;cursor:grab}
+.seat:hover{transform:translate(-50%,-50%);box-shadow:var(--shadow-xs)}
+@media(hover:hover){.seat:hover{transform:translate(-50%,-50%) scale(1.06);z-index:5;box-shadow:var(--shadow-md)}}
+.seat.selected,.marker.selected{z-index:6}
+.seat-label{font-size:.92rem;color:var(--text)}
+.seat-status{font-size:.74rem;opacity:1;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.seat.free .seat-status{color:color-mix(in srgb,var(--free) 75%,var(--text))}
+.seat.booked .seat-status{color:color-mix(in srgb,var(--booked) 75%,var(--text))}
+.seat.mine .seat-status{color:color-mix(in srgb,var(--mine) 75%,var(--text))}
+.marker{font-size:.8rem}.marker .icon{width:22px;height:22px}
+.layout-toolbar{position:sticky;top:calc(68px + env(safe-area-inset-top));z-index:20;background:color-mix(in srgb,var(--accent) 10%,var(--panel));box-shadow:var(--shadow-sm)}
+.scroll-hint{display:none!important}.scroll-hint.show{display:flex!important}
+#boardHint.moving{color:var(--accent);font-weight:700;background:var(--accent-soft);padding:10px 12px;border-radius:var(--radius-sm)}
+@media(max-width:560px){header small{display:none}.link-box .btn{flex:1}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <defs>
-<symbol id="i-seat" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="4" rx="1"/><line x1="6" y1="8" x2="6" y2="20"/><line x1="18" y1="8" x2="18" y2="20"/></symbol>
+<symbol id="i-seat" viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="8" rx="2"/><rect x="5" y="12" width="14" height="4" rx="1.5"/><line x1="7" y1="16" x2="7" y2="21"/><line x1="17" y1="16" x2="17" y2="21"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
 <symbol id="i-board" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1"/><line x1="12" y1="16" x2="12" y2="20"/><line x1="8" y1="20" x2="16" y2="20"/></symbol>
-<symbol id="i-desk" viewBox="0 0 24 24"><rect x="3" y="10" width="18" height="6" rx="1"/><line x1="6" y1="16" x2="6" y2="20"/><line x1="18" y1="16" x2="18" y2="20"/><line x1="4" y1="10" x2="4" y2="6"/><line x1="8" y1="10" x2="8" y2="7"/></symbol>
+<symbol id="i-desk" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="5" rx="1"/><line x1="6" y1="10" x2="6" y2="19"/><line x1="18" y1="10" x2="18" y2="19"/></symbol>
 <symbol id="i-door" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="1"/><circle cx="14" cy="12" r="1" fill="currentColor"/></symbol>
 <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
 <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3"/><rect x="19" y="14" width="2" height="2"/><rect x="14" y="19" width="2" height="2"/><rect x="18" y="18" width="3" height="3"/></symbol>
-<symbol id="i-settings" viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2" fill="var(--panel)"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="16" cy="12" r="2" fill="var(--panel)"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="10" cy="18" r="2" fill="var(--panel)"/></symbol>
+<symbol id="i-settings" viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2" style="fill:var(--panel)"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="16" cy="12" r="2" style="fill:var(--panel)"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="10" cy="18" r="2" style="fill:var(--panel)"/></symbol>
 <symbol id="i-back" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></symbol>
 <symbol id="i-enter" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></symbol>
 <symbol id="i-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
@@ -276,68 +401,123 @@ footer{ text-align:center; color:var(--muted); font-size:.78rem; margin:36px 0 0
 </defs>
 </svg>
 
-<div class="wrap">
-  <header>
+<header>
+  <div class="header-inner">
     <div class="brand">
       <div class="brand-badge"><svg class="icon"><use href="#i-seat"></use></svg></div>
-      <div><h1>จองที่นั่งห้องเรียน</h1><small>ระบบจองที่นั่งแบบเรียลไทม์</small></div>
+      <div><h1>จองที่นั่งห้องเรียน</h1><small>ดูผัง เลือกที่นั่ง และจองได้ทันทีจากมือถือหรือคอมพิวเตอร์</small></div>
     </div>
-    <button class="theme-toggle btn" id="themeBtn" type="button" aria-label="สลับโหมดสี">
-      <span class="track"><span class="thumb"></span></span>
-    </button>
-  </header>
+    <button class="icon-btn" id="themeBtn" type="button" aria-label="สลับโหมดสีสว่าง/มืด"><svg class="icon i-sun"><use href="#i-sun"></use></svg><svg class="icon i-moon"><use href="#i-moon"></use></svg></button>
+  </div>
+</header>
+<div class="wrap">
 
-  <p id="notice" role="status" aria-live="polite"></p>
+  <!-- ========== หน้าแรก ========== -->
+  <div id="landing">
+    <section class="hero" id="hero">
+      <svg class="hero-art" viewBox="0 0 320 170" role="img" aria-label="ตัวอย่างผังที่นั่งห้องเรียน"><rect x="90" y="6" width="140" height="14" rx="7" style="fill:var(--accent-soft);stroke:var(--accent)" stroke-width="2"/><rect x="26" y="40" width="44" height="34" rx="9" style="fill:var(--free-soft);stroke:var(--free)" stroke-width="2"/><rect x="82" y="40" width="44" height="34" rx="9" style="fill:var(--booked-soft);stroke:var(--booked)" stroke-width="2"/><rect x="138" y="40" width="44" height="34" rx="9" style="fill:var(--free-soft);stroke:var(--free)" stroke-width="2"/><rect x="194" y="40" width="44" height="34" rx="9" style="fill:var(--free-soft);stroke:var(--free)" stroke-width="2"/><rect x="250" y="40" width="44" height="34" rx="9" style="fill:var(--mine-soft);stroke:var(--mine)" stroke-width="2"/><rect x="26" y="84" width="44" height="34" rx="9" style="fill:var(--booked-soft);stroke:var(--booked)" stroke-width="2"/><rect x="82" y="84" width="44" height="34" rx="9" style="fill:var(--free-soft);stroke:var(--free)" stroke-width="2"/><rect x="138" y="84" width="44" height="34" rx="9" style="fill:var(--free-soft);stroke:var(--free)" stroke-width="2"/><rect x="194" y="84" width="44" height="34" rx="9" style="fill:var(--booked-soft);stroke:var(--booked)" stroke-width="2"/><rect x="250" y="84" width="44" height="34" rx="9" style="fill:var(--free-soft);stroke:var(--free)" stroke-width="2"/><rect x="26" y="128" width="44" height="34" rx="9" style="fill:var(--free-soft);stroke:var(--free)" stroke-width="2"/><rect x="82" y="128" width="44" height="34" rx="9" style="fill:var(--free-soft);stroke:var(--free)" stroke-width="2"/><rect x="138" y="128" width="44" height="34" rx="9" style="fill:var(--booked-soft);stroke:var(--booked)" stroke-width="2"/><rect x="194" y="128" width="44" height="34" rx="9" style="fill:var(--free-soft);stroke:var(--free)" stroke-width="2"/><rect x="250" y="128" width="44" height="34" rx="9" style="fill:var(--booked-soft);stroke:var(--booked)" stroke-width="2"/></svg>
+      <h2 class="hero-title">จัดที่นั่งห้องเรียนได้ง่าย ๆ ในไม่กี่คลิก</h2>
+      <p class="hero-desc">สร้างห้อง วางตำแหน่งโต๊ะให้เหมือนห้องจริง แล้วแชร์ลิงก์หรือรหัสห้องให้ทุกคนเลือกที่นั่งเอง
+        ทุกคนจะเห็นผังอัปเดตพร้อมกันแบบทันที ไม่ต้องติดตั้งแอปเพิ่ม</p>
+    </section>
 
-  <section class="card" id="entry">
-    <div class="card-head"><h2>เข้าห้อง</h2><p class="muted">กรอกเลขห้องที่ได้รับจากผู้สอนหรือผู้จัดงาน</p></div>
-    <div class="row">
-      <input class="field" id="joinCode" style="flex:1;min-width:150px" inputmode="numeric"
-             maxlength="6" pattern="[0-9]{4,6}" placeholder="เลขห้อง 4–6 หลัก" aria-label="เลขห้อง">
-      <button class="btn primary" id="joinBtn" type="button"><svg class="icon"><use href="#i-enter"></use></svg><span>เข้าห้อง</span></button>
-      <button class="btn" id="newBtn" type="button"><svg class="icon"><use href="#i-plus"></use></svg><span>สร้างห้องใหม่</span></button>
+    <div class="option-grid" id="optionGrid">
+      <section class="card option-card" id="entry">
+        <div class="option-icon"><svg class="icon"><use href="#i-enter"></use></svg></div>
+        <h2>มีรหัสห้องอยู่แล้ว?</h2>
+        <p class="muted">กรอกรหัสห้องที่ได้รับจากผู้สอนหรือผู้จัดงาน เพื่อดูผังที่นั่งและเลือกที่นั่งของคุณ</p>
+        <div class="field-group">
+          <label for="joinCode">รหัสห้อง</label>
+          <input class="field" id="joinCode" inputmode="numeric" maxlength="6" pattern="[0-9]{4,6}" placeholder="กรอกตัวเลข 4-6 หลัก เช่น 1234">
+        </div>
+        <button class="btn primary block" id="joinBtn" type="button"><svg class="icon"><use href="#i-enter"></use></svg><span>เข้าห้อง</span></button>
+      </section>
+
+      <section class="card option-card" id="newBtnCard">
+        <div class="option-icon accent2"><svg class="icon"><use href="#i-plus"></use></svg></div>
+        <h2>ต้องการสร้างห้องใหม่?</h2>
+        <p class="muted">เหมาะสำหรับครู ผู้บรรยาย หรือผู้จัดกิจกรรม ที่ต้องการจัดที่นั่งเอง และดูว่าใครเลือกที่นั่งไหนแบบทันที</p>
+        <button class="btn primary block" id="newBtn" type="button"><svg class="icon"><use href="#i-plus"></use></svg><span>สร้างห้องใหม่</span></button>
+      </section>
     </div>
-  </section>
 
-  <section class="card hidden" id="createPanel">
-    <div class="card-head"><h2>สร้างห้อง</h2><p class="muted">กำหนดข้อมูลพื้นฐาน แล้วปรับผังที่นั่งได้ภายหลัง</p></div>
+    <section class="card hidden" id="createPanel">
+      <div class="card-head"><h2>สร้างห้องใหม่</h2><p class="muted">ทำตาม 2 ขั้นตอนง่าย ๆ: กรอกข้อมูลห้อง แล้วจัดผังที่นั่งก่อนเผยแพร่</p></div>
 
-    <h3 class="section-title">ข้อมูลห้อง</h3>
-    <div class="grid two">
-      <div class="field-group"><label for="roomName">ชื่อห้อง</label><input class="field" id="roomName" maxlength="100" required></div>
-      <div class="field-group">
-        <label for="roomCode">เลขห้อง 4–6 หลัก</label>
-        <input class="field" id="roomCode" inputmode="numeric" maxlength="6" pattern="[0-9]{4,6}" required>
-        <small id="codeStatus" aria-live="polite">พิมพ์เลขห้องเพื่อตรวจสอบ</small>
+      <div id="createStep1">
+        <h3 class="section-title">ข้อมูลห้อง</h3>
+        <div class="grid two">
+          <div class="field-group">
+            <label for="roomName">ชื่อห้อง</label>
+            <input class="field" id="roomName" maxlength="100" required placeholder="เช่น ห้อง ม.3/1 หรือ สัมมนาวันเสาร์">
+          </div>
+          <div class="field-group">
+            <label for="roomCode">รหัสห้อง (ตัวเลข 4-6 หลัก)</label>
+            <input class="field" id="roomCode" inputmode="numeric" maxlength="6" pattern="[0-9]{4,6}" required placeholder="เช่น 1234">
+            <small id="codeStatus" aria-live="polite">พิมพ์รหัสห้องเพื่อตรวจสอบว่าใช้ได้หรือไม่</small>
+          </div>
+          <div class="field-group">
+            <label for="pinCreate">รหัสผ่านผู้ดูแล (6-12 หลัก)</label>
+            <input class="field" id="pinCreate" type="password" inputmode="numeric" autocomplete="new-password" minlength="6" maxlength="12" placeholder="ตั้งรหัสที่คุณจำได้">
+            <small>เก็บรหัสนี้ไว้ให้ดี ต้องใช้ทุกครั้งที่จะแก้ไขหรือลบห้องภายหลัง</small>
+          </div>
+          <div class="field-group">
+            <label for="maxSeats">จำกัดที่นั่งต่อคน</label>
+            <select class="field" id="maxSeats">
+              <option value="1">1 ที่ต่อคน</option><option value="2">2 ที่ต่อคน</option>
+              <option value="3">3 ที่ต่อคน</option><option value="0">ไม่จำกัด</option>
+            </select>
+            <small>ช่วยป้องกันไม่ให้คนเดียวจองหลายที่</small>
+          </div>
+        </div>
+
+        <h3 class="section-title">ช่วงเวลาที่เปิดให้จอง</h3>
+        <p class="muted">นอกช่วงเวลานี้ ผู้เข้าร่วมจะดูผังที่นั่งได้ แต่จะยังจองไม่ได้</p>
+        <div class="grid two">
+          <div class="field-group"><label for="openAt">เริ่มเปิดให้จอง</label><input class="field" id="openAt" type="datetime-local"></div>
+          <div class="field-group"><label for="closeAt">ปิดรับจอง</label><input class="field" id="closeAt" type="datetime-local"></div>
+        </div>
+
+        <div class="row" style="margin-top:18px">
+          <button class="btn primary" id="toStep2" type="button"><svg class="icon"><use href="#i-enter"></use></svg><span>ถัดไป: จัดผังที่นั่ง</span></button>
+          <button class="btn ghost" id="cancelCreate" type="button"><svg class="icon"><use href="#i-close"></use></svg><span>ยกเลิก</span></button>
+        </div>
       </div>
-      <div class="field-group"><label for="pinCreate">Admin PIN 6–12 หลัก</label><input class="field" id="pinCreate" type="password" inputmode="numeric" autocomplete="new-password" minlength="6" maxlength="12"></div>
-      <div class="field-group"><label for="maxSeats">จำนวนที่จองได้ต่อเบราว์เซอร์</label>
-        <select class="field" id="maxSeats">
-          <option value="1">1 ที่</option><option value="2">2 ที่</option>
-          <option value="3">3 ที่</option><option value="0">ไม่จำกัด</option>
-        </select>
+
+      <div class="hidden" id="createStep2">
+        <h3 class="section-title">จัดผังที่นั่ง (ขั้นตอนบังคับ)</h3>
+        <p class="muted">ลากโต๊ะให้ตรงกับตำแหน่งจริงในห้องของคุณ ต้องมีที่นั่งอย่างน้อย 1 ที่ จึงจะเผยแพร่ห้องได้</p>
+
+        <div class="row" style="margin-bottom:14px">
+          <input class="field" id="createRows" type="number" min="1" max="12" value="4" style="max-width:88px" aria-label="จำนวนแถว">
+          <span class="muted">แถว ×</span>
+          <input class="field" id="createCols" type="number" min="1" max="12" value="5" style="max-width:88px" aria-label="จำนวนคอลัมน์">
+          <span class="muted">คอลัมน์</span>
+          <button class="btn sm" id="createGenerate" type="button"><svg class="icon"><use href="#i-plus"></use></svg><span>สร้างผังอัตโนมัติ</span></button>
+        </div>
+
+        <div class="toolbar">
+          <button class="btn sm" id="createAddSeat" type="button"><svg class="icon"><use href="#i-seat"></use></svg><span>โต๊ะ</span></button>
+          <button class="btn sm" id="createAddBoard" type="button"><svg class="icon"><use href="#i-board"></use></svg><span>กระดาน</span></button>
+          <button class="btn sm" id="createAddTeacher" type="button"><svg class="icon"><use href="#i-desk"></use></svg><span>โต๊ะครู</span></button>
+          <button class="btn sm" id="createAddDoor" type="button"><svg class="icon"><use href="#i-door"></use></svg><span>ประตู</span></button>
+          <button class="btn sm" id="createToggleSeat" type="button"><svg class="icon"><use href="#i-toggle"></use></svg><span>เปิด/ปิดที่เลือก</span></button>
+          <button class="btn sm danger" id="createRemoveItem" type="button"><svg class="icon"><use href="#i-trash"></use></svg><span>ลบที่เลือก</span></button>
+        </div>
+
+        <p class="scroll-hint">↔ ปัดซ้าย-ขวาเพื่อดูผังที่นั่งทั้งหมด</p>
+        <div class="board-scroll"><div class="board" id="createBoard" aria-label="ผังที่นั่งที่กำลังจัด"></div></div>
+        <p class="muted" id="seatCountHint" style="margin-top:8px"></p>
+
+        <div class="row" style="margin-top:16px">
+          <button class="btn" id="backStep1" type="button"><svg class="icon"><use href="#i-back"></use></svg><span>ย้อนกลับ</span></button>
+          <button class="btn primary" id="publishRoom" type="button" disabled><svg class="icon"><use href="#i-save"></use></svg><span>เผยแพร่ห้อง</span></button>
+        </div>
       </div>
-    </div>
+    </section>
+  </div>
 
-    <h3 class="section-title">ช่วงเวลาเปิดจอง</h3>
-    <div class="grid two">
-      <div class="field-group"><label for="openAt">เริ่มเปิดจอง</label><input class="field" id="openAt" type="datetime-local"></div>
-      <div class="field-group"><label for="closeAt">สิ้นสุดการจอง</label><input class="field" id="closeAt" type="datetime-local"></div>
-    </div>
-
-    <h3 class="section-title">ผังที่นั่งเริ่มต้น</h3>
-    <div class="grid two">
-      <div class="field-group"><label for="rows">แถวเริ่มต้น (1–12)</label><input class="field" id="rows" type="number" min="1" max="12" value="4"></div>
-      <div class="field-group"><label for="cols">คอลัมน์เริ่มต้น (1–12)</label><input class="field" id="cols" type="number" min="1" max="12" value="5"></div>
-    </div>
-    <p class="muted" style="margin-top:6px">หลังสร้างห้อง สามารถลากโต๊ะและเพิ่มป้ายในโหมดจัดผังได้</p>
-
-    <div class="row" style="margin-top:18px">
-      <button class="btn primary" id="createBtn" type="button"><svg class="icon"><use href="#i-save"></use></svg><span>สร้างห้อง</span></button>
-      <button class="btn ghost" id="cancelCreate" type="button"><svg class="icon"><use href="#i-close"></use></svg><span>ยกเลิก</span></button>
-    </div>
-  </section>
-
+  <!-- ========== หน้าห้อง ========== -->
   <main class="hidden" id="roomPanel">
     <section class="card">
       <div class="room-head">
@@ -350,83 +530,107 @@ footer{ text-align:center; color:var(--muted); font-size:.78rem; margin:36px 0 0
       <p id="windowStatus" style="margin-top:14px"></p>
 
       <div class="link-box">
-        <input class="field" id="roomLinkField" readonly aria-label="ลิงก์ห้อง">
+        <input class="field" id="roomLinkField" readonly aria-label="ลิงก์ห้อง สำหรับคัดลอกไปแชร์">
         <button class="btn" id="copyBtn" type="button"><svg class="icon"><use href="#i-copy"></use></svg><span>คัดลอกลิงก์</span></button>
         <button class="btn" id="qrBtn" type="button"><svg class="icon"><use href="#i-qr"></use></svg><span>QR code</span></button>
         <button class="btn" id="editBtn" type="button"><svg class="icon"><use href="#i-settings"></use></svg><span>จัดการห้อง</span></button>
       </div>
       <div class="hidden" id="qrWrap"><div id="qr"></div></div>
 
-      <div class="legend" aria-label="คำอธิบายสถานะ">
+      <div class="legend" aria-label="คำอธิบายสถานะที่นั่ง">
         <span class="legend-item"><i class="dot free"></i>ว่าง <b id="countFree">0</b></span>
         <span class="legend-item"><i class="dot booked"></i>ถูกจองแล้ว <b id="countBooked">0</b></span>
         <span class="legend-item"><i class="dot mine"></i>ที่นั่งของฉัน <b id="countMine">0</b></span>
         <span class="legend-item"><i class="dot off"></i>ปิดใช้งาน <b id="countOff">0</b></span>
       </div>
-      <div class="board" id="board" aria-label="แผนผังที่นั่ง"></div>
-      <p class="muted" id="boardHint"></p>
-    </section>
 
-    <section class="card hidden" id="bookingPanel">
-      <h2 id="bookingTitle">จองที่นั่ง</h2>
-      <p id="chosenSeat"></p>
-      <div id="nameWrap" class="field-group"><label for="bookName">ชื่อจริงหรือชื่อที่ตกลงกัน</label>
-        <input class="field" id="bookName" maxlength="80" autocomplete="name"></div>
-      <div class="row" style="margin-top:14px">
-        <button class="btn primary" id="confirmBook" type="button"><svg class="icon"><use href="#i-save"></use></svg><span>ยืนยันการจอง</span></button>
-        <button class="btn danger hidden" id="cancelBook" type="button"><svg class="icon"><use href="#i-trash"></use></svg><span>ยกเลิกที่นั่งนี้</span></button>
-        <button class="btn ghost" id="dismissBook" type="button"><svg class="icon"><use href="#i-close"></use></svg><span>ปิด</span></button>
-      </div>
-      <p class="muted" style="margin-top:12px">ต้องการเปลี่ยนที่: เลือกที่นั่งของฉัน แล้วกดที่นั่งว่างอีกที่</p>
-    </section>
-
-    <section class="card hidden" id="adminPanel">
-      <div class="card-head"><h2>จัดการห้อง</h2><p class="muted">ทุกคำสั่งที่เปลี่ยนข้อมูลต้องยืนยันด้วย Admin PIN</p></div>
-      <div class="field-group">
-        <label for="adminPin">Admin PIN</label>
-        <input class="field" id="adminPin" type="password" inputmode="numeric" autocomplete="off" style="max-width:260px">
+      <div class="layout-toolbar hidden" id="layoutToolbar">
+        <div class="toolbar">
+          <button class="btn sm" id="addSeat" type="button"><svg class="icon"><use href="#i-seat"></use></svg><span>โต๊ะ</span></button>
+          <button class="btn sm" id="addBoard" type="button"><svg class="icon"><use href="#i-board"></use></svg><span>กระดาน</span></button>
+          <button class="btn sm" id="addTeacher" type="button"><svg class="icon"><use href="#i-desk"></use></svg><span>โต๊ะครู</span></button>
+          <button class="btn sm" id="addDoor" type="button"><svg class="icon"><use href="#i-door"></use></svg><span>ประตู</span></button>
+          <button class="btn sm" id="toggleSeat" type="button"><svg class="icon"><use href="#i-toggle"></use></svg><span>เปิด/ปิดที่เลือก</span></button>
+          <button class="btn sm danger" id="removeItem" type="button"><svg class="icon"><use href="#i-trash"></use></svg><span>ลบที่เลือก</span></button>
+        </div>
+        <div class="row">
+          <input class="field pin-field" id="layoutPin" type="password" inputmode="numeric" placeholder="รหัสผ่านผู้ดูแล" aria-label="รหัสผ่านผู้ดูแล สำหรับบันทึกผัง">
+          <button class="btn primary sm" id="saveLayout" type="button"><svg class="icon"><use href="#i-save"></use></svg><span>บันทึกผัง</span></button>
+          <button class="btn ghost sm" id="cancelLayoutEdit" type="button"><svg class="icon"><use href="#i-close"></use></svg><span>ยกเลิก</span></button>
+        </div>
       </div>
 
-      <h3 class="section-title">ข้อมูลห้อง</h3>
-      <div class="grid two">
-        <div class="field-group"><label for="editName">ชื่อห้อง</label><input class="field" id="editName" maxlength="100"></div>
-        <div class="field-group"><label for="editMax">จำนวนที่จองได้</label><select class="field" id="editMax">
-          <option value="1">1 ที่</option><option value="2">2 ที่</option>
-          <option value="3">3 ที่</option><option value="0">ไม่จำกัด</option>
-        </select></div>
-        <div class="field-group"><label for="editOpen">เริ่มเปิดจอง</label><input class="field" id="editOpen" type="datetime-local"></div>
-        <div class="field-group"><label for="editClose">สิ้นสุดการจอง</label><input class="field" id="editClose" type="datetime-local"></div>
-      </div>
-
-      <h3 class="section-title">จัดผัง</h3>
-      <p class="muted">ลากโต๊ะหรือป้ายเพื่อย้ายตำแหน่ง แตะเพื่อเลือก จากนั้นปิดใช้งานหรือลบ</p>
-      <div class="toolbar">
-        <button class="btn sm" id="addSeat" type="button"><svg class="icon"><use href="#i-seat"></use></svg><span>โต๊ะ</span></button>
-        <button class="btn sm" id="addBoard" type="button"><svg class="icon"><use href="#i-board"></use></svg><span>กระดาน</span></button>
-        <button class="btn sm" id="addTeacher" type="button"><svg class="icon"><use href="#i-desk"></use></svg><span>โต๊ะครู</span></button>
-        <button class="btn sm" id="addDoor" type="button"><svg class="icon"><use href="#i-door"></use></svg><span>ประตู</span></button>
-        <button class="btn sm" id="toggleSeat" type="button"><svg class="icon"><use href="#i-toggle"></use></svg><span>เปิด/ปิดที่เลือก</span></button>
-        <button class="btn sm danger" id="removeItem" type="button"><svg class="icon"><use href="#i-trash"></use></svg><span>ลบที่เลือก</span></button>
-      </div>
-
-      <div class="row" style="margin-top:18px">
-        <button class="btn primary" id="saveAdmin" type="button"><svg class="icon"><use href="#i-save"></use></svg><span>บันทึกการเปลี่ยนแปลง</span></button>
-        <button class="btn danger" id="deleteRoom" type="button"><svg class="icon"><use href="#i-trash"></use></svg><span>ลบห้อง</span></button>
-      </div>
-
-      <h3 class="section-title">รายชื่อผู้จอง <span id="bookingsCount" class="muted" style="text-transform:none;letter-spacing:0;font-weight:600"></span></h3>
-      <div class="table-wrap">
-        <table class="data-table">
-          <thead><tr><th>ชื่อผู้จอง</th><th>ที่นั่ง</th><th>ย้ายไปที่</th><th></th></tr></thead>
-          <tbody id="adminBookings"></tbody>
-        </table>
-      </div>
-      <p class="muted hidden" id="bookingsEmpty">ยังไม่มีผู้จอง</p>
+      <p class="scroll-hint">↔ ปัดซ้าย-ขวาเพื่อดูผังที่นั่งทั้งหมด</p>
+      <div class="board-scroll"><div class="board" id="board" aria-label="แผนผังที่นั่ง"></div></div>
+      <p class="muted" id="boardHint" style="margin-top:10px"></p>
     </section>
   </main>
 
-  <footer>จองที่นั่งห้องเรียน · ข้อมูลอัปเดตแบบเรียลไทม์</footer>
+  <footer>จองที่นั่งห้องเรียน · ข้อมูลอัปเดตให้ทุกคนเห็นพร้อมกันแบบทันที</footer>
 </div>
+
+<!-- ========== Pop-up: จองที่นั่ง ========== -->
+<div class="modal-overlay hidden" id="bookingOverlay">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="bookingTitle">
+    <button class="modal-close" id="dismissBook" type="button" aria-label="ปิดหน้าต่างนี้"><svg class="icon"><use href="#i-close"></use></svg></button>
+    <h2 id="bookingTitle">จองที่นั่งนี้</h2>
+    <p id="chosenSeat" style="font-weight:700;color:var(--accent);font-size:1.05rem"></p>
+    <div id="nameWrap" class="field-group">
+      <label for="bookName">ชื่อของคุณ</label>
+      <input class="field" id="bookName" maxlength="80" autocomplete="name" placeholder="พิมพ์ชื่อจริงหรือชื่อเล่นที่เพื่อนจำได้">
+    </div>
+    <div class="row" style="margin-top:16px">
+      <button class="btn primary" id="confirmBook" type="button"><svg class="icon"><use href="#i-save"></use></svg><span>ยืนยันการจอง</span></button>
+      <button class="btn danger hidden" id="cancelBook" type="button"><svg class="icon"><use href="#i-trash"></use></svg><span>ยกเลิกที่นั่งนี้</span></button>
+      <button class="btn hidden" id="moveBook" type="button"><svg class="icon"><use href="#i-enter"></use></svg><span>ย้ายที่นั่ง</span></button>
+    </div>
+    
+  </div>
+</div>
+
+<!-- ========== Pop-up: จัดการห้อง ========== -->
+<div class="modal-overlay hidden" id="settingsOverlay">
+  <div class="modal-card wide" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <button class="modal-close" id="closeSettings" type="button" aria-label="ปิดหน้าต่างนี้"><svg class="icon"><use href="#i-close"></use></svg></button>
+    <h2 id="settingsTitle">จัดการห้อง</h2>
+    <p class="muted">ทุกคำสั่งที่เปลี่ยนข้อมูลต้องยืนยันด้วยรหัสผ่านผู้ดูแลที่ตั้งไว้ตอนสร้างห้อง</p>
+
+    <div class="field-group" style="max-width:260px">
+      <label for="adminPin">รหัสผ่านผู้ดูแล</label>
+      <input class="field" id="adminPin" type="password" inputmode="numeric" autocomplete="off" placeholder="กรอกก่อนบันทึกหรือลบข้อมูล">
+    </div>
+
+    <h3 class="section-title">ข้อมูลห้อง</h3>
+    <div class="grid two">
+      <div class="field-group"><label for="editName">ชื่อห้อง</label><input class="field" id="editName" maxlength="100"></div>
+      <div class="field-group"><label for="editMax">จำกัดที่นั่งต่อคน</label><select class="field" id="editMax">
+        <option value="1">1 ที่ต่อคน</option><option value="2">2 ที่ต่อคน</option>
+        <option value="3">3 ที่ต่อคน</option><option value="0">ไม่จำกัด</option>
+      </select></div>
+      <div class="field-group"><label for="editOpen">เริ่มเปิดให้จอง</label><input class="field" id="editOpen" type="datetime-local"></div>
+      <div class="field-group"><label for="editClose">ปิดรับจอง</label><input class="field" id="editClose" type="datetime-local"></div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn primary" id="saveSettings" type="button"><svg class="icon"><use href="#i-save"></use></svg><span>บันทึกการตั้งค่า</span></button>
+      <button class="btn danger" id="deleteRoom" type="button"><svg class="icon"><use href="#i-trash"></use></svg><span>ลบห้องนี้ถาวร</span></button>
+    </div>
+
+    <h3 class="section-title">ผังที่นั่ง</h3>
+    <p class="muted">ต้องการเพิ่ม ลบ หรือย้ายตำแหน่งโต๊ะ? ปิดหน้าต่างนี้แล้วแก้ไขได้โดยตรงบนแผนผัง</p>
+    <button class="btn" id="openLayoutEditor" type="button"><svg class="icon"><use href="#i-settings"></use></svg><span>แก้ไขผังที่นั่ง</span></button>
+
+    <h3 class="section-title">รายชื่อผู้จอง <span id="bookingsCount" class="muted" style="text-transform:none;letter-spacing:0;font-weight:600"></span></h3>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>ชื่อผู้จอง</th><th>ที่นั่ง</th><th>ย้ายไปที่</th><th></th></tr></thead>
+        <tbody id="adminBookings"></tbody>
+      </table>
+    </div>
+    <p class="muted hidden" id="bookingsEmpty">ยังไม่มีผู้จอง</p>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="false"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -462,43 +666,60 @@ footer{ text-align:center; color:var(--muted); font-size:.78rem; margin:36px 0 0
 
   let room = null, bookings = [], channel = null, draft = null;
   let editing = false, selected = null, movingFrom = null, codeTimer = null;
-  let pollTimer = null;
+  let pollTimer = null, myHash = '', dragging = false;
 
+  // ---------- ธีมสี ----------
   const savedTheme = localStorage.getItem('seat-theme');
   const initialTheme = savedTheme ||
     (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   document.documentElement.dataset.theme = initialTheme;
+  const syncMeta = () => document.querySelector('meta[name=theme-color]').content =
+    getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+  syncMeta();
   $('themeBtn').onclick = () => {
     const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
     document.documentElement.dataset.theme = next;
     localStorage.setItem('seat-theme', next);
+    syncMeta();
   };
 
-  function token() {
-    let t = localStorage.getItem('seat-client-token');
-    if (!t) {
-      const bytes = crypto.getRandomValues(new Uint8Array(32));
-      t = Array.from(bytes, x => x.toString(16).padStart(2, '0')).join('');
-      localStorage.setItem('seat-client-token', t);
-    }
-    return t;
-  }
-  async function tokenHash() {
-    const bytes = new TextEncoder().encode(token());
-    const hash = await crypto.subtle.digest('SHA-256', bytes);
-    return Array.from(new Uint8Array(hash), x => x.toString(16).padStart(2, '0')).join('');
-  }
+  // ---------- Toast ----------
   function notice(message, error = false) {
-    $('notice').textContent = message;
-    $('notice').classList.toggle('error', error);
+    if (!message) return;
+    const el = document.createElement('div');
+    el.className = 'toast' + (error ? ' error' : '');
+    el.innerHTML = `<span class="toast-icon">${error ? '⚠' : 'ⓘ'}</span><span class="msg">${enc(message)}</span><button class="toast-close" type="button" aria-label="ปิดการแจ้งเตือน">×</button>`;
+    $('toastContainer').appendChild(el);
+    const remove = () => { el.classList.add('leaving'); setTimeout(() => el.remove(), 200); };
+    el.querySelector('.toast-close').onclick = remove;
+    setTimeout(remove, 4200);
   }
   function fail(error) {
     console.error(error);
-    const message = error?.message || 'เกิดข้อผิดพลาด กรุณาลองใหม่';
+    const message = error?.message || 'เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่อีกครั้ง';
     notice(message.includes('duplicate key') || error?.code === '23505'
-      ? 'มีคนจองที่นั่งนี้ตัดหน้าแล้ว กรุณาเลือกที่อื่น'
+      ? 'มีคนจองที่นั่งนี้ไปก่อนหน้าคุณเพียงเสี้ยววินาที กรุณาเลือกที่นั่งอื่น'
       : message, true);
   }
+
+  // ---------- Modal ----------
+  function openModal(id) {
+    $(id).classList.remove('hidden');
+    document.body.classList.add('modal-open');
+  }
+  function closeModal(id) {
+    $(id).classList.add('hidden');
+    if (![...document.querySelectorAll('.modal-overlay')].some(ov => !ov.classList.contains('hidden')))
+      document.body.classList.remove('modal-open');
+  }
+  document.querySelectorAll('.modal-overlay').forEach(ov => {
+    ov.addEventListener('click', e => { if (e.target === ov) closeModal(ov.id); });
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape')
+      document.querySelectorAll('.modal-overlay:not(.hidden)').forEach(ov => closeModal(ov.id));
+  });
+
   function windowOpen() {
     const now = Date.now();
     return room && now >= new Date(room.open_at).getTime() &&
@@ -511,18 +732,83 @@ footer{ text-align:center; color:var(--muted); font-size:.78rem; margin:36px 0 0
       for (let c = 0; c < cols; c++)
         seats.push({
           id:uid(), label:`${r + 1}-${c + 1}`, enabled:true,
-          x:Math.round((c + 1) * 100 / (cols + 1)),
-          y:Math.round((r + 1) * 100 / (rows + 1))
+          x:cols === 1 ? 50 : Math.round(12 + c * 76 / (cols - 1)),
+          y:rows === 1 ? 56 : Math.round(26 + r * 66 / (rows - 1))
         });
     return {seats, markers:[]};
   }
-  function resetPanels() {
-    $('entry').classList.remove('hidden');
-    $('createPanel').classList.add('hidden');
-    $('roomPanel').classList.add('hidden');
-    $('bookingPanel').classList.add('hidden');
-    $('adminPanel').classList.add('hidden');
+  function addSeatTo(layout, rerender) {
+    const n = layout.seats.length + 1;
+    layout.seats.push({id:uid(), label:String(n), enabled:true, x:50, y:50});
+    rerender();
   }
+  function seatStatusInfo(seat, booking) {
+    if (!seat.enabled) return {cls:'off', text:'ปิดใช้งาน'};
+    if (booking) return {cls: booking.client_token === myHash ? 'mine' : 'booked',
+      text: booking.name + (booking.client_token === myHash ? ' (ฉัน)' : '')};
+    return {cls:'free', text:'ว่าง'};
+  }
+  function buildSeatButton(seat, info, selectedId) {
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'seat ' + info.cls + (selectedId === seat.id ? ' selected' : '');
+    el.style.left = seat.x + '%'; el.style.top = seat.y + '%';
+    el.setAttribute('aria-label', `${seatLabel(seat)} ${info.text}`);
+    el.title = `${seatLabel(seat)} · ${info.text}`;
+    el.innerHTML = `<span class="seat-label">${enc(seatLabel(seat))}</span><span class="seat-status">${enc(info.text)}</span>`;
+    return el;
+  }
+  function buildMarkerEl(marker, editableTag, selectedId) {
+    const el = document.createElement(editableTag ? 'button' : 'div');
+    if (editableTag) el.type = 'button';
+    el.className = 'marker ' + (markerClass[marker.type] || '') + (selectedId === marker.id ? ' selected' : '');
+    el.style.left = marker.x + '%'; el.style.top = marker.y + '%';
+    el.innerHTML = `<svg class="icon"><use href="#${markerIcons[marker.type] || 'i-board'}"></use></svg><span>${enc(marker.type)}</span>`;
+    return el;
+  }
+  function attachDrag(el, item, after) {
+    after = after || render;
+    let start = null, dragged = false;
+    el.addEventListener('pointerdown', e => {
+      start = {x:e.clientX, y:e.clientY};
+      dragged = false;
+      el.setPointerCapture(e.pointerId);
+    });
+    el.addEventListener('pointermove', e => {
+      if (!start) return;
+      if (Math.hypot(e.clientX - start.x, e.clientY - start.y) < 4 && !dragged) return;
+      dragged = true; dragging = true;
+      const board = el.parentElement;
+      const rect = board.getBoundingClientRect();
+      item.x = Math.round(Math.max(5, Math.min(95, (e.clientX - rect.left) / rect.width * 100)));
+      item.y = Math.round(Math.max(7, Math.min(93, (e.clientY - rect.top) / rect.height * 100)));
+      el.style.left = item.x + '%';
+      el.style.top = item.y + '%';
+    });
+    const end = () => {
+      start = null; dragging = false;
+      if (dragged) { selected = item; setTimeout(after, 0); }
+    };
+    el.addEventListener('pointerup', end);
+    el.addEventListener('pointercancel', end);
+    el.addEventListener('click', e => {
+      if (dragged) { e.stopImmediatePropagation(); dragged = false; }
+    }, true);
+  }
+  function adminPin(fieldId) {
+    const pin = $(fieldId).value;
+    if (!/^[0-9]{6,12}$/.test(pin)) throw new Error('กรุณากรอกรหัสผ่านผู้ดูแลห้อง (6-12 หลัก) ให้ถูกต้อง');
+    return pin;
+  }
+
+  function showView(v) {
+    $('landing').classList.toggle('hidden', v === 'room');
+    $('hero').classList.toggle('hidden', v !== 'home');
+    $('optionGrid').classList.toggle('hidden', v !== 'home');
+    $('createPanel').classList.toggle('hidden', v !== 'create');
+    $('roomPanel').classList.toggle('hidden', v !== 'room');
+  }
+  function resetPanels() { showView('home'); document.title = 'จองที่นั่งห้องเรียน'; }
   function unsubscribe() {
     if (channel) db.removeChannel(channel);
     channel = null;
@@ -548,16 +834,13 @@ footer{ text-align:center; color:var(--muted); font-size:.78rem; margin:36px 0 0
         unsubscribe();
         room = null; resetPanels();
       }
-      notice('ไม่พบห้องนี้ หรือห้องหมดอายุและถูกลบแล้ว', true);
+      notice('ไม่พบห้องนี้ อาจพิมพ์รหัสผิด หรือห้องถูกลบไปแล้ว', true);
       return;
     }
     const changed = room?.id !== data.id;
     if (changed) unsubscribe();
     room = data;
-    if (!editing) draft = structuredClone(data.layout);
-    $('entry').classList.add('hidden');
-    $('createPanel').classList.add('hidden');
-    $('roomPanel').classList.remove('hidden');
+    showView('room');
     if (changed) {
       bookings = [];
       await loadBookings();
@@ -574,46 +857,51 @@ footer{ text-align:center; color:var(--muted); font-size:.78rem; margin:36px 0 0
       }, 30000);
     }
     render();
-    if (!silent) notice('เข้าห้องแล้ว');
+    if (!silent) notice('เข้าห้องเรียบร้อยแล้ว');
+  }
+  function fitBoard(board, layout) {
+    const need = (key, size) => {
+      const v = [...new Set(layout.seats.map(i => i[key]))].sort((a, b) => a - b);
+      let m = 100;
+      for (let i = 1; i < v.length; i++) if (v[i] - v[i - 1] >= 3) m = Math.min(m, v[i] - v[i - 1]);
+      return Math.min(1400, size / m * 100);
+    };
+    board.style.minWidth = Math.max(320, need('x', 76)) + 'px';
+    board.style.minHeight = Math.max(300, need('y', 68)) + 'px';
+    const sc = board.closest('.board-scroll'), hint = sc.previousElementSibling;
+    requestAnimationFrame(() => hint.classList.toggle('show', sc.scrollWidth > sc.clientWidth + 2));
   }
   function render() {
-    if (!room) return;
+    if (!room || dragging) return;
+    document.title = room.name + ' · จองที่นั่ง';
     $('displayName').textContent = room.name;
     $('roomLinkField').value = roomLink(room.code);
     $('roomMeta').innerHTML =
-      `<span class="meta-chip">เลขห้อง ${enc(room.code)}</span>` +
-      `<span class="meta-chip">${room.max_seats_per_user === 0 ? 'จองได้ไม่จำกัด' : 'จองได้ ' + enc(room.max_seats_per_user) + ' ที่/เบราว์เซอร์'}</span>`;
+      `<span class="meta-chip">รหัสห้อง ${enc(room.code)}</span>` +
+      `<span class="meta-chip">${room.max_seats_per_user === 0 ? 'จองได้ไม่จำกัด' : 'จองได้ ' + enc(room.max_seats_per_user) + ' ที่/คน'}</span>`;
     const open = windowOpen();
     $('windowStatus').innerHTML =
-      `<span class="status-pill ${open ? 'open' : 'closed'}">${open ? 'เปิดรับจองอยู่' : 'ไม่อยู่ในช่วงเปิดจอง'}</span>` +
+      `<span class="status-pill ${open ? 'open' : 'closed'}">${open ? 'เปิดให้จองอยู่ตอนนี้' : (Date.now() < new Date(room.open_at).getTime() ? 'ยังไม่ถึงเวลาเปิดจอง' : 'ปิดรับจองแล้ว')}</span>` +
       `<span class="muted">${enc(prettyDate(room.open_at))} – ${enc(prettyDate(room.close_at))}</span>`;
     $('boardHint').textContent = editing
-      ? 'โหมดจัดผัง: ลากเพื่อย้ายตำแหน่ง และกดบันทึกเมื่อเสร็จ'
-      : (movingFrom ? 'เลือกที่นั่งว่างเพื่อย้ายการจอง หรือแตะที่นั่งเดิมเพื่อยกเลิกการย้าย'
-                    : 'แตะที่นั่งว่างเพื่อจอง');
+      ? 'โหมดแก้ไขผัง: ลากค้างเพื่อย้ายตำแหน่งโต๊ะหรือป้าย แตะเพื่อเลือก แล้วกด "บันทึกผัง" เมื่อเสร็จ'
+      : (movingFrom ? 'เลือกที่นั่งว่างที่ต้องการย้ายไป หรือแตะที่นั่งเดิมอีกครั้งเพื่อยกเลิก'
+                    : 'แตะที่นั่งว่างเพื่อเลือกจอง');
     const map = new Map(bookings.map(b => [b.seat_id, b]));
-    const layout = editing ? draft : room.layout;
+    const layout = (editing && draft) ? draft : room.layout;
     const board = $('board');
     board.replaceChildren();
+    board.classList.toggle('editing', editing);
+    fitBoard(board, layout);
+    $('boardHint').classList.toggle('moving', !!movingFrom && !editing);
     const counts = {free:0, booked:0, mine:0, off:0};
     for (const seat of layout.seats) {
       const b = map.get(seat.id);
-      let state;
-      if (!seat.enabled) { state = 'off'; counts.off++; }
-      else if (b) { state = b.client_token === myHash ? 'mine' : 'booked'; counts[state]++; }
-      else { state = 'free'; counts.free++; }
-      const el = document.createElement('button');
-      el.type = 'button';
-      el.className = 'seat ' + state + (selected?.id === seat.id ? ' selected' : '');
-      el.style.left = `${seat.x}%`;
-      el.style.top = `${seat.y}%`;
-      const statusText = !seat.enabled ? 'ปิดใช้งาน' :
-        b ? `${b.name}${b.client_token === myHash ? ' (ฉัน)' : ''}` : 'ว่าง';
-      el.setAttribute('aria-label', `${seatLabel(seat)} ${statusText}`);
-      el.innerHTML = `<span class="seat-label">${enc(seatLabel(seat))}</span>` +
-        `<span class="seat-status">${enc(statusText)}</span>`;
+      const info = seatStatusInfo(seat, b);
+      counts[info.cls]++;
+      const el = buildSeatButton(seat, info, selected?.id);
       el.onclick = () => chooseSeat(seat, b);
-      if (editing) attachDrag(el, seat);
+      if (editing) attachDrag(el, seat, render);
       board.appendChild(el);
     }
     $('countFree').textContent = counts.free;
@@ -621,17 +909,10 @@ footer{ text-align:center; color:var(--muted); font-size:.78rem; margin:36px 0 0
     $('countMine').textContent = counts.mine;
     $('countOff').textContent = counts.off;
     for (const marker of layout.markers) {
-      const el = document.createElement(editing ? 'button' : 'div');
-      if (editing) el.type = 'button';
-      el.className = 'marker ' + (markerClass[marker.type] || '') +
-        (selected?.id === marker.id ? ' selected' : '');
-      el.style.left = `${marker.x}%`;
-      el.style.top = `${marker.y}%`;
-      el.innerHTML = `<svg class="icon"><use href="#${markerIcons[marker.type] || 'i-board'}"></use></svg>` +
-        `<span>${enc(marker.type)}</span>`;
+      const el = buildMarkerEl(marker, editing, selected?.id);
       if (editing) {
         el.onclick = () => { selected = marker; render(); };
-        attachDrag(el, marker);
+        attachDrag(el, marker, render);
       }
       board.appendChild(el);
     }
@@ -639,94 +920,68 @@ footer{ text-align:center; color:var(--muted); font-size:.78rem; margin:36px 0 0
       const empty = document.createElement('p');
       empty.className = 'board-empty';
       empty.textContent = editing
-        ? 'ยังไม่มีผังที่นั่ง เริ่มเพิ่มโต๊ะหรือป้ายด้านล่างได้เลย'
+        ? 'ยังไม่มีผังที่นั่ง เริ่มเพิ่มโต๊ะหรือป้ายด้วยปุ่มด้านบนได้เลย'
         : 'ห้องนี้ยังไม่มีผังที่นั่ง';
       board.appendChild(empty);
     }
-    renderAdminBookings();
+    if (!$('settingsOverlay').classList.contains('hidden') && !$('adminBookings').contains(document.activeElement))
+      renderAdminBookings();
   }
-  let myHash = '';
-  function attachDrag(el, item) {
-    let start = null, dragged = false;
-    el.addEventListener('pointerdown', e => {
-      start = {x:e.clientX, y:e.clientY};
-      dragged = false;
-      el.setPointerCapture(e.pointerId);
-    });
-    el.addEventListener('pointermove', e => {
-      if (!start) return;
-      if (Math.hypot(e.clientX - start.x, e.clientY - start.y) < 4 && !dragged) return;
-      dragged = true;
-      const rect = $('board').getBoundingClientRect();
-      item.x = Math.round(Math.max(5, Math.min(95,
-        (e.clientX - rect.left) / rect.width * 100)));
-      item.y = Math.round(Math.max(7, Math.min(93,
-        (e.clientY - rect.top) / rect.height * 100)));
-      el.style.left = item.x + '%';
-      el.style.top = item.y + '%';
-    });
-    el.addEventListener('pointerup', () => {
-      start = null;
-      if (dragged) {
-        selected = item;
-        setTimeout(() => render(), 0);
-      }
-    });
-    el.addEventListener('click', e => {
-      if (dragged) { e.stopImmediatePropagation(); dragged = false; }
-    }, true);
-  }
+
   function chooseSeat(seat, b) {
     if (editing) { selected = seat; render(); return; }
-    if (!windowOpen()) return notice('ขณะนี้อยู่นอกช่วงเปิดจอง', true);
-    if (!seat.enabled) return notice('ที่นั่งนี้ปิดใช้งาน', true);
-    if (b && b.client_token !== myHash) return notice('ที่นั่งนี้มีผู้จองแล้ว', true);
+    if (!windowOpen()) return notice('ขณะนี้ไม่อยู่ในช่วงเวลาที่เปิดให้จอง', true);
+    if (!seat.enabled) return notice('ที่นั่งนี้ถูกปิดใช้งานอยู่ ไม่สามารถจองได้', true);
+    if (b && b.client_token !== myHash) return notice('มีคนจองที่นั่งนี้ไปแล้ว ลองเลือกที่นั่งอื่นดูนะ', true);
     if (movingFrom && !b) return moveMine(seat);
     if (b && b.client_token === myHash) {
-      if (movingFrom?.id === b.id) {
-        movingFrom = null; notice('ยกเลิกการเลือกย้ายที่');
-      } else {
-        movingFrom = b;
-        notice(`เลือกที่นั่งว่างเพื่อย้ายจาก ${seatLabel(seat)} หรือกดยกเลิกด้านล่าง`);
-      }
-      $('bookingPanel').classList.remove('hidden');
+      const moving = movingFrom?.id === b.id;
+      $('moveBook').classList.remove('hidden');
+      $('moveBook').querySelector('span').textContent = moving ? 'ยกเลิกการย้าย' : 'ย้ายที่นั่ง';
+      $('moveBook').onclick = () => {
+        movingFrom = moving ? null : b;
+        closeModal('bookingOverlay'); render();
+        if (!moving) notice('แตะที่นั่งว่างที่ต้องการย้ายไป');
+      };
       $('bookingTitle').textContent = 'ที่นั่งของฉัน';
-      $('chosenSeat').textContent = `${seatLabel(seat)} · ${b.name}`;
+      $('chosenSeat').textContent = `${seatLabel(seat)} · จองในชื่อ ${b.name}`;
       $('nameWrap').classList.add('hidden');
       $('confirmBook').classList.add('hidden');
       $('cancelBook').classList.remove('hidden');
       $('cancelBook').onclick = () => cancelMine(b);
-      render();
+      openModal('bookingOverlay');
       return;
     }
-    $('bookingPanel').classList.remove('hidden');
-    $('bookingTitle').textContent = 'จองที่นั่ง';
+    $('bookingTitle').textContent = 'จองที่นั่งนี้';
     $('chosenSeat').textContent = seatLabel(seat);
     $('nameWrap').classList.remove('hidden');
     $('confirmBook').classList.remove('hidden');
     $('cancelBook').classList.add('hidden');
+    $('moveBook').classList.add('hidden');
     const existing = bookings.find(x => x.client_token === myHash);
-    if (existing) $('bookName').value = existing.name;
+    $('bookName').value = existing?.name || localStorage.getItem('seat-name') || '';
     $('confirmBook').onclick = () => reserve(seat);
-    $('bookName').focus();
+    openModal('bookingOverlay');
+    setTimeout(() => $('bookName').focus(), 60);
   }
   async function reserve(seat) {
     const name = $('bookName').value.trim();
-    if (!name) return notice('กรุณากรอกชื่อผู้จอง', true);
+    if (!name) return notice('กรุณาพิมพ์ชื่อของคุณก่อนกดยืนยัน', true);
     setBusy($('confirmBook'), true);
     try {
       const {error} = await db.rpc('book_seat', {
         p_room_id:room.id, p_seat_id:seat.id, p_name:name, p_token:token()
       });
       if (error) throw error;
-      $('bookingPanel').classList.add('hidden');
-      notice('จองที่นั่งสำเร็จ');
+      localStorage.setItem('seat-name', name);
+      closeModal('bookingOverlay');
+      notice('จองที่นั่งเรียบร้อยแล้ว 🎉');
       await loadBookings();
     } catch (e) { fail(e); await loadBookings(); }
     finally { setBusy($('confirmBook'), false); }
   }
   async function cancelMine(b) {
-    if (!confirm(`ยกเลิกที่นั่งของ ${b.name}?`)) return;
+    if (!confirm(`ต้องการยกเลิกที่นั่งของ ${b.name} ใช่หรือไม่?`)) return;
     setBusy($('cancelBook'), true);
     try {
       const {error} = await db.rpc('owner_booking', {
@@ -734,7 +989,7 @@ footer{ text-align:center; color:var(--muted); font-size:.78rem; margin:36px 0 0
       });
       if (error) throw error;
       movingFrom = null;
-      $('bookingPanel').classList.add('hidden');
+      closeModal('bookingOverlay');
       notice('ยกเลิกการจองแล้ว');
       await loadBookings();
     } catch (e) { fail(e); await loadBookings(); }
@@ -742,22 +997,38 @@ footer{ text-align:center; color:var(--muted); font-size:.78rem; margin:36px 0 0
   }
   async function moveMine(seat) {
     const old = movingFrom;
-    if (!old || !confirm(`ย้ายการจองไปที่ ${seatLabel(seat)}?`)) return;
+    if (!old || !confirm(`ต้องการย้ายที่นั่งของคุณไปที่ ${seatLabel(seat)} ใช่หรือไม่?`)) return;
     try {
       const {error} = await db.rpc('owner_booking', {
         p_booking_id:old.id, p_token:token(), p_action:'move', p_seat_id:seat.id
       });
       if (error) throw error;
       movingFrom = null;
-      $('bookingPanel').classList.add('hidden');
-      notice('ย้ายที่นั่งสำเร็จ');
+      closeModal('bookingOverlay');
+      notice('ย้ายที่นั่งเรียบร้อยแล้ว');
       await loadBookings();
     } catch (e) { fail(e); await loadBookings(); }
   }
 
+  function token() {
+    let t = localStorage.getItem('seat-client-token');
+    if (!t) {
+      const bytes = crypto.getRandomValues(new Uint8Array(32));
+      t = Array.from(bytes, x => x.toString(16).padStart(2, '0')).join('');
+      localStorage.setItem('seat-client-token', t);
+    }
+    return t;
+  }
+  async function tokenHash() {
+    const bytes = new TextEncoder().encode(token());
+    const hash = await crypto.subtle.digest('SHA-256', bytes);
+    return Array.from(new Uint8Array(hash), x => x.toString(16).padStart(2, '0')).join('');
+  }
+
+  // ---------- หน้าแรก: เข้าห้อง ----------
   $('joinBtn').onclick = async () => {
     const code = $('joinCode').value.trim();
-    if (!/^[0-9]{4,6}$/.test(code)) return notice('เลขห้องต้องเป็นตัวเลข 4–6 หลัก', true);
+    if (!/^[0-9]{4,6}$/.test(code)) return notice('กรุณากรอกรหัสห้องเป็นตัวเลข 4-6 หลัก', true);
     editing = false;
     selected = movingFrom = null;
     setBusy($('joinBtn'), true);
@@ -766,64 +1037,147 @@ footer{ text-align:center; color:var(--muted); font-size:.78rem; margin:36px 0 0
       if (room?.code === code) history.replaceState(null, '', roomLink(code));
     } finally { setBusy($('joinBtn'), false); }
   };
-  $('joinCode').addEventListener('keydown', e => {
-    if (e.key === 'Enter') $('joinBtn').click();
-  });
-  $('newBtn').onclick = () => $('createPanel').classList.remove('hidden');
-  $('cancelCreate').onclick = () => $('createPanel').classList.add('hidden');
-  $('backBtn').onclick = () => {
-    unsubscribe(); room = null; editing = false; selected = movingFrom = null;
-    history.replaceState(null, '', location.pathname);
-    resetPanels(); notice('');
+  $('joinCode').addEventListener('keydown', e => { if (e.key === 'Enter') $('joinBtn').click(); });
+
+  // ---------- Wizard สร้างห้อง ----------
+  function showStep(step) {
+    $('createStep1').classList.toggle('hidden', step !== 1);
+    $('createStep2').classList.toggle('hidden', step !== 2);
+  }
+  $('newBtn').onclick = () => {
+    showView('create'); showStep(1);
+    if (!$('openAt').value) {
+      const n = Date.now();
+      $('openAt').value = localDate(new Date(n).toISOString());
+      $('closeAt').value = localDate(new Date(n + 7 * 864e5).toISOString());
+    }
+    window.scrollTo({top:0});
+  };
+  $('cancelCreate').onclick = () => {
+    showView('home'); draft = null; selected = null;
+    showStep(1);
   };
   $('roomCode').addEventListener('input', () => {
     clearTimeout(codeTimer);
     const code = $('roomCode').value.trim();
     $('codeStatus').textContent = /^[0-9]{4,6}$/.test(code)
-      ? 'กำลังตรวจสอบ…' : 'ต้องเป็นตัวเลข 4–6 หลัก';
+      ? 'กำลังตรวจสอบ…' : 'กรุณากรอกตัวเลข 4-6 หลัก';
     if (!/^[0-9]{4,6}$/.test(code)) return;
     codeTimer = setTimeout(async () => {
       const {data, error} = await db.from('rooms_public')
         .select('code').eq('code', code).maybeSingle();
       if ($('roomCode').value.trim() !== code) return;
-      $('codeStatus').textContent = error ? 'ตรวจสอบไม่ได้ กรุณาลองอีกครั้ง' :
-        data ? 'เลขห้องนี้ถูกใช้แล้ว' : 'เลขห้องนี้ว่าง';
+      $('codeStatus').textContent = error ? 'ตรวจสอบไม่ได้ในขณะนี้ ลองใหม่อีกครั้ง' :
+        data ? 'รหัสห้องนี้มีคนใช้แล้ว ลองเปลี่ยนตัวเลขอื่น' : 'รหัสห้องนี้ใช้ได้ ✓';
     }, 350);
   });
-  $('createBtn').onclick = async () => {
-    const code = $('roomCode').value.trim(), name = $('roomName').value.trim();
+
+  function renderCreateBoard() {
+    const board = $('createBoard');
+    board.replaceChildren();
+    board.classList.add('editing');
+    fitBoard(board, draft);
+    for (const seat of draft.seats) {
+      const info = {cls: seat.enabled ? 'free' : 'off', text: seat.enabled ? 'ใช้งานอยู่' : 'ปิดใช้งาน'};
+      const el = buildSeatButton(seat, info, selected?.id);
+      el.onclick = () => { selected = seat; renderCreateBoard(); };
+      attachDrag(el, seat, renderCreateBoard);
+      board.appendChild(el);
+    }
+    for (const marker of draft.markers) {
+      const el = buildMarkerEl(marker, true, selected?.id);
+      el.onclick = () => { selected = marker; renderCreateBoard(); };
+      attachDrag(el, marker, renderCreateBoard);
+      board.appendChild(el);
+    }
+    if (!draft.seats.length && !draft.markers.length) {
+      const empty = document.createElement('p');
+      empty.className = 'board-empty';
+      empty.textContent = 'แตะปุ่ม "สร้างผังอัตโนมัติ" หรือ "+ โต๊ะ" ด้านบนเพื่อเริ่มจัดที่นั่ง';
+      board.appendChild(empty);
+    }
+    const enabledCount = draft.seats.filter(s => s.enabled).length;
+    $('seatCountHint').textContent = `ที่นั่งทั้งหมด ${draft.seats.length} ที่ (เปิดใช้งาน ${enabledCount} ที่)`;
+    $('publishRoom').disabled = enabledCount === 0;
+  }
+  $('toStep2').onclick = () => {
+    const name = $('roomName').value.trim();
+    const code = $('roomCode').value.trim();
     const pin = $('pinCreate').value;
-    const rows = Number($('rows').value), cols = Number($('cols').value);
-    if (!/^[0-9]{4,6}$/.test(code) || !name || !/^[0-9]{6,12}$/.test(pin))
-      return notice('กรุณากรอกชื่อ เลขห้อง และ PIN 6–12 หลักให้ถูกต้อง', true);
-    if (!Number.isInteger(rows) || !Number.isInteger(cols) ||
-        rows < 1 || rows > 12 || cols < 1 || cols > 12)
-      return notice('แถวและคอลัมน์ต้องอยู่ระหว่าง 1–12', true);
     const open = isoDate($('openAt').value), close = isoDate($('closeAt').value);
+    if (!/^[0-9]{4,6}$/.test(code) || !name || !/^[0-9]{6,12}$/.test(pin))
+      return notice('กรุณากรอกชื่อห้อง รหัสห้อง และรหัสผ่านผู้ดูแลให้ครบและถูกต้อง', true);
     if (!open || !close || new Date(close) <= new Date(open))
-      return notice('กรุณากำหนดเวลาเริ่มและสิ้นสุดให้ถูกต้อง', true);
-    setBusy($('createBtn'), true);
+      return notice('กรุณาระบุเวลาที่เปิด-ปิดให้จองให้ถูกต้อง (เวลาสิ้นสุดต้องอยู่หลังเวลาเริ่ม)', true);
+    if (!draft || (!draft.seats.length && !draft.markers.length))
+      draft = initialLayout(Number($('createRows').value) || 4, Number($('createCols').value) || 5);
+    selected = null;
+    showStep(2);
+    renderCreateBoard();
+    window.scrollTo({top:0});
+  };
+  $('backStep1').onclick = () => showStep(1);
+  $('createGenerate').onclick = () => {
+    const rows = Number($('createRows').value), cols = Number($('createCols').value);
+    if (!Number.isInteger(rows) || !Number.isInteger(cols) || rows < 1 || rows > 12 || cols < 1 || cols > 12)
+      return notice('จำนวนแถวและคอลัมน์ต้องอยู่ระหว่าง 1-12', true);
+    if (draft && draft.seats.length && !confirm('การสร้างผังใหม่จะลบโต๊ะที่จัดไว้ก่อนหน้า ต้องการดำเนินการต่อหรือไม่?')) return;
+    draft = initialLayout(rows, cols);
+    selected = null;
+    renderCreateBoard();
+  };
+  $('createAddSeat').onclick = () => addSeatTo(draft, renderCreateBoard);
+  $('createAddBoard').onclick = () => { draft.markers.push({id:uid(), type:'กระดาน', x:50, y:10}); renderCreateBoard(); };
+  $('createAddTeacher').onclick = () => { draft.markers.push({id:uid(), type:'โต๊ะครู', x:82, y:10}); renderCreateBoard(); };
+  $('createAddDoor').onclick = () => { draft.markers.push({id:uid(), type:'ประตู', x:10, y:10}); renderCreateBoard(); };
+  $('createToggleSeat').onclick = () => {
+    const seat = draft.seats.find(s => s.id === selected?.id);
+    if (!seat) return notice('แตะเลือกโต๊ะบนแผนผังก่อน แล้วค่อยกดปุ่มนี้', true);
+    seat.enabled = !seat.enabled; renderCreateBoard();
+  };
+  $('createRemoveItem').onclick = () => {
+    if (!selected) return notice('แตะเลือกโต๊ะหรือป้ายก่อน แล้วค่อยกดลบ', true);
+    draft.seats = draft.seats.filter(s => s.id !== selected.id);
+    draft.markers = draft.markers.filter(m => m.id !== selected.id);
+    selected = null; renderCreateBoard();
+  };
+  $('publishRoom').onclick = async () => {
+    if (!draft.seats.some(s => s.enabled))
+      return notice('กรุณาเพิ่มที่นั่งอย่างน้อย 1 ที่ก่อนเผยแพร่ห้อง', true);
+    const code = $('roomCode').value.trim(), name = $('roomName').value.trim(), pin = $('pinCreate').value;
+    const open = isoDate($('openAt').value), close = isoDate($('closeAt').value);
+    setBusy($('publishRoom'), true);
     try {
       const {error} = await db.rpc('create_room', {
-        p_code:code, p_name:name, p_pin:pin,
-        p_layout:initialLayout(rows, cols), p_open_at:open, p_close_at:close,
-        p_max_seats:Number($('maxSeats').value)
+        p_code:code, p_name:name, p_pin:pin, p_layout:draft,
+        p_open_at:open, p_close_at:close, p_max_seats:Number($('maxSeats').value)
       });
       if (error) throw error;
       $('pinCreate').value = '';
       await loadRoom(code);
       history.replaceState(null, '', roomLink(code));
-      notice('สร้างห้องแล้ว โปรดจำ Admin PIN ให้ดี');
+      notice('เผยแพร่ห้องเรียบร้อยแล้ว อย่าลืมจดรหัสผ่านผู้ดูแลไว้ให้ดี');
+      $('createPanel').classList.add('hidden');
+      draft = null;
     } catch (e) {
       fail(e);
-      if (e.code === '23505') $('codeStatus').textContent = 'เลขห้องนี้ถูกใช้แล้ว';
-    } finally { setBusy($('createBtn'), false); }
+      if (e.code === '23505') { $('codeStatus').textContent = 'รหัสห้องนี้มีคนใช้แล้ว ลองเปลี่ยนตัวเลขอื่น'; showStep(1); }
+    } finally { setBusy($('publishRoom'), false); }
+  };
+
+  // ---------- ปุ่มในหน้าห้อง ----------
+  $('backBtn').onclick = () => {
+    unsubscribe(); room = null; editing = false; selected = movingFrom = null; draft = null;
+    $('layoutToolbar').classList.add('hidden');
+    closeModal('bookingOverlay'); closeModal('settingsOverlay');
+    history.replaceState(null, '', location.pathname);
+    resetPanels();
   };
   $('copyBtn').onclick = async () => {
     try {
       await navigator.clipboard.writeText(roomLink(room.code));
-      notice('คัดลอกลิงก์แล้ว');
-    } catch { notice('คัดลอกไม่ได้ กรุณาคัดลอกจากช่องลิงก์ด้านบน', true); }
+      notice('คัดลอกลิงก์ห้องเรียบร้อยแล้ว ส่งให้เพื่อนได้เลย');
+    } catch { notice('คัดลอกอัตโนมัติไม่ได้ กรุณาเลือกข้อความในช่องลิงก์ด้วยตนเอง', true); }
   };
   $('qrBtn').onclick = () => {
     $('qrWrap').classList.toggle('hidden');
@@ -831,102 +1185,111 @@ footer{ text-align:center; color:var(--muted); font-size:.78rem; margin:36px 0 0
     if (!$('qrWrap').classList.contains('hidden'))
       new QRCode($('qr'), {text:roomLink(room.code), width:180, height:180});
   };
-  $('dismissBook').onclick = () => $('bookingPanel').classList.add('hidden');
+  $('dismissBook').onclick = () => closeModal('bookingOverlay');
 
+  // ---------- จัดการห้อง (modal) ----------
   $('editBtn').onclick = () => {
-    const panel = $('adminPanel');
-    const opening = panel.classList.contains('hidden');
-    panel.classList.toggle('hidden');
-    editing = opening;
-    selected = null;
-    draft = structuredClone(room.layout);
-    if (opening) {
-      $('editName').value = room.name;
-      $('editMax').value = room.max_seats_per_user;
-      $('editOpen').value = localDate(room.open_at);
-      $('editClose').value = localDate(room.close_at);
-      $('bookingPanel').classList.add('hidden');
-    }
-    render();
+    $('editName').value = room.name;
+    $('editMax').value = room.max_seats_per_user;
+    $('editOpen').value = localDate(room.open_at);
+    $('editClose').value = localDate(room.close_at);
+    renderAdminBookings();
+    openModal('settingsOverlay');
   };
-  function addMarker(type) {
-    draft.markers.push({id:uid(), type, x:50, y:15});
-    render();
-  }
-  $('addSeat').onclick = () => {
-    const n = draft.seats.length + 1;
-    draft.seats.push({id:uid(), label:String(n), enabled:true, x:50, y:50});
-    render();
-  };
-  $('addBoard').onclick = () => addMarker('กระดาน');
-  $('addTeacher').onclick = () => addMarker('โต๊ะครู');
-  $('addDoor').onclick = () => addMarker('ประตู');
-  $('toggleSeat').onclick = () => {
-    const seat = draft.seats.find(s => s.id === selected?.id);
-    if (!seat) return notice('เลือกโต๊ะก่อน', true);
-    if (seat.enabled && bookings.some(b => b.seat_id === seat.id))
-      return notice('มีผู้จองโต๊ะนี้อยู่ กรุณาจัดการการจองก่อน', true);
-    seat.enabled = !seat.enabled;
-    render();
-  };
-  $('removeItem').onclick = () => {
-    if (!selected) return notice('เลือกโต๊ะหรือป้ายก่อน', true);
-    if (bookings.some(b => b.seat_id === selected.id))
-      return notice('มีผู้จองโต๊ะนี้อยู่ กรุณาจัดการการจองก่อน', true);
-    draft.seats = draft.seats.filter(s => s.id !== selected.id);
-    draft.markers = draft.markers.filter(m => m.id !== selected.id);
-    selected = null;
-    render();
-  };
-  function adminPin() {
-    const pin = $('adminPin').value;
-    if (!/^[0-9]{6,12}$/.test(pin)) throw new Error('กรุณากรอก Admin PIN 6–12 หลัก');
-    return pin;
-  }
-  $('saveAdmin').onclick = async () => {
-    setBusy($('saveAdmin'), true);
+  $('closeSettings').onclick = () => closeModal('settingsOverlay');
+  $('saveSettings').onclick = async () => {
+    setBusy($('saveSettings'), true);
     try {
       const open = isoDate($('editOpen').value), close = isoDate($('editClose').value);
       if (!open || !close || new Date(close) <= new Date(open))
-        throw new Error('ช่วงเวลาเปิดจองไม่ถูกต้อง');
+        throw new Error('ช่วงเวลาที่เปิดให้จองไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง');
       const {error} = await db.rpc('admin_update_room', {
-        p_room_id:room.id, p_pin:adminPin(), p_name:$('editName').value.trim(),
-        p_layout:draft, p_open_at:open, p_close_at:close,
+        p_room_id:room.id, p_pin:adminPin('adminPin'), p_name:$('editName').value.trim(),
+        p_layout:room.layout, p_open_at:open, p_close_at:close,
         p_max_seats:Number($('editMax').value)
       });
       if (error) throw error;
-      editing = false; selected = null;
-      $('adminPanel').classList.add('hidden');
       $('adminPin').value = '';
       await loadRoom(room.code);
-      notice('บันทึกห้องแล้ว');
-    } catch (e) { fail(e); }
-    finally { setBusy($('saveAdmin'), false); }
+      notice('บันทึกการตั้งค่าห้องเรียบร้อยแล้ว');
+      closeModal('settingsOverlay');
+    } catch (e) { fail(e); } finally { setBusy($('saveSettings'), false); }
   };
   $('deleteRoom').onclick = async () => {
     let pin;
-    try { pin = adminPin(); } catch (e) { return fail(e); }
-    if (!confirm('ลบห้องและการจองทั้งหมดอย่างถาวร?')) return;
+    try { pin = adminPin('adminPin'); } catch (e) { return fail(e); }
+    if (!confirm('ต้องการลบห้องนี้และข้อมูลการจองทั้งหมดอย่างถาวรใช่หรือไม่?')) return;
     setBusy($('deleteRoom'), true);
     try {
-      const {error} = await db.rpc('admin_delete_room', {
-        p_room_id:room.id, p_pin:pin
+      const {error} = await db.rpc('admin_delete_room', { p_room_id:room.id, p_pin:pin });
+      if (error) throw error;
+      closeModal('settingsOverlay');
+      $('backBtn').click();
+      notice('ลบห้องเรียบร้อยแล้ว');
+    } catch (e) { fail(e); } finally { setBusy($('deleteRoom'), false); }
+  };
+
+  // ---------- โหมดแก้ไขผัง (ลอยเหนือบอร์ด ไม่ใช่ pop-up เพราะต้องเห็นผังขณะลาก) ----------
+  $('openLayoutEditor').onclick = () => {
+    closeModal('settingsOverlay');
+    editing = true; selected = null; movingFrom = null;
+    draft = structuredClone(room.layout);
+    $('layoutToolbar').classList.remove('hidden');
+    render();
+    $('layoutToolbar').scrollIntoView({behavior:'smooth', block:'center'});
+    notice('โหมดแก้ไขผัง: ลากโต๊ะหรือป้ายบนแผนผังด้านล่างเพื่อจัดตำแหน่งได้เลย');
+  };
+  $('cancelLayoutEdit').onclick = () => {
+    editing = false; selected = null; draft = null;
+    $('layoutToolbar').classList.add('hidden');
+    $('layoutPin').value = '';
+    render();
+  };
+  $('addSeat').onclick = () => addSeatTo(draft, render);
+  $('addBoard').onclick = () => { draft.markers.push({id:uid(), type:'กระดาน', x:50, y:10}); render(); };
+  $('addTeacher').onclick = () => { draft.markers.push({id:uid(), type:'โต๊ะครู', x:82, y:10}); render(); };
+  $('addDoor').onclick = () => { draft.markers.push({id:uid(), type:'ประตู', x:10, y:10}); render(); };
+  $('toggleSeat').onclick = () => {
+    const seat = draft.seats.find(s => s.id === selected?.id);
+    if (!seat) return notice('แตะเลือกโต๊ะบนแผนผังก่อน แล้วค่อยกดปุ่มนี้', true);
+    if (seat.enabled && bookings.some(b => b.seat_id === seat.id))
+      return notice('ที่นั่งนี้มีคนจองอยู่ กรุณาจัดการการจองก่อนปิดใช้งาน', true);
+    seat.enabled = !seat.enabled; render();
+  };
+  $('removeItem').onclick = () => {
+    if (!selected) return notice('แตะเลือกโต๊ะหรือป้ายก่อน แล้วค่อยกดลบ', true);
+    if (bookings.some(b => b.seat_id === selected.id))
+      return notice('ที่นั่งนี้มีคนจองอยู่ กรุณาจัดการการจองก่อนลบ', true);
+    draft.seats = draft.seats.filter(s => s.id !== selected.id);
+    draft.markers = draft.markers.filter(m => m.id !== selected.id);
+    selected = null; render();
+  };
+  $('saveLayout').onclick = async () => {
+    setBusy($('saveLayout'), true);
+    try {
+      const {error} = await db.rpc('admin_update_room', {
+        p_room_id:room.id, p_pin:adminPin('layoutPin'), p_name:room.name,
+        p_layout:draft, p_open_at:room.open_at, p_close_at:room.close_at,
+        p_max_seats:room.max_seats_per_user
       });
       if (error) throw error;
-      $('backBtn').click();
-      notice('ลบห้องแล้ว');
-    } catch (e) { fail(e); }
-    finally { setBusy($('deleteRoom'), false); }
+      $('layoutPin').value = '';
+      editing = false; selected = null;
+      $('layoutToolbar').classList.add('hidden');
+      await loadRoom(room.code);
+      notice('บันทึกผังที่นั่งเรียบร้อยแล้ว');
+    } catch (e) { fail(e); } finally { setBusy($('saveLayout'), false); }
   };
+
   function renderAdminBookings() {
-    if (!room || !editing) return;
+    if (!room) return;
     const tbody = $('adminBookings');
     tbody.replaceChildren();
     $('bookingsCount').textContent = bookings.length ? `(${bookings.length} คน)` : '';
     $('bookingsEmpty').classList.toggle('hidden', bookings.length > 0);
     if (!bookings.length) return;
     for (const b of bookings) {
-      const seat = (draft?.seats || []).find(s => s.id === b.seat_id);
+      const seat = (room.layout.seats || []).find(s => s.id === b.seat_id);
       const tr = document.createElement('tr');
 
       const nameTd = document.createElement('td');
@@ -937,22 +1300,20 @@ footer{ text-align:center; color:var(--muted); font-size:.78rem; margin:36px 0 0
       const moveTd = document.createElement('td');
       const move = document.createElement('select');
       move.className = 'field';
-      const placeholder = new Option('ย้ายไปที่…', '');
-      move.add(placeholder);
-      for (const s of draft.seats.filter(s =>
-        s.enabled && s.id !== b.seat_id &&
-        !bookings.some(x => x.seat_id === s.id)))
+      move.add(new Option('ย้ายไปที่…', ''));
+      for (const s of room.layout.seats.filter(s =>
+        s.enabled && s.id !== b.seat_id && !bookings.some(x => x.seat_id === s.id)))
         move.add(new Option(s.label, s.id));
       move.onchange = async () => {
         if (!move.value) return;
         move.disabled = true;
         try {
           const {error} = await db.rpc('admin_booking', {
-            p_booking_id:b.id, p_pin:adminPin(),
+            p_booking_id:b.id, p_pin:adminPin('adminPin'),
             p_action:'move', p_seat_id:move.value
           });
           if (error) throw error;
-          notice('ย้ายผู้จองแล้ว');
+          notice('ย้ายที่นั่งผู้จองเรียบร้อยแล้ว');
           await loadBookings();
         } catch (e) { fail(e); move.value = ''; move.disabled = false; }
       };
@@ -964,15 +1325,15 @@ footer{ text-align:center; color:var(--muted); font-size:.78rem; margin:36px 0 0
       del.innerHTML = '<svg class="icon"><use href="#i-trash"></use></svg><span>ลบ</span>';
       del.onclick = async () => {
         let pin;
-        try { pin = adminPin(); } catch (e) { return fail(e); }
-        if (!confirm(`ลบการจองของ ${b.name}?`)) return;
+        try { pin = adminPin('adminPin'); } catch (e) { return fail(e); }
+        if (!confirm(`ต้องการลบการจองของ ${b.name} ใช่หรือไม่?`)) return;
         setBusy(del, true);
         try {
           const {error} = await db.rpc('admin_booking', {
             p_booking_id:b.id, p_pin:pin, p_action:'delete', p_seat_id:null
           });
           if (error) throw error;
-          notice('ลบการจองแล้ว');
+          notice('ลบการจองเรียบร้อยแล้ว');
           await loadBookings();
         } catch (e) { fail(e); setBusy(del, false); }
       };
@@ -982,6 +1343,11 @@ footer{ text-align:center; color:var(--muted); font-size:.78rem; margin:36px 0 0
       tbody.appendChild(tr);
     }
   }
+
+  $('bookName').addEventListener('keydown', e => { if (e.key === 'Enter') $('confirmBook').click(); });
+  for (const id of ['joinCode', 'roomCode'])
+    $(id).addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, ''); });
+
   (async () => {
     myHash = await tokenHash();
     const code = new URL(location.href).searchParams.get('room');
@@ -989,7 +1355,8 @@ footer{ text-align:center; color:var(--muted); font-size:.78rem; margin:36px 0 0
       $('joinCode').value = code;
       await loadRoom(code);
     }
-    setInterval(() => { if (room) render(); }, 15000);
+    setInterval(() => { if (room && !editing) render(); }, 15000);
+    addEventListener('resize', () => { if (room) { const l = editing && draft ? draft : room.layout; fitBoard($('board'), l); } });
   })();
 </script>
 </body>
