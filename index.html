@@ -533,6 +533,48 @@ a.btn{text-decoration:none}
 }
 @media(max-width:480px){#cancelLayoutEdit{width:50px;padding:0}#cancelLayoutEdit span{display:none}}
 @media(max-width:680px) and (max-height:700px){#createStep2 .toolbar,.layout-toolbar .toolbar{position:static}}
+
+/* ---------- v9: Canva-style layout editor ---------- */
+.board{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.board .seat,.board .marker{min-width:0;min-height:0;padding:0 2px;gap:0}
+.board .seat-label{font-size:clamp(9px,calc(var(--u,1px)*18),26px)}
+.board .seat-status{font-size:clamp(8px,calc(var(--u,1px)*12),17px)}
+.board .marker{font-size:clamp(9px,calc(var(--u,1px)*16),22px);gap:2px}
+.board .marker .icon{width:clamp(12px,calc(var(--u,1px)*22),30px);height:clamp(12px,calc(var(--u,1px)*22),30px)}
+.board .marker span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.board.dense .marker span{display:inline}
+.board .marker.type-text{border-style:dashed;border-color:var(--muted);background:transparent;color:var(--text)}
+.board.editing .seat,.board.editing .marker{touch-action:none;cursor:grab}
+.board.editing .seat:hover{transform:translate(-50%,-50%);box-shadow:var(--shadow-xs)}
+.board.editing .marker{overflow:visible}
+.guide{position:absolute;pointer-events:none;background:#f43f5e;z-index:8;display:none}
+.guide.v{width:1px;top:0;bottom:0}.guide.h{height:1px;left:0;right:0}
+.marq{position:absolute;pointer-events:none;border:1px solid var(--accent);background:var(--accent-soft);z-index:9}
+.rz{position:absolute;right:-10px;bottom:-10px;width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--accent);cursor:nwse-resize;touch-action:none;z-index:7}
+.ed{position:sticky;top:calc(var(--hh,64px) + 6px);z-index:20;margin:10px 0;padding:8px 10px;background:color-mix(in srgb,var(--panel) 95%,transparent);
+  border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);backdrop-filter:blur(10px)}
+.layout-toolbar{display:block;position:sticky;top:calc(var(--hh,64px) + 6px);z-index:20;padding:0;border:0;background:none;box-shadow:none;margin:10px 0}
+.layout-toolbar .ed{position:static;margin:0}
+.ed .toolbar{position:static!important;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:0 0 8px!important;margin:0!important;background:none!important;border:0!important;box-shadow:none!important;align-items:center}
+.ed .toolbar::-webkit-scrollbar,.ed-ctx::-webkit-scrollbar{display:none}
+.ed .toolbar>*{flex:0 0 auto}
+@media(min-width:681px){.ed .toolbar{flex-wrap:wrap;overflow:visible}}
+.ed .btn.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.ed-pop{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--border)}
+.ed-pop .field{width:84px;min-height:42px}
+.ed-ctx{display:flex;align-items:center;gap:8px;min-height:52px;overflow-x:auto;scrollbar-width:none;border-top:1px solid var(--border);padding-top:8px}
+.ed-ctx>*{flex:0 0 auto}
+.ed-ctx .field{width:140px;min-height:42px}
+.ed-ctx .hint{flex:1 1 auto;font-size:.82rem;color:var(--muted);line-height:1.5}
+.ed-ctx .count{font-weight:700;font-size:.86rem}
+.ed-ctx .sz{display:flex;align-items:center;gap:6px;margin:0;font-size:.8rem;color:var(--muted)}
+.ed-ctx input[type=range]{width:96px;accent-color:var(--accent)}
+.save-bar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;gap:9px;align-items:center;justify-content:center;
+  padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:var(--panel);border-top:1px solid var(--border);box-shadow:0 -8px 24px -12px rgba(15,23,42,.3)}
+.save-bar .pin-field{max-width:220px;flex:1}
+.steps{display:flex;gap:8px;margin:0 0 16px}
+.steps span{flex:1;padding:8px 12px;border-radius:12px;background:var(--panel-alt);border:1px solid var(--border);font-weight:600;font-size:.84rem;color:var(--muted)}
+.steps span.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
 </style>
 </head>
 <body>
@@ -556,6 +598,20 @@ a.btn{text-decoration:none}
 <symbol id="i-trash" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></symbol>
 <symbol id="i-save" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
 <symbol id="i-close" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+<symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></symbol>
+<symbol id="i-redo" viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+<symbol id="i-text" viewBox="0 0 24 24"><polyline points="5 7 5 4 19 4 19 7"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="9" y1="20" x2="15" y2="20"/></symbol>
+<symbol id="i-magnet" viewBox="0 0 24 24"><path d="M5 3v8a7 7 0 0 0 14 0V3h-4v8a3 3 0 0 1-6 0V3z"/></symbol>
+<symbol id="i-multi" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></symbol>
+<symbol id="i-al" viewBox="0 0 24 24"><line x1="4" y1="3" x2="4" y2="21"/><rect x="7" y="6" width="12" height="4"/><rect x="7" y="14" width="8" height="4"/></symbol>
+<symbol id="i-ac" viewBox="0 0 24 24"><line x1="12" y1="3" x2="12" y2="21"/><rect x="5" y="6" width="14" height="4"/><rect x="8" y="14" width="8" height="4"/></symbol>
+<symbol id="i-ar" viewBox="0 0 24 24"><line x1="20" y1="3" x2="20" y2="21"/><rect x="5" y="6" width="12" height="4"/><rect x="9" y="14" width="8" height="4"/></symbol>
+<symbol id="i-at" viewBox="0 0 24 24"><line x1="3" y1="4" x2="21" y2="4"/><rect x="6" y="7" width="4" height="12"/><rect x="14" y="7" width="4" height="8"/></symbol>
+<symbol id="i-am" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><rect x="6" y="5" width="4" height="14"/><rect x="14" y="8" width="4" height="8"/></symbol>
+<symbol id="i-ab" viewBox="0 0 24 24"><line x1="3" y1="20" x2="21" y2="20"/><rect x="6" y="5" width="4" height="12"/><rect x="14" y="9" width="4" height="8"/></symbol>
+<symbol id="i-dh" viewBox="0 0 24 24"><line x1="4" y1="3" x2="4" y2="21"/><line x1="20" y1="3" x2="20" y2="21"/><rect x="9" y="7" width="6" height="10"/></symbol>
+<symbol id="i-dv" viewBox="0 0 24 24"><line x1="3" y1="4" x2="21" y2="4"/><line x1="3" y1="20" x2="21" y2="20"/><rect x="7" y="9" width="10" height="6"/></symbol>
 </defs>
 </svg>
 
@@ -603,6 +659,7 @@ a.btn{text-decoration:none}
       <div class="card-head"><h2>สร้างห้องใหม่</h2><p class="muted">ทำตาม 2 ขั้นตอนง่าย ๆ: กรอกข้อมูลห้อง แล้วจัดผังที่นั่งก่อนเผยแพร่</p></div>
 
       <div id="createStep1">
+        <div class="steps"><span class="on">1 · ข้อมูลห้อง</span><span>2 · จัดผังที่นั่ง</span></div>
         <h3 class="section-title">ข้อมูลห้อง</h3>
         <div class="grid two">
           <div class="field-group">
@@ -643,26 +700,9 @@ a.btn{text-decoration:none}
       </div>
 
       <div class="hidden" id="createStep2">
-        <h3 class="section-title">จัดผังที่นั่ง (ขั้นตอนบังคับ)</h3>
-        <p class="muted">แตะโต๊ะเพื่อเลือก แล้วแตะที่ว่างบนผังเพื่อย้ายไปวาง (หรือลากก็ได้) ต้องมีที่นั่งอย่างน้อย 1 ที่ จึงจะเผยแพร่ห้องได้</p>
-
-        <div class="row" style="margin-bottom:14px">
-          <input class="field" id="createRows" type="number" min="1" max="12" value="4" style="max-width:88px" aria-label="จำนวนแถว">
-          <span class="muted">แถว ×</span>
-          <input class="field" id="createCols" type="number" min="1" max="12" value="5" style="max-width:88px" aria-label="จำนวนคอลัมน์">
-          <span class="muted">คอลัมน์</span>
-          <button class="btn sm" id="createGenerate" type="button"><svg class="icon"><use href="#i-plus"></use></svg><span>สร้างผังอัตโนมัติ</span></button>
-        </div>
-
-        <div class="toolbar">
-          <button class="btn sm" id="createAddSeat" type="button"><svg class="icon"><use href="#i-seat"></use></svg><span>โต๊ะ</span></button>
-          <button class="btn sm" id="createAddBoard" type="button"><svg class="icon"><use href="#i-board"></use></svg><span>กระดาน</span></button>
-          <button class="btn sm" id="createAddTeacher" type="button"><svg class="icon"><use href="#i-desk"></use></svg><span>โต๊ะครู</span></button>
-          <button class="btn sm" id="createAddDoor" type="button"><svg class="icon"><use href="#i-door"></use></svg><span>ประตู</span></button>
-          <button class="btn sm" id="createToggleSeat" type="button"><svg class="icon"><use href="#i-toggle"></use></svg><span>เปิด/ปิดที่เลือก</span></button>
-          <button class="btn sm danger" id="createRemoveItem" type="button"><svg class="icon"><use href="#i-trash"></use></svg><span>ลบที่เลือก</span></button>
-          <span class="tool-sep"></span><div class="expand-group" role="group" aria-label="ขยายพื้นที่ผัง"><span class="expand-label">ขยายผัง</span><button class="btn sm icon-only" type="button" data-expand="top" aria-label="ขยายพื้นที่ด้านบน" title="ขยายพื้นที่ด้านบน"><svg class="icon rot-up"><use href="#i-back"></use></svg></button><button class="btn sm icon-only" type="button" data-expand="bottom" aria-label="ขยายพื้นที่ด้านล่าง" title="ขยายพื้นที่ด้านล่าง"><svg class="icon rot-down"><use href="#i-back"></use></svg></button><button class="btn sm icon-only" type="button" data-expand="left" aria-label="ขยายพื้นที่ด้านซ้าย" title="ขยายพื้นที่ด้านซ้าย"><svg class="icon "><use href="#i-back"></use></svg></button><button class="btn sm icon-only" type="button" data-expand="right" aria-label="ขยายพื้นที่ด้านขวา" title="ขยายพื้นที่ด้านขวา"><svg class="icon rot-right"><use href="#i-back"></use></svg></button><button class="btn sm" type="button" data-expand="trim" title="ตัดพื้นที่ว่างรอบผังออก"><span>จัดพอดี</span></button></div>
-        </div>
+        <div class="steps"><span>1 · ข้อมูลห้อง</span><span class="on">2 · จัดผังที่นั่ง</span></div>
+        <p class="muted">จัดโต๊ะให้เหมือนห้องจริง: ลากเพื่อย้าย ใช้แถบเครื่องมือเพื่อเพิ่ม จัดแนว หรือขยายผัง (ต้องมีที่นั่งอย่างน้อย 1 ที่จึงจะเผยแพร่ได้)</p>
+        <div id="createEd"></div>
 
         <div class="zoom-bar" data-zoom="createBoard"><button class="btn sm icon-only" type="button" data-z="-1" aria-label="ย่อผัง">−</button><output>100%</output><button class="btn sm icon-only" type="button" data-z="1" aria-label="ซูมผังเข้า">+</button><span class="zhint">ซูมให้แตะง่ายขึ้น แล้วปัดเลื่อนดู</span></div>
         <div class="board-scroll"><div class="board" id="createBoard" aria-label="ผังที่นั่งที่กำลังจัด"></div></div>
@@ -717,28 +757,18 @@ a.btn{text-decoration:none}
         <span class="legend-item"><i class="dot off"></i>ปิดใช้งาน <b id="countOff">0</b></span>
       </div>
 
-      <div class="layout-toolbar hidden" id="layoutToolbar">
-        <div class="toolbar">
-          <button class="btn sm" id="addSeat" type="button"><svg class="icon"><use href="#i-seat"></use></svg><span>โต๊ะ</span></button>
-          <button class="btn sm" id="addBoard" type="button"><svg class="icon"><use href="#i-board"></use></svg><span>กระดาน</span></button>
-          <button class="btn sm" id="addTeacher" type="button"><svg class="icon"><use href="#i-desk"></use></svg><span>โต๊ะครู</span></button>
-          <button class="btn sm" id="addDoor" type="button"><svg class="icon"><use href="#i-door"></use></svg><span>ประตู</span></button>
-          <button class="btn sm" id="toggleSeat" type="button"><svg class="icon"><use href="#i-toggle"></use></svg><span>เปิด/ปิดที่เลือก</span></button>
-          <button class="btn sm danger" id="removeItem" type="button"><svg class="icon"><use href="#i-trash"></use></svg><span>ลบที่เลือก</span></button>
-          <span class="tool-sep"></span><div class="expand-group" role="group" aria-label="ขยายพื้นที่ผัง"><span class="expand-label">ขยายผัง</span><button class="btn sm icon-only" type="button" data-expand="top" aria-label="ขยายพื้นที่ด้านบน" title="ขยายพื้นที่ด้านบน"><svg class="icon rot-up"><use href="#i-back"></use></svg></button><button class="btn sm icon-only" type="button" data-expand="bottom" aria-label="ขยายพื้นที่ด้านล่าง" title="ขยายพื้นที่ด้านล่าง"><svg class="icon rot-down"><use href="#i-back"></use></svg></button><button class="btn sm icon-only" type="button" data-expand="left" aria-label="ขยายพื้นที่ด้านซ้าย" title="ขยายพื้นที่ด้านซ้าย"><svg class="icon "><use href="#i-back"></use></svg></button><button class="btn sm icon-only" type="button" data-expand="right" aria-label="ขยายพื้นที่ด้านขวา" title="ขยายพื้นที่ด้านขวา"><svg class="icon rot-right"><use href="#i-back"></use></svg></button><button class="btn sm" type="button" data-expand="trim" title="ตัดพื้นที่ว่างรอบผังออก"><span>จัดพอดี</span></button></div>
-        </div>
-        <div class="row">
-          <input class="field pin-field" id="layoutPin" type="password" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="รหัสผู้ดูแล" aria-label="รหัสผ่านผู้ดูแล สำหรับบันทึกผัง">
-          <button class="btn primary sm" id="saveLayout" type="button"><svg class="icon"><use href="#i-save"></use></svg><span>บันทึกผัง</span></button>
-          <button class="btn ghost sm" id="cancelLayoutEdit" type="button"><svg class="icon"><use href="#i-close"></use></svg><span>ยกเลิก</span></button>
-        </div>
-      </div>
+      <div class="layout-toolbar hidden" id="layoutToolbar"><div id="roomEd"></div></div>
 
       <div class="zoom-bar" data-zoom="board"><button class="btn sm icon-only" type="button" data-z="-1" aria-label="ย่อผัง">−</button><output>100%</output><button class="btn sm icon-only" type="button" data-z="1" aria-label="ซูมผังเข้า">+</button><span class="zhint">ซูมให้แตะง่ายขึ้น แล้วปัดเลื่อนดู</span></div>
       <div class="board-scroll"><div class="board" id="board" aria-label="แผนผังที่นั่ง"></div></div>
       <p class="muted" id="boardHint" style="margin-top:10px"></p>
     </section>
   </main>
+  <div class="save-bar hidden" id="layoutBar">
+    <input class="field pin-field" id="layoutPin" type="password" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="รหัสผู้ดูแล" aria-label="รหัสผ่านผู้ดูแล สำหรับบันทึกผัง">
+    <button class="btn primary" id="saveLayout" type="button"><svg class="icon"><use href="#i-save"></use></svg><span>บันทึกผัง</span></button>
+    <button class="btn ghost" id="cancelLayoutEdit" type="button"><svg class="icon"><use href="#i-close"></use></svg><span>ยกเลิก</span></button>
+  </div>
 
   <footer>จองที่นั่งห้องเรียน · ข้อมูลอัปเดตให้ทุกคนเห็นพร้อมกันแบบทันที
  <h4 style="line-height:2;">ระบบมีปัญหาใช่ไหม? ติดต่อผู้พัฒนาที่นี่ : <a target="_blank" rel="noopener" href="https://discord.gg/JvHpQBK6">https://discord.gg/JvHpQBK6</a></h4>
@@ -871,7 +901,7 @@ a.btn{text-decoration:none}
     dateStyle:'medium', timeStyle:'short'
   });
   const markerIcons = {'กระดาน':'i-board','โต๊ะครู':'i-desk','ประตู':'i-door'};
-  const markerClass = {'กระดาน':'type-board','โต๊ะครู':'type-teacher','ประตู':'type-door'};
+  const markerClass = {'กระดาน':'type-board','โต๊ะครู':'type-teacher','ประตู':'type-door','ข้อความ':'type-text'};
   const setBusy = (btn, busy) => { btn.disabled = busy; btn.classList.toggle('is-loading', busy); };
 
   let room = null, bookings = [], channel = null, draft = null;
@@ -894,6 +924,8 @@ a.btn{text-decoration:none}
     syncMeta();
   };
 
+  const setHH = () => document.documentElement.style.setProperty('--hh', document.querySelector('header').offsetHeight + 'px');
+  setHH();
   if (window.visualViewport) {   // ให้ bottom-sheet อยู่เหนือคีย์บอร์ดบนมือถือ
     const vv = visualViewport, st = document.documentElement.style;
     const upd = () => { st.setProperty('--vvh', vv.height + 'px'); st.setProperty('--vvt', vv.offsetTop + 'px'); };
@@ -934,8 +966,10 @@ a.btn{text-decoration:none}
     ov.addEventListener('click', e => { if (e.target === ov) closeModal(ov.id); });
   });
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape')
+    if (e.key === 'Escape') {
+      if (!$('confirmOverlay').classList.contains('hidden')) return $('confirmNo').click();
       document.querySelectorAll('.modal-overlay:not(.hidden)').forEach(ov => closeModal(ov.id));
+    }
   });
 
   function askConfirm(msg, ok = 'ยืนยัน') {
@@ -953,74 +987,358 @@ a.btn{text-decoration:none}
       now < new Date(room.close_at).getTime();
   }
   function seatLabel(seat) { return seat.label || 'โต๊ะ'; }
-  function initialLayout(rows, cols) {
-    const seats = [];
-    for (let r = 0; r < rows; r++)
-      for (let c = 0; c < cols; c++)
-        seats.push({
-          id:uid(), label:`${r + 1}-${c + 1}`, enabled:true,
-          x:cols === 1 ? 50 : Math.round(12 + c * 76 / (cols - 1)),
-          y:rows === 1 ? 56 : Math.round(26 + r * 66 / (rows - 1))
-        });
-    return {seats, markers:[]};
-  }
-  function addSeatTo(layout, rerender) {
-    const n = layout.seats.length + 1;
-    layout.seats.push({id:uid(), label:String(n), enabled:true, x:50, y:50});
-    rerender();
-  }
   function seatStatusInfo(seat, booking) {
     if (!seat.enabled) return {cls:'off', text:'ปิดใช้งาน'};
     if (booking) return {cls: booking.client_token === myHash ? 'mine' : 'booked',
       text: booking.name + (booking.client_token === myHash ? ' (ฉัน)' : '')};
     return {cls:'free', text:'ว่าง'};
   }
-  function buildSeatButton(seat, info, selectedId) {
-    const el = document.createElement('button');
-    el.type = 'button';
-    el.className = 'seat ' + info.cls + (selectedId === seat.id ? ' selected' : '');
-    el.style.left = seat.x + '%'; el.style.top = seat.y + '%';
-    el.setAttribute('aria-label', `${seatLabel(seat)} ${info.text}`);
-    el.title = `${seatLabel(seat)} · ${info.text}`;
-    el.innerHTML = `<span class="seat-label">${enc(seatLabel(seat))}</span><span class="seat-status">${enc(info.text)}</span>`;
+
+  // ===== โมเดลผัง: หน่วยคงที่ (กว้าง W × สูง H) ขนาดโต๊ะไม่เปลี่ยนเมื่อเพิ่ม/ลบโต๊ะ =====
+  const SZ = {'กระดาน':[300,56], 'โต๊ะครู':[150,56], 'ประตู':[80,56], 'ข้อความ':[170,44]};
+  const rd = v => Math.round(v * 10) / 10;
+  const isMk = i => 'type' in i;
+  const allI = S => [...S.seats, ...S.markers];
+  const byId = (S, id) => allI(S).find(i => i.id === id);
+  const dim = (S, i) => isMk(i) ? [i.w, i.h] : [S.sw, S.sh];
+  const box = (S, i) => { const [w, h] = dim(S, i); return {l:i.x - w / 2, r:i.x + w / 2, t:i.y - h / 2, b:i.y + h / 2}; };
+  // รองรับผังเก่า (หน่วย %) โดยแปลงเป็นหน่วยคงที่ตอนโหลด
+  function toScene(L) {
+    L = L || {}; const seats = L.seats || [], markers = L.markers || []; let W = 1000, H, sw, sh;
+    if (L.W && L.H) { W = L.W; H = L.H; [sw, sh] = L.sz || [90, 70]; }
+    else if (!seats.length) { H = 560; sw = 90; sh = 70; }
+    else {
+      const gap = k => {
+        const v = [...new Set(seats.map(i => i[k]))].sort((a, b) => a - b); let m = 100;
+        for (let i = 1; i < v.length; i++) if (v[i] - v[i - 1] >= 3) m = Math.min(m, v[i] - v[i - 1]);
+        return m;
+      };
+      const mx = gap('x'), my = gap('y'), q = Math.max(4, Math.min(16, mx - 1.5)), bh = Math.max(60, Math.min(220, (q * .8 + 1.5) / (my / 100)));
+      sw = Math.min(110, q * 10); sh = Math.min(80, Math.max(30, Math.min(q * .8, my / 100 * bh - 1.2) * 10)); H = W * bh / 100;
+    }
+    return {W, H, sw, sh,
+      seats:seats.map(q => ({id:q.id, label:q.label, enabled:q.enabled !== false, x:q.x / 100 * W, y:q.y / 100 * H})),
+      markers:markers.map(m => ({id:m.id, type:m.type, text:m.text, x:m.x / 100 * W, y:m.y / 100 * H,
+        w:m.w || Math.max(90, sw * (m.type === 'กระดาน' ? 2.2 : 1.35)), h:m.h || Math.max(50, sh * .8)}))};
+  }
+  function fromScene(S) {   // เก็บ x,y เป็น % เหมือนเดิม + ขนาดผัง/โต๊ะ เพื่อให้ห้องเก่า/ระบบหลังบ้านยังใช้ได้
+    return {v:2, W:Math.round(S.W), H:Math.round(S.H), sz:[Math.round(S.sw), Math.round(S.sh)],
+      seats:S.seats.map(q => ({id:q.id, label:q.label, enabled:q.enabled, x:rd(q.x / S.W * 100), y:rd(q.y / S.H * 100)})),
+      markers:S.markers.map(m => ({id:m.id, type:m.type, ...(m.text ? {text:m.text} : {}),
+        x:rd(m.x / S.W * 100), y:rd(m.y / S.H * 100), w:Math.round(m.w), h:Math.round(m.h)}))};
+  }
+  const nextLabel = S => { const u = new Set(S.seats.map(q => String(q.label))); let n = S.seats.length + 1; while (u.has(String(n))) n++; return String(n); };
+  function freeSpot(S, w, h, px, py) {
+    let best = null, bd = 1e12; const bs = allI(S).map(i => box(S, i));
+    for (let y = h / 2 + 20; y <= S.H - h / 2 - 20; y += 20) for (let x = w / 2 + 20; x <= S.W - w / 2 - 20; x += 20) {
+      const l = x - w / 2 - 8, r = x + w / 2 + 8, t = y - h / 2 - 8, b = y + h / 2 + 8;
+      if (bs.some(q => l < q.r && r > q.l && t < q.b && b > q.t)) continue;
+      const d = (x - px) ** 2 + (y - py) ** 2; if (d < bd) { bd = d; best = [x, y]; }
+    }
+    if (best) return best;
+    S.H += Math.round(h + 40); return [Math.max(w / 2, Math.min(S.W - w / 2, px)), S.H - h / 2 - 20];
+  }
+  function gridInto(S, rows, cols) {
+    const g = 24, cw = S.sw + g, ch = S.sh + g, tw = cols * cw - g, th = rows * ch - g, first = !S.seats.length;
+    const y0 = Math.max(S.markers.length ? 140 : 60, first ? 0 : Math.max(...S.seats.map(q => q.y + S.sh / 2)) + g + S.sh / 2);
+    S.W = Math.max(S.W, Math.ceil(tw + 100)); S.H = Math.max(S.H, Math.ceil(y0 + th - S.sh / 2 + 60));
+    const x0 = (S.W - tw) / 2 + S.sw / 2;
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++)
+      S.seats.push({id:uid(), label:first ? `${r + 1}-${c + 1}` : nextLabel(S), enabled:true, x:rd(x0 + c * cw), y:rd(y0 + r * ch)});
+  }
+  function newScene(rows, cols) {
+    const S = {W:1000, H:560, sw:90, sh:70, seats:[], markers:[{id:uid(), type:'กระดาน', x:500, y:50, w:300, h:56}]};
+    gridInto(S, rows, cols); return S;
+  }
+
+  // ===== วาดผัง (ใช้ทั้งโหมดดูและโหมดแก้ไข) =====
+  function buildSeat(S, q, info) {
+    const el = document.createElement('button'); el.type = 'button'; el.dataset.id = q.id;
+    el.className = 'seat ' + info.cls;
+    el.style.cssText = `left:${q.x / S.W * 100}%;top:${q.y / S.H * 100}%;width:${S.sw / S.W * 100}%;height:${S.sh / S.H * 100}%`;
+    el.setAttribute('aria-label', `${seatLabel(q)} ${info.text}`);
+    el.title = seatLabel(q) + (info.text ? ' · ' + info.text : '');
+    el.innerHTML = `<span class="seat-label">${enc(seatLabel(q))}</span>` + (info.text ? `<span class="seat-status">${enc(info.text)}</span>` : '');
     return el;
   }
-  function buildMarkerEl(marker, editableTag, selectedId) {
-    const el = document.createElement(editableTag ? 'button' : 'div');
-    if (editableTag) el.type = 'button';
-    el.className = 'marker ' + (markerClass[marker.type] || '') + (selectedId === marker.id ? ' selected' : '');
-    el.style.left = marker.x + '%'; el.style.top = marker.y + '%';
-    el.innerHTML = `<svg class="icon"><use href="#${markerIcons[marker.type] || 'i-board'}"></use></svg><span>${enc(marker.type)}</span>`;
+  function buildMarker(S, m, edit) {
+    const el = document.createElement(edit ? 'button' : 'div'); if (edit) el.type = 'button'; el.dataset.id = m.id;
+    el.className = 'marker ' + (markerClass[m.type] || '');
+    el.style.cssText = `left:${m.x / S.W * 100}%;top:${m.y / S.H * 100}%;width:${m.w / S.W * 100}%;height:${m.h / S.H * 100}%`;
+    const ic = markerIcons[m.type];
+    el.innerHTML = (ic ? `<svg class="icon"><use href="#${ic}"></use></svg>` : '') + `<span>${enc(m.text || m.type)}</span>`;
     return el;
   }
-  function attachDrag(el, item, after) {
-    after = after || render;
-    let start = null, dragged = false;
-    el.addEventListener('pointerdown', e => {
-      start = {x:e.clientX, y:e.clientY};
-      dragged = false;
-      el.setPointerCapture(e.pointerId);
-    });
-    el.addEventListener('pointermove', e => {
-      if (!start) return;
-      if (Math.hypot(e.clientX - start.x, e.clientY - start.y) < 4 && !dragged) return;
-      dragged = true; dragging = true;
-      const board = el.parentElement;
-      const rect = board.getBoundingClientRect();
-      item.x = Math.round(Math.max(5, Math.min(95, (e.clientX - rect.left) / rect.width * 100)));
-      item.y = Math.round(Math.max(7, Math.min(93, (e.clientY - rect.top) / rect.height * 100)));
-      el.style.left = item.x + '%';
-      el.style.top = item.y + '%';
-    });
-    const end = () => {
-      start = null; dragging = false;
-      if (dragged) { selected = item; el.parentElement._lock = true; setTimeout(after, 0); }
+  function drawBoard(board, S, o) {
+    board._S = S; board.replaceChildren(); board.classList.toggle('editing', !!o.edit);
+    for (const q of S.seats) {
+      const el = buildSeat(S, q, o.info(q)); if (o.click) el.onclick = () => o.click(q); board.appendChild(el);
+    }
+    for (const m of S.markers) board.appendChild(buildMarker(S, m, !!o.edit));
+    if (!S.seats.length && !S.markers.length) {
+      const p = document.createElement('p'); p.className = 'board-empty';
+      p.textContent = o.edit ? 'ผังยังว่างอยู่ กดปุ่ม “โต๊ะ” หรือ “ตาราง” ด้านบนเพื่อเริ่มจัดที่นั่ง' : 'ห้องนี้ยังไม่มีผังที่นั่ง';
+      board.appendChild(p);
+    }
+    sizeBoard(board);
+  }
+
+  // ===== ตัวแก้ไขผัง (ลาก/เลือกหลายชิ้น/จัดแนว/ย้อนกลับ แบบ Canva-Miro) =====
+  function makeEditor({board, mount, get, locked, after}) {
+    const E = {sel:new Set(), multi:false, snap:true, undo:[], redo:[], just:false, busy:false};
+    const S = () => get(), touch = matchMedia('(pointer:coarse)').matches;
+    const I = (n, c) => n ? `<svg class="icon ${c || ''}"><use href="#i-${n}"></use></svg>` : '';
+    const B = (a, ic, t, ti, cls, rot) => `<button type="button" class="btn sm ${t ? '' : 'icon-only'} ${cls || ''}" data-act="${a}" title="${ti || t}" aria-label="${ti || t}">${I(ic, rot)}${t ? `<span>${t}</span>` : ''}</button>`;
+    mount.className = 'ed';
+    mount.innerHTML = `<div class="toolbar">${B('add:seat', 'seat', 'โต๊ะ', 'เพิ่มโต๊ะ')}${B('grid', 'grid', 'ตาราง', 'เพิ่มโต๊ะเป็นตาราง')}${B('add:กระดาน', 'board', 'กระดาน')}${B('add:โต๊ะครู', 'desk', 'โต๊ะครู')}${B('add:ประตู', 'door', 'ประตู')}${B('add:ข้อความ', 'text', 'ข้อความ', 'เพิ่มป้ายข้อความ')}<span class="tool-sep"></span>${B('undo', 'undo', '', 'ย้อนกลับ (Ctrl+Z)')}${B('redo', 'redo', '', 'ทำซ้ำ (Ctrl+Y)')}<span class="tool-sep"></span>${B('snap', 'magnet', 'ดูดเส้น', 'ดูดติดเส้นนำและช่องตาราง')}${B('multi', 'multi', 'เลือกหลาย', 'โหมดเลือกหลายชิ้น (สำหรับมือถือ)')}<span class="tool-sep"></span><div class="expand-group"><span class="expand-label">ขยายผัง</span>${B('ex:top', 'back', '', 'ขยายพื้นที่ด้านบน', '', 'rot-up')}${B('ex:bottom', 'back', '', 'ขยายพื้นที่ด้านล่าง', '', 'rot-down')}${B('ex:left', 'back', '', 'ขยายพื้นที่ด้านซ้าย')}${B('ex:right', 'back', '', 'ขยายพื้นที่ด้านขวา', '', 'rot-right')}${B('ex:trim', '', 'จัดพอดี', 'ตัดพื้นที่ว่างรอบผังออก')}${B('clear', 'trash', 'ล้างผัง', 'ลบทุกอย่างบนผัง', 'danger')}</div></div>` +
+      `<div class="ed-pop hidden"><input class="field" type="number" min="1" max="12" value="4" data-g="r" aria-label="จำนวนแถว"><span class="muted">แถว ×</span><input class="field" type="number" min="1" max="12" value="5" data-g="c" aria-label="จำนวนคอลัมน์"><span class="muted">คอลัมน์</span><button type="button" class="btn sm primary" data-act="gridgo"><span>เพิ่มตาราง</span></button></div><div class="ed-ctx"></div>`;
+    const q$ = x => mount.querySelector(x);
+
+    const snapshot = () => { E.undo.push(JSON.stringify(S())); if (E.undo.length > 60) E.undo.shift(); E.redo = []; };
+    const restore = (from, to) => {
+      const j = from.pop(); if (!j) return; to.push(JSON.stringify(S())); Object.assign(S(), JSON.parse(j));
+      E.sel = new Set([...E.sel].filter(id => byId(S(), id))); E.draw();
     };
-    el.addEventListener('pointerup', end);
-    el.addEventListener('pointercancel', end);
-    el.addEventListener('click', e => {
-      if (dragged) { e.stopImmediatePropagation(); dragged = false; }
-    }, true);
+    E.undoF = () => restore(E.undo, E.redo); E.redoF = () => restore(E.redo, E.undo);
+    E.reset = () => { E.sel = new Set(); E.undo = []; E.redo = []; E.multi = false; };
+
+    function ui() {
+      const s = S(); if (!s) return;
+      q$('[data-act=undo]').disabled = !E.undo.length; q$('[data-act=redo]').disabled = !E.redo.length;
+      q$('[data-act=snap]').classList.toggle('on', E.snap); q$('[data-act=multi]').classList.toggle('on', E.multi);
+      const its = [...E.sel].map(id => byId(s, id)).filter(Boolean), seats = its.filter(i => !isMk(i)), c = q$('.ed-ctx');
+      if (!its.length) {
+        c.innerHTML = `<span class="hint">${touch ? 'แตะเพื่อเลือก · ลากเพื่อย้าย · กด “เลือกหลาย” เพื่อเลือกหลายชิ้นพร้อมกัน' : 'คลิกเพื่อเลือก · ลากเพื่อย้าย · ลากบนพื้นที่ว่างเพื่อเลือกหลายชิ้น · Shift+คลิกเพื่อเพิ่ม · ปุ่มลูกศรเพื่อขยับ'}</span>`;
+        return;
+      }
+      let h = '';
+      if (its.length === 1) {
+        const i = its[0];
+        h += `<input class="field ed-label" maxlength="30" value="${enc(isMk(i) ? (i.text || i.type) : i.label)}" aria-label="ชื่อที่แสดง">`;
+      } else {
+        h += `<b class="count">เลือก ${its.length} ชิ้น</b>` +
+          [['l','al','ชิดซ้าย'],['c','ac','กึ่งกลางแนวนอน'],['r','ar','ชิดขวา'],['t','at','ชิดบน'],['m','am','กึ่งกลางแนวตั้ง'],['b','ab','ชิดล่าง']].map(x => B('al:' + x[0], x[1], '', x[2])).join('') +
+          (its.length > 2 ? B('di:x', 'dh', '', 'กระจายห่างเท่ากัน (แนวนอน)') + B('di:y', 'dv', '', 'กระจายห่างเท่ากัน (แนวตั้ง)') : '');
+      }
+      if (seats.length) h += B('tog', 'toggle', seats.every(i => i.enabled) ? 'ปิดที่นั่ง' : 'เปิดที่นั่ง', 'เปิด/ปิดการใช้งานที่นั่ง');
+      h += B('dup', 'copy', 'ทำสำเนา', 'ทำสำเนา (Ctrl+D)') + B('del', 'trash', 'ลบ', 'ลบ (Delete)', 'danger');
+      if (seats.length) h += `<label class="sz">ขนาดโต๊ะ<input type="range" min="50" max="160" value="${Math.round(s.sw)}" data-act="size" aria-label="ขนาดโต๊ะทั้งหมด"></label>`;
+      c.innerHTML = h;
+    }
+    const markSel = () => {
+      board.querySelectorAll('[data-id]').forEach(el => el.classList.toggle('selected', E.sel.has(el.dataset.id)));
+      board.querySelectorAll('.rz').forEach(x => x.remove());
+      const s = S();
+      if (s && E.sel.size === 1) {
+        const i = byId(s, [...E.sel][0]), el = i && isMk(i) && board.querySelector(`[data-id="${i.id}"]`);
+        if (el) { const h = document.createElement('i'); h.className = 'rz'; el.appendChild(h); }
+      }
+      ui();
+    };
+    E.draw = () => {
+      const s = S(); if (!s) return;
+      drawBoard(board, s, {edit:true, info:q => ({cls:q.enabled ? 'free' : 'off', text:q.enabled ? '' : 'ปิดใช้งาน'})});
+      markSel(); if (after) after(s); autoZoom(board);
+    };
+
+    // ---- การกระทำ ----
+    const add = k => {
+      const s = S(); snapshot();
+      const [w, h] = k === 'seat' ? [s.sw, s.sh] : SZ[k];
+      const pref = {'กระดาน':[s.W / 2, 50], 'โต๊ะครู':[s.W * .82, 50], 'ประตู':[s.W * .08, 50]}[k] || [s.W / 2, s.H / 2];
+      const [x, y] = freeSpot(s, w, h, pref[0], pref[1]);
+      const it = k === 'seat' ? {id:uid(), label:nextLabel(s), enabled:true, x, y}
+        : {id:uid(), type:k, ...(k === 'ข้อความ' ? {text:'ข้อความ'} : {}), x, y, w, h};
+      (k === 'seat' ? s.seats : s.markers).push(it);
+      E.sel = new Set([it.id]); E.draw();
+      const el = board.querySelector(`[data-id="${it.id}"]`); if (el && el.scrollIntoView) el.scrollIntoView({block:'nearest', inline:'nearest', behavior:'smooth'});
+    };
+    const del = () => {
+      const s = S(), ids = [...E.sel], bad = ids.filter(id => locked(id)), ok = ids.filter(id => !bad.includes(id));
+      if (bad.length) notice('ที่นั่งที่มีคนจองอยู่ลบไม่ได้ (ไปลบการจองที่ “จัดการห้อง” ก่อน)', true);
+      if (!ok.length) return;
+      snapshot(); s.seats = s.seats.filter(i => !ok.includes(i.id)); s.markers = s.markers.filter(i => !ok.includes(i.id));
+      E.sel = new Set(bad); E.draw();
+    };
+    const dup = () => {
+      const s = S(), ns = []; if (!E.sel.size) return; snapshot();
+      for (const id of E.sel) {
+        const i = byId(s, id); if (!i) continue;
+        const c = {...i, id:uid(), x:Math.min(s.W - 20, i.x + 30), y:Math.min(s.H - 20, i.y + 30)};
+        if (isMk(i)) s.markers.push(c); else { c.label = nextLabel(s); s.seats.push(c); }
+        ns.push(c.id);
+      }
+      E.sel = new Set(ns); E.draw();
+    };
+    const tog = () => {
+      const s = S(), its = [...E.sel].map(i => byId(s, i)).filter(i => i && !isMk(i)); if (!its.length) return;
+      const to = !its.every(i => i.enabled), bad = to ? [] : its.filter(i => locked(i.id));
+      if (bad.length) notice('ที่นั่งที่มีคนจองอยู่ปิดใช้งานไม่ได้', true);
+      snapshot(); its.forEach(i => { if (!bad.includes(i)) i.enabled = to; }); E.draw();
+    };
+    const align = k => {
+      const s = S(), its = [...E.sel].map(i => byId(s, i)).filter(Boolean); if (its.length < 2) return; snapshot();
+      const bs = its.map(i => box(s, i)), L = Math.min(...bs.map(b => b.l)), R = Math.max(...bs.map(b => b.r)), T = Math.min(...bs.map(b => b.t)), Bt = Math.max(...bs.map(b => b.b));
+      its.forEach(i => {
+        const [w, h] = dim(s, i);
+        if (k === 'l') i.x = L + w / 2; if (k === 'r') i.x = R - w / 2; if (k === 'c') i.x = (L + R) / 2;
+        if (k === 't') i.y = T + h / 2; if (k === 'b') i.y = Bt - h / 2; if (k === 'm') i.y = (T + Bt) / 2;
+      });
+      E.draw();
+    };
+    const dist = p => {
+      const s = S(), its = [...E.sel].map(i => byId(s, i)).filter(Boolean).sort((a, b) => a[p] - b[p]); if (its.length < 3) return; snapshot();
+      const a = its[0][p], z = its[its.length - 1][p]; its.forEach((i, n) => { i[p] = a + (z - a) * n / (its.length - 1); }); E.draw();
+    };
+    const expand = side => {
+      const s = S(); snapshot();
+      if (side === 'trim') {
+        const bs = allI(s).map(i => box(s, i)); if (!bs.length) { E.undo.pop(); return; }
+        const L = Math.min(...bs.map(b => b.l)) - 50, T = Math.min(...bs.map(b => b.t)) - 50;
+        s.W = Math.max(400, Math.round(Math.max(...bs.map(b => b.r)) + 50 - L)); s.H = Math.max(300, Math.round(Math.max(...bs.map(b => b.b)) + 50 - T));
+        allI(s).forEach(i => { i.x -= L; i.y -= T; });
+      } else {
+        const hz = side === 'left' || side === 'right', add = Math.round((hz ? s.W : s.H) * .25 / 10) * 10;
+        if ((hz ? s.W : s.H) + add > 3000) { E.undo.pop(); return notice('ผังใหญ่ที่สุดแล้ว', true); }
+        if (hz) s.W += add; else s.H += add;
+        if (side === 'left') allI(s).forEach(i => { i.x += add; });
+        if (side === 'top') allI(s).forEach(i => { i.y += add; });
+      }
+      E.draw();
+    };
+    const clear = async () => {
+      const s = S(); if (!allI(s).length) return;
+      if (s.seats.some(q => locked(q.id))) return notice('มีผู้จองอยู่ จึงล้างผังทั้งหมดไม่ได้ (ลบการจองก่อน)', true);
+      if (!await askConfirm('ลบทุกอย่างบนผังใช่หรือไม่? (กดย้อนกลับเพื่อเรียกคืนได้)', 'ล้างผัง')) return;
+      snapshot(); s.seats = []; s.markers = []; E.sel = new Set(); E.draw();
+    };
+    mount.addEventListener('click', e => {
+      const b = e.target.closest('button[data-act]'); if (!b || b.disabled) return;
+      const [a, x] = b.dataset.act.split(':');
+      ({
+        add:() => add(x), grid:() => q$('.ed-pop').classList.toggle('hidden'),
+        gridgo:() => {
+          const r = +q$('[data-g=r]').value, c = +q$('[data-g=c]').value;
+          if (!Number.isInteger(r) || !Number.isInteger(c) || r < 1 || r > 12 || c < 1 || c > 12) return notice('จำนวนแถวและคอลัมน์ต้องอยู่ระหว่าง 1-12', true);
+          const s = S(), n0 = s.seats.length; snapshot(); gridInto(s, r, c);
+          E.sel = new Set(s.seats.slice(n0).map(q => q.id)); E.draw(); q$('.ed-pop').classList.add('hidden');
+        },
+        undo:() => E.undoF(), redo:() => E.redoF(), snap:() => { E.snap = !E.snap; ui(); }, multi:() => { E.multi = !E.multi; ui(); },
+        ex:() => expand(x), clear, tog, dup, del, al:() => align(x), di:() => dist(x)
+      })[a]?.();
+    });
+    mount.addEventListener('input', e => {
+      const s = S(), t = e.target, one = E.sel.size === 1 ? byId(s, [...E.sel][0]) : null;
+      if (t.classList.contains('ed-label') && one) {
+        if (!E.ls) { snapshot(); E.ls = 1; }
+        if (isMk(one)) one.text = t.value; else one.label = t.value;
+        const el = board.querySelector(`[data-id="${one.id}"]`), sp = el && el.querySelector(isMk(one) ? 'span' : '.seat-label');
+        if (sp) sp.textContent = t.value || (isMk(one) ? one.type : 'โต๊ะ');
+      }
+      if (t.dataset.act === 'size') {
+        if (!E.zs) { snapshot(); E.zs = 1; }
+        s.sw = +t.value; s.sh = Math.round(t.value * .78);
+        board.querySelectorAll('.seat').forEach(el => { el.style.width = s.sw / s.W * 100 + '%'; el.style.height = s.sh / s.H * 100 + '%'; });
+        sizeBoard(board);
+      }
+    });
+    mount.addEventListener('change', () => { E.ls = E.zs = 0; });
+    mount.addEventListener('focusout', () => { E.ls = E.zs = 0; });
+
+    // ---- ลาก / เลือกหลายชิ้น / ปรับขนาด ----
+    const pt = e => { const r = board.getBoundingClientRect(), s = S(); return {x:(e.clientX - r.left) * s.W / r.width, y:(e.clientY - r.top) * s.H / r.height, k:s.W / r.width}; };
+    const listen = (mv, up) => {
+      const end = ev => { removeEventListener('pointermove', mv); removeEventListener('pointerup', end); removeEventListener('pointercancel', end); E.busy = false; up(ev); };
+      E.busy = true; addEventListener('pointermove', mv); addEventListener('pointerup', end); addEventListener('pointercancel', end);
+    };
+    const finish = () => { E.just = true; setTimeout(() => { E.just = false; }); E.draw(); };
+    const guides = (x, y) => {
+      const s = S(); let v = board.querySelector('.guide.v'), h = board.querySelector('.guide.h');
+      if (x != null && !v) { v = document.createElement('i'); v.className = 'guide v'; board.appendChild(v); }
+      if (y != null && !h) { h = document.createElement('i'); h.className = 'guide h'; board.appendChild(h); }
+      if (v) { v.style.display = x == null ? 'none' : 'block'; if (x != null) v.style.left = x / s.W * 100 + '%'; }
+      if (h) { h.style.display = y == null ? 'none' : 'block'; if (y != null) h.style.top = y / s.H * 100 + '%'; }
+    };
+    function startDrag(e, id, add, tap) {
+      const s = S(), p0 = pt(e), ids = [...E.sel], its = ids.map(i => byId(s, i)), org = its.map(i => [i.x, i.y]);
+      const els = ids.map(i => board.querySelector(`[data-id="${i}"]`)), bs = its.map(i => box(s, i));
+      const bb = {l:Math.min(...bs.map(b => b.l)), r:Math.max(...bs.map(b => b.r)), t:Math.min(...bs.map(b => b.t)), b:Math.max(...bs.map(b => b.b))};
+      const xs = [0, s.W / 2, s.W], ys = [0, s.H / 2, s.H];
+      for (const i of allI(s)) if (!E.sel.has(i.id)) { const q = box(s, i); xs.push(q.l, (q.l + q.r) / 2, q.r); ys.push(q.t, (q.t + q.b) / 2, q.b); }
+      const near = (refs, tg, th) => { let best = null; for (const r of refs) for (const t of tg) { const d = t - r; if (Math.abs(d) <= th && (!best || Math.abs(d) < Math.abs(best.d))) best = {d, t}; } return best; };
+      let moved = false;
+      listen(ev => {
+        if (!moved) { if (Math.hypot(ev.clientX - e.clientX, ev.clientY - e.clientY) < 4) return; moved = true; snapshot(); }
+        const p = pt(ev); let dx = p.x - p0.x, dy = p.y - p0.y, gx = null, gy = null;
+        if (E.snap && !ev.altKey) {
+          const th = 6 * p.k, a = near([bb.l + dx, (bb.l + bb.r) / 2 + dx, bb.r + dx], xs, th), c = near([bb.t + dy, (bb.t + bb.b) / 2 + dy, bb.b + dy], ys, th);
+          if (a) { dx += a.d; gx = a.t; } else dx = Math.round((org[0][0] + dx) / 10) * 10 - org[0][0];
+          if (c) { dy += c.d; gy = c.t; } else dy = Math.round((org[0][1] + dy) / 10) * 10 - org[0][1];
+        }
+        dx = Math.max(-bb.l, Math.min(s.W - bb.r, dx)); dy = Math.max(-bb.t, Math.min(s.H - bb.b, dy));
+        its.forEach((i, n) => { i.x = org[n][0] + dx; i.y = org[n][1] + dy; els[n].style.left = i.x / s.W * 100 + '%'; els[n].style.top = i.y / s.H * 100 + '%'; });
+        guides(gx, gy);
+      }, () => {
+        if (moved) { its.forEach(i => { i.x = rd(i.x); i.y = rd(i.y); }); finish(); }
+        else if (tap) { E.sel.delete(id); markSel(); }
+        else if (!add && E.sel.size > 1) { E.sel = new Set([id]); markSel(); }
+      });
+    }
+    function startResize(e, m) {
+      const s = S(), p0 = pt(e), o = {x:m.x, y:m.y, w:m.w, h:m.h}, el = board.querySelector(`[data-id="${m.id}"]`); let moved = false;
+      listen(ev => {
+        if (!moved) { if (Math.hypot(ev.clientX - e.clientX, ev.clientY - e.clientY) < 3) return; moved = true; snapshot(); }
+        const p = pt(ev); let w = Math.max(40, o.w + p.x - p0.x), h = Math.max(30, o.h + p.y - p0.y);
+        if (E.snap) { w = Math.round(w / 10) * 10; h = Math.round(h / 10) * 10; }
+        m.w = w; m.h = h; m.x = o.x + (w - o.w) / 2; m.y = o.y + (h - o.h) / 2;
+        Object.assign(el.style, {width:w / s.W * 100 + '%', height:h / s.H * 100 + '%', left:m.x / s.W * 100 + '%', top:m.y / s.H * 100 + '%'});
+      }, () => { if (moved) finish(); });
+    }
+    function startMarquee(e, base) {
+      const s = S(), p0 = pt(e), m = document.createElement('i'); m.className = 'marq'; board.appendChild(m); let moved = false;
+      listen(ev => {
+        if (!moved) { if (Math.hypot(ev.clientX - e.clientX, ev.clientY - e.clientY) < 4) return; moved = true; }
+        const p = pt(ev), l = Math.min(p0.x, p.x), t = Math.min(p0.y, p.y), r = Math.max(p0.x, p.x), b = Math.max(p0.y, p.y);
+        Object.assign(m.style, {left:l / s.W * 100 + '%', top:t / s.H * 100 + '%', width:(r - l) / s.W * 100 + '%', height:(b - t) / s.H * 100 + '%'});
+        E.sel = new Set(base);
+        for (const i of allI(s)) { const q = box(s, i); if (l < q.r && r > q.l && t < q.b && b > q.t) E.sel.add(i.id); }
+        board.querySelectorAll('[data-id]').forEach(el => el.classList.toggle('selected', E.sel.has(el.dataset.id)));
+      }, () => { m.remove(); if (moved) { E.just = true; setTimeout(() => { E.just = false; }); markSel(); } });
+    }
+    board.addEventListener('pointerdown', e => {
+      const s = S(); if (!s || !board.classList.contains('editing') || (e.button > 0 && e.pointerType === 'mouse')) return;
+      const el = e.target.closest('[data-id]'), mod = e.shiftKey || e.ctrlKey || e.metaKey;
+      if (e.target.closest('.rz') && el) { e.preventDefault(); return startResize(e, byId(s, el.dataset.id)); }
+      if (el) {
+        e.preventDefault(); const id = el.dataset.id, add = mod || E.multi; let tap = false;
+        if (add) { if (E.sel.has(id)) tap = true; else { E.sel.add(id); markSel(); } }
+        else if (!E.sel.has(id)) { E.sel = new Set([id]); markSel(); }
+        startDrag(e, id, add, tap);
+      } else if (e.pointerType === 'mouse') { e.preventDefault(); startMarquee(e, mod ? new Set(E.sel) : new Set()); }
+    });
+    board.addEventListener('click', e => {
+      if (e.target !== board || E.just || E.multi || !S() || !board.classList.contains('editing')) return;
+      if (E.sel.size) { E.sel.clear(); markSel(); }
+    });
+    board.addEventListener('dblclick', e => { if (e.target.closest('[data-id]')) { const l = q$('.ed-label'); if (l) l.select(); } });
+
+    E.key = e => {
+      const s = S(), k = e.key, mod = e.ctrlKey || e.metaKey, kl = k.length === 1 ? k.toLowerCase() : k; if (!s) return;
+      if (mod && kl === 'z') { e.preventDefault(); return e.shiftKey ? E.redoF() : E.undoF(); }
+      if (mod && kl === 'y') { e.preventDefault(); return E.redoF(); }
+      if (mod && kl === 'a') { e.preventDefault(); E.sel = new Set(allI(s).map(i => i.id)); return markSel(); }
+      if (mod && kl === 'd') { e.preventDefault(); return dup(); }
+      if (k === 'Escape') { E.sel.clear(); return markSel(); }
+      if (!E.sel.size) return;
+      if (k === 'Delete' || k === 'Backspace') { e.preventDefault(); return del(); }
+      const st = e.shiftKey ? 10 : 1, d = ({ArrowLeft:[-st, 0], ArrowRight:[st, 0], ArrowUp:[0, -st], ArrowDown:[0, st]})[k];
+      if (d) {
+        e.preventDefault(); snapshot();
+        for (const id of E.sel) { const i = byId(s, id); if (i) { i.x = Math.max(0, Math.min(s.W, i.x + d[0])); i.y = Math.max(0, Math.min(s.H, i.y + d[1])); } }
+        E.draw();
+      }
+    };
+    return E;
   }
   function adminPin(fieldId) {
     const pin = $(fieldId).value;
@@ -1085,44 +1403,38 @@ a.btn{text-decoration:none}
         }, () => { clearTimeout(bkTimer); bkTimer = setTimeout(loadBookings, 250); })
         .subscribe();
       // สำรองกรณีเครือข่าย Realtime ขาดช่วง และอัปเดตเวลาปิดจอง
+      let tick = 0;
       pollTimer = setInterval(async () => {
-        await loadRoom(code, true);
+        if (document.hidden) return;
+        if (++tick % 4 === 0) await loadRoom(code, true);
         await loadBookings();
-      }, 30000);
+      }, 8000);
     }
     if (!same || !silent) render();
     if (!silent && changed) notice('เข้าห้องเรียบร้อยแล้ว');
   }
-  function fitBoard(board, layout) {
-    const keep = board._lock && board._fit;
-    const gap = key => {
-      const v = [...new Set(layout.seats.map(i => i[key]))].sort((x, y) => x - y);
-      let m = 100;
-      for (let i = 1; i < v.length; i++) if (v[i] - v[i - 1] >= 3) m = Math.min(m, v[i] - v[i - 1]);
-      return m;
-    };
-    let sw, bh, sh;
-    if (keep) ({sw, bh, sh} = keep);
-    else {
-      const mx = gap('x'), my = gap('y');
-      sw = Math.max(4, Math.min(16, mx - 1.5));
-      bh = Math.max(60, Math.min(220, (sw * .8 + 1.5) / (my / 100)));
-      sh = Math.max(3, Math.min(sw * .8, my / 100 * bh - 1.2));
-      board._fit = {sw, bh, sh};
-    }
-    board.style.setProperty('--sw', sw.toFixed(2));
-    board.style.setProperty('--sh', sh.toFixed(2));
-    board.style.aspectRatio = (100 / bh).toFixed(3);
-    board._bh = bh; sizeBoard(board);
-    if (board.id === 'board' && !editing && !board._userZ) {
-      const px = board.parentElement.clientWidth * sw / 100;
-      const z = ZL.find(v => v >= Math.min(3, 44 / px)) || 3;
-      if (z !== board._z) { applyZoom(board, z); return; }
-    }
-    requestAnimationFrame(() => board.classList.toggle('dense', board.clientWidth * sw / 100 < 46));
+  function autoZoom(b) {   // ซูมอัตโนมัติให้โต๊ะแตะง่ายบนจอเล็ก (ผู้ใช้ซูมเองจะไม่ถูกทับ)
+    const S = b._S, w = b.parentElement.clientWidth;
+    if (b._userZ || !S || !w) return;
+    const px = w * S.sw / S.W, z = ZL.find(v => v >= Math.min(3, 44 / px)) || 3;
+    if (z !== b._z) applyZoom(b, z);
+  }
+  function paintCounts(S) {
+    const map = new Map(bookings.map(b => [b.seat_id, b])), counts = {free:0, booked:0, mine:0, off:0};
+    for (const q of S.seats) counts[seatStatusInfo(q, map.get(q.id)).cls]++;
+    $('countFree').textContent = counts.free;
+    $('countBooked').textContent = counts.booked;
+    $('countMine').textContent = counts.mine;
+    $('countOff').textContent = counts.off;
+    const total = counts.free + counts.booked + counts.mine, rb = $('remainBadge');
+    rb.classList.toggle('hidden', total === 0);
+    rb.classList.toggle('full', total > 0 && counts.free === 0);
+    rb.innerHTML = counts.free === 0
+      ? `<span>เต็มแล้ว</span><span class="remain-sub">ที่นั่งทั้งหมด ${total} ที่ถูกจองครบแล้ว</span>`
+      : `<span>ที่นั่งเหลือ</span><b>${counts.free}</b><span class="remain-sub">จาก ${total} ที่</span>`;
   }
   function render() {
-    if (!room || dragging) return;
+    if (!room || (editing && EDR.busy)) return;
     document.title = room.name + ' · จองที่นั่ง - by : discord.gg/JvHpQBK6';
     $('displayName').textContent = room.name;
     $('roomLinkField').value = roomLink(room.code);
@@ -1134,57 +1446,19 @@ a.btn{text-decoration:none}
       `<span class="status-pill ${open ? 'open' : 'closed'}">${open ? 'เปิดให้จองอยู่ตอนนี้' : (Date.now() < new Date(room.open_at).getTime() ? 'ยังไม่ถึงเวลาเปิดจอง' : 'ปิดรับจองแล้ว')}</span>` +
       `<span class="muted">${enc(prettyDate(room.open_at))} – ${enc(prettyDate(room.close_at))}</span>`;
     $('boardHint').textContent = editing
-      ? 'โหมดแก้ไขผัง: แตะโต๊ะเพื่อเลือก แล้วแตะที่ว่างบนผังเพื่อย้ายไปวาง (หรือลากก็ได้) ใช้ปุ่ม "ขยายผัง" เพิ่มพื้นที่ว่างโดยโต๊ะไม่ขยับ แล้วกด "บันทึกผัง" เมื่อเสร็จ'
+      ? 'โหมดแก้ไขผัง: ลากเพื่อย้าย แก้เสร็จแล้วใส่รหัสผู้ดูแลที่แถบด้านล่างแล้วกด “บันทึกผัง”'
       : (movingFrom ? 'เลือกที่นั่งว่างที่ต้องการย้ายไป หรือแตะที่นั่งเดิมอีกครั้งเพื่อยกเลิก'
                     : 'แตะที่นั่งว่างเพื่อเลือกจอง');
-    const map = new Map(bookings.map(b => [b.seat_id, b]));
-    const layout = (editing && draft) ? draft : room.layout;
-    const board = $('board');
-    board.replaceChildren();
-    board.classList.toggle('editing', editing);
-    if (!editing) board._lock = false;
-    fitBoard(board, layout);
     $('boardHint').classList.toggle('moving', !!movingFrom && !editing);
     document.body.classList.toggle('editing-layout', editing);
-    const counts = {free:0, booked:0, mine:0, off:0};
-    for (const seat of layout.seats) {
-      const b = map.get(seat.id);
-      const info = seatStatusInfo(seat, b);
-      counts[info.cls]++;
-      const el = buildSeatButton(seat, info, selected?.id);
-      el.onclick = () => chooseSeat(seat, b);
-      if (editing) attachDrag(el, seat, render);
-      board.appendChild(el);
+    const map = new Map(bookings.map(b => [b.seat_id, b]));
+    if (editing && draft) EDR.draw();
+    else {
+      const S = toScene(room.layout);
+      drawBoard($('board'), S, {info:q => seatStatusInfo(q, map.get(q.id)), click:q => chooseSeat(q, map.get(q.id))});
+      paintCounts(S); autoZoom($('board'));
     }
-    $('countFree').textContent = counts.free;
-    $('countBooked').textContent = counts.booked;
-    $('countMine').textContent = counts.mine;
-    $('countOff').textContent = counts.off;
     updateOpens();
-    {
-      const total = counts.free + counts.booked + counts.mine, rb = $('remainBadge');
-      rb.classList.toggle('hidden', total === 0);
-      rb.classList.toggle('full', total > 0 && counts.free === 0);
-      rb.innerHTML = counts.free === 0
-        ? `<span>เต็มแล้ว</span><span class="remain-sub">ที่นั่งทั้งหมด ${total} ที่ถูกจองครบแล้ว</span>`
-        : `<span>ที่นั่งเหลือ</span><b>${counts.free}</b><span class="remain-sub">จาก ${total} ที่</span>`;
-    }
-    for (const marker of layout.markers) {
-      const el = buildMarkerEl(marker, editing, selected?.id);
-      if (editing) {
-        el.onclick = () => { selected = marker; render(); };
-        attachDrag(el, marker, render);
-      }
-      board.appendChild(el);
-    }
-    if (!layout.seats.length && !layout.markers.length) {
-      const empty = document.createElement('p');
-      empty.className = 'board-empty';
-      empty.textContent = editing
-        ? 'ยังไม่มีผังที่นั่ง เริ่มเพิ่มโต๊ะหรือป้ายด้วยปุ่มด้านบนได้เลย'
-        : 'ห้องนี้ยังไม่มีผังที่นั่ง';
-      board.appendChild(empty);
-    }
     if (!$('settingsOverlay').classList.contains('hidden') && !$('adminBookings').contains(document.activeElement))
       renderAdminBookings();
   }
@@ -1335,34 +1609,12 @@ a.btn{text-decoration:none}
     }, 350);
   });
 
-  function renderCreateBoard() {
-    const board = $('createBoard');
-    board.replaceChildren();
-    board.classList.add('editing');
-    fitBoard(board, draft);
-    for (const seat of draft.seats) {
-      const info = {cls: seat.enabled ? 'free' : 'off', text: seat.enabled ? 'ใช้งานอยู่' : 'ปิดใช้งาน'};
-      const el = buildSeatButton(seat, info, selected?.id);
-      el.onclick = () => { selected = seat; renderCreateBoard(); };
-      attachDrag(el, seat, renderCreateBoard);
-      board.appendChild(el);
-    }
-    for (const marker of draft.markers) {
-      const el = buildMarkerEl(marker, true, selected?.id);
-      el.onclick = () => { selected = marker; renderCreateBoard(); };
-      attachDrag(el, marker, renderCreateBoard);
-      board.appendChild(el);
-    }
-    if (!draft.seats.length && !draft.markers.length) {
-      const empty = document.createElement('p');
-      empty.className = 'board-empty';
-      empty.textContent = 'แตะปุ่ม "สร้างผังอัตโนมัติ" หรือ "+ โต๊ะ" ด้านบนเพื่อเริ่มจัดที่นั่ง';
-      board.appendChild(empty);
-    }
-    const enabledCount = draft.seats.filter(s => s.enabled).length;
-    $('seatCountHint').textContent = `ที่นั่งทั้งหมด ${draft.seats.length} ที่ (เปิดใช้งาน ${enabledCount} ที่)`;
-    $('publishRoom').disabled = enabledCount === 0;
-  }
+  const EDC = makeEditor({board:$('createBoard'), mount:$('createEd'), get:() => draft, locked:() => false,
+    after:s => {
+      const n = s.seats.filter(q => q.enabled).length;
+      $('seatCountHint').textContent = `ที่นั่งทั้งหมด ${s.seats.length} ที่ (เปิดใช้งาน ${n} ที่)`;
+      $('publishRoom').disabled = n === 0;
+    }});
   $('toStep2').onclick = () => {
     const name = $('roomName').value.trim();
     const code = $('roomCode').value.trim();
@@ -1373,38 +1625,11 @@ a.btn{text-decoration:none}
     if (bad.length) { $(bad[0]).focus(); return notice('กรุณากรอกชื่อห้อง รหัสห้อง (4-6 หลัก) และรหัสผ่านผู้ดูแล (6-12 หลัก) ให้ถูกต้อง', true); }
     if (!open || !close || new Date(close) <= new Date(open) || new Date(close) <= Date.now())
       return notice('กรุณาระบุเวลาให้ถูกต้อง: เวลาปิดต้องอยู่หลังเวลาเริ่ม และต้องยังไม่ผ่านไปแล้ว', true);
-    if (!draft || (!draft.seats.length && !draft.markers.length))
-      draft = initialLayout(Number($('createRows').value) || 4, Number($('createCols').value) || 5);
-    selected = null; $('createBoard')._lock = false;
-    showStep(2);
-    renderCreateBoard();
+    if (!draft) draft = newScene(4, 5);
+    EDC.reset(); showStep(2); EDC.draw();
     window.scrollTo({top:0});
   };
   $('backStep1').onclick = () => showStep(1);
-  $('createGenerate').onclick = async () => {
-    const rows = Number($('createRows').value), cols = Number($('createCols').value);
-    if (!Number.isInteger(rows) || !Number.isInteger(cols) || rows < 1 || rows > 12 || cols < 1 || cols > 12)
-      return notice('จำนวนแถวและคอลัมน์ต้องอยู่ระหว่าง 1-12', true);
-    if (draft && draft.seats.length && !await askConfirm('การสร้างผังใหม่จะลบโต๊ะที่จัดไว้ก่อนหน้า ต้องการดำเนินการต่อหรือไม่?')) return;
-    draft = initialLayout(rows, cols); $('createBoard')._lock = false;
-    selected = null;
-    renderCreateBoard();
-  };
-  $('createAddSeat').onclick = () => addSeatTo(draft, renderCreateBoard);
-  $('createAddBoard').onclick = () => { draft.markers.push({id:uid(), type:'กระดาน', x:50, y:10}); renderCreateBoard(); };
-  $('createAddTeacher').onclick = () => { draft.markers.push({id:uid(), type:'โต๊ะครู', x:82, y:10}); renderCreateBoard(); };
-  $('createAddDoor').onclick = () => { draft.markers.push({id:uid(), type:'ประตู', x:10, y:10}); renderCreateBoard(); };
-  $('createToggleSeat').onclick = () => {
-    const seat = draft.seats.find(s => s.id === selected?.id);
-    if (!seat) return notice('แตะเลือกโต๊ะบนแผนผังก่อน แล้วค่อยกดปุ่มนี้', true);
-    seat.enabled = !seat.enabled; renderCreateBoard();
-  };
-  $('createRemoveItem').onclick = () => {
-    if (!selected) return notice('แตะเลือกโต๊ะหรือป้ายก่อน แล้วค่อยกดลบ', true);
-    draft.seats = draft.seats.filter(s => s.id !== selected.id);
-    draft.markers = draft.markers.filter(m => m.id !== selected.id);
-    selected = null; renderCreateBoard();
-  };
   $('publishRoom').onclick = async () => {
     if (!draft.seats.some(s => s.enabled))
       return notice('กรุณาเพิ่มที่นั่งอย่างน้อย 1 ที่ก่อนเผยแพร่ห้อง', true);
@@ -1413,7 +1638,7 @@ a.btn{text-decoration:none}
     setBusy($('publishRoom'), true);
     try {
       const {error} = await db.rpc('create_room', {
-        p_code:code, p_name:name, p_pin:pin, p_layout:draft,
+        p_code:code, p_name:name, p_pin:pin, p_layout:fromScene(draft),
         p_open_at:open, p_close_at:close, p_max_seats:Number($('maxSeats').value)
       });
       if (error) throw error;
@@ -1434,8 +1659,7 @@ a.btn{text-decoration:none}
   // ---------- ปุ่มในหน้าห้อง ----------
   function leaveRoom() {
     unsubscribe(); room = null; editing = false; selected = movingFrom = null; draft = null; rmSig = '';
-    $('layoutToolbar').classList.add('hidden');
-    document.body.classList.remove('editing-layout');
+    setEditUI(false);
     closeModal('bookingOverlay'); closeModal('settingsOverlay');
     resetPanels();
   }
@@ -1509,52 +1733,46 @@ a.btn{text-decoration:none}
   };
 
   // ---------- โหมดแก้ไขผัง (ลอยเหนือบอร์ด ไม่ใช่ pop-up เพราะต้องเห็นผังขณะลาก) ----------
+  const setEditUI = on => {
+    $('layoutToolbar').classList.toggle('hidden', !on);
+    $('layoutBar').classList.toggle('hidden', !on);
+    document.body.classList.toggle('editing-layout', on);
+  };
+  const EDR = makeEditor({board:$('board'), mount:$('roomEd'), get:() => draft, locked:id => bookings.some(b => b.seat_id === id),
+    after:s => paintCounts(s)});
+  const activeEd = () => editing && room ? EDR
+    : (!$('createPanel').classList.contains('hidden') && !$('createStep2').classList.contains('hidden') ? EDC : null);
+  document.addEventListener('keydown', e => {
+    if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) || document.body.classList.contains('modal-open')) return;
+    const ed = activeEd(); if (ed) ed.key(e);
+  });
+  addEventListener('beforeunload', e => {
+    const ed = activeEd(); if (ed && ed.undo.length) { e.preventDefault(); e.returnValue = ''; }
+  });
   $('openLayoutEditor').onclick = () => {
     closeModal('settingsOverlay');
-    editing = true; selected = null; movingFrom = null;
-    draft = structuredClone(room.layout);
-    $('layoutToolbar').classList.remove('hidden');
-    render();
-    ($('layoutToolbar').offsetParent ? $('layoutToolbar') : $('board')).scrollIntoView({behavior:'smooth', block:'center'});
-    notice('โหมดแก้ไขผัง: ลากโต๊ะหรือป้ายบนแผนผังด้านล่างเพื่อจัดตำแหน่งได้เลย');
+    editing = true; movingFrom = null; draft = toScene(room.layout); EDR.reset();
+    setEditUI(true); render();
+    $('roomEd').scrollIntoView({behavior:'smooth', block:'start'});
+    notice('โหมดแก้ไขผัง: ลากโต๊ะเพื่อย้าย ใช้แถบเครื่องมือเพื่อเพิ่ม/จัดแนว แล้วกด “บันทึกผัง”');
   };
-  $('cancelLayoutEdit').onclick = () => {
-    editing = false; selected = null; draft = null;
-    $('layoutToolbar').classList.add('hidden');
+  $('cancelLayoutEdit').onclick = async () => {
+    if (EDR.undo.length && !await askConfirm('ทิ้งการแก้ไขผังที่ยังไม่ได้บันทึกใช่หรือไม่?', 'ทิ้งการแก้ไข')) return;
+    editing = false; draft = null; setEditUI(false);
     $('layoutPin').value = '';
     render();
-  };
-  $('addSeat').onclick = () => addSeatTo(draft, render);
-  $('addBoard').onclick = () => { draft.markers.push({id:uid(), type:'กระดาน', x:50, y:10}); render(); };
-  $('addTeacher').onclick = () => { draft.markers.push({id:uid(), type:'โต๊ะครู', x:82, y:10}); render(); };
-  $('addDoor').onclick = () => { draft.markers.push({id:uid(), type:'ประตู', x:10, y:10}); render(); };
-  $('toggleSeat').onclick = () => {
-    const seat = draft.seats.find(s => s.id === selected?.id);
-    if (!seat) return notice('แตะเลือกโต๊ะบนแผนผังก่อน แล้วค่อยกดปุ่มนี้', true);
-    if (seat.enabled && bookings.some(b => b.seat_id === seat.id))
-      return notice('ที่นั่งนี้มีคนจองอยู่ กรุณาจัดการการจองก่อนปิดใช้งาน', true);
-    seat.enabled = !seat.enabled; render();
-  };
-  $('removeItem').onclick = () => {
-    if (!selected) return notice('แตะเลือกโต๊ะหรือป้ายก่อน แล้วค่อยกดลบ', true);
-    if (bookings.some(b => b.seat_id === selected.id))
-      return notice('ที่นั่งนี้มีคนจองอยู่ กรุณาจัดการการจองก่อนลบ', true);
-    draft.seats = draft.seats.filter(s => s.id !== selected.id);
-    draft.markers = draft.markers.filter(m => m.id !== selected.id);
-    selected = null; render();
   };
   $('saveLayout').onclick = async () => {
     setBusy($('saveLayout'), true);
     try {
       const {error} = await db.rpc('admin_update_room', {
         p_room_id:room.id, p_pin:adminPin('layoutPin'), p_name:room.name,
-        p_layout:draft, p_open_at:room.open_at, p_close_at:room.close_at,
+        p_layout:fromScene(draft), p_open_at:room.open_at, p_close_at:room.close_at,
         p_max_seats:room.max_seats_per_user
       });
       if (error) throw error;
       $('layoutPin').value = '';
-      editing = false; selected = null;
-      $('layoutToolbar').classList.add('hidden');
+      editing = false; selected = null; draft = null; setEditUI(false);
       await loadRoom(room.code);
       notice('บันทึกผังที่นั่งเรียบร้อยแล้ว');
     } catch (e) { fail(e); } finally { setBusy($('saveLayout'), false); }
@@ -1638,12 +1856,9 @@ a.btn{text-decoration:none}
     setBusy(btn, true);
     try {
       try { await Promise.race([document.fonts?.load('600 20px Anuphan'), new Promise(r => setTimeout(r, 2500))]); } catch {}
-      const board = $('board'), z = board._z || 1, bw = board.clientWidth / z, bh = board.clientHeight / z;
-      const layout = editing && draft ? draft : room.layout;
+      const layout = editing && draft ? draft : toScene(room.layout);
       const map = new Map(bookings.map(b => [b.seat_id, b]));
-      const sw = parseFloat(board.style.getPropertyValue('--sw')) || 14;
-      const sh = parseFloat(board.style.getPropertyValue('--sh')) || 11;
-      const W = 1600, k = W / bw, pad = 48, head = 210, bH = Math.round(bh * k), foot = 110;
+      const W = 1600, k = W / layout.W, pad = 48, head = 210, bH = Math.round(layout.H * k), foot = 110;
       const c = document.createElement('canvas');
       c.width = W + pad * 2; c.height = head + bH + foot;
       const g = c.getContext('2d');
@@ -1689,28 +1904,22 @@ a.btn{text-decoration:none}
         g.setLineDash(dashed ? [12, 8] : []); g.lineWidth = 3; g.strokeStyle = line; g.stroke(); g.setLineDash([]);
       };
       g.textAlign = 'center'; g.textBaseline = 'middle';
-      const ls = clamp(8, sw * .26 * bw / 100, 14.5) * k, ss = clamp(7, sw * .2 * bw / 100, 12) * k;
-      const sW = Math.min(sw * bw / 100, 100) * k, sH = Math.min(sh * bw / 100, 72) * k;
-      const dense = sW / k < 46;
+      const ls = 18 * k, ss = 12.5 * k, sW = layout.sw * k, sH = layout.sh * k;
       for (const seat of layout.seats) {
-        const b = map.get(seat.id);
-        const cls = !seat.enabled ? 'off' : b ? 'booked' : 'free';
-        const cx = pad + seat.x / 100 * W, cy = head + seat.y / 100 * bH;
+        const b = map.get(seat.id), cls = !seat.enabled ? 'off' : b ? 'booked' : 'free';
+        const cx = pad + seat.x * k, cy = head + seat.y * k;
         box(cx, cy, sW, sH, col[cls], cls === 'off');
         g.fillStyle = '#111827'; g.font = F(700, ls);
-        g.fillText(seatLabel(seat), cx, dense ? cy : cy - ls * .55, sW - 10);
-        if (!dense) {
-          g.fillStyle = col[cls][0]; g.font = F(600, ss);
-          g.fillText(b ? b.name : (seat.enabled ? 'ว่าง' : 'ปิดใช้งาน'), cx, cy + ss * 1.05, sW - 12);
-        }
+        g.fillText(seatLabel(seat), cx, cy - ls * .55, sW - 10);
+        g.fillStyle = col[cls][0]; g.font = F(600, ss);
+        g.fillText(b ? b.name : (seat.enabled ? 'ว่าง' : 'ปิดใช้งาน'), cx, cy + ss * 1.05, sW - 12);
       }
-      const mW = Math.min(sw * 1.35 * bw / 100, 130) * k, mH = clamp(36, sh * bw / 100, 64) * k;
-      const mk = {'กระดาน':'board', 'โต๊ะครู':'teacher', 'ประตู':'door'};
+      const mk = {'กระดาน':'board', 'โต๊ะครู':'teacher', 'ประตู':'door', 'ข้อความ':'door'};
       for (const m of layout.markers) {
-        const cx = pad + m.x / 100 * W, cy = head + m.y / 100 * bH, kind = mk[m.type] || 'board';
+        const cx = pad + m.x * k, cy = head + m.y * k, kind = mk[m.type] || 'board', mW = m.w * k, mH = m.h * k;
         box(cx, cy, mW, mH, col[kind], kind === 'door');
-        g.fillStyle = col[kind][0]; g.font = F(700, clamp(8, sw * .24 * bw / 100, 13) * k);
-        g.fillText(m.type, cx, cy, mW - 12);
+        g.fillStyle = col[kind][0]; g.font = F(700, 16 * k);
+        g.fillText(m.text || m.type, cx, cy, mW - 12);
       }
       // คำอธิบายสี
       const ly = head + bH + 62;
@@ -1760,9 +1969,10 @@ a.btn{text-decoration:none}
 
   // ---------- ขนาดผัง (ไม่พึ่ง aspect-ratio / cqw) + ซูม + แตะเพื่อวาง ----------
   function sizeBoard(b) {
-    const w = b.clientWidth; if (!w) return;
-    b.style.setProperty('--u', (w / 100) + 'px');
-    if (b._bh) b.style.height = (w * b._bh / 100) + 'px';
+    const S = b._S, w = b.clientWidth; if (!S || !w) return;
+    const u = w / S.W;
+    b.style.setProperty('--u', u + 'px'); b.style.height = (w * S.H / S.W) + 'px';
+    b.classList.toggle('dense', S.sw * u < 46);
   }
   const ZL = [1, 1.5, 2, 3];
   function applyZoom(b, z, keepMid) {
@@ -1773,7 +1983,6 @@ a.btn{text-decoration:none}
     bar.querySelectorAll('[data-z]').forEach(x => x.disabled = (x.dataset.z < 0 && z <= ZL[0]) || (x.dataset.z > 0 && z >= ZL[ZL.length - 1]));
     requestAnimationFrame(() => {
       sizeBoard(b); if (keepMid) sc.scrollLeft = mid * b.clientWidth - sc.clientWidth / 2;
-      b.classList.toggle('dense', b.clientWidth * (parseFloat(b.style.getPropertyValue('--sw')) || 14) / 100 < 46);
     });
   }
   function setZoom(id, dir) {
@@ -1789,43 +1998,6 @@ a.btn{text-decoration:none}
     const b = $(id); b._z = 1;
     if (ro) ro.observe(b); else addEventListener('resize', () => sizeBoard(b));
   }
-  function tapPlace(e, layout, redraw) {
-    if (e.target !== e.currentTarget || !selected || !layout) return;
-    const r = e.currentTarget.getBoundingClientRect();
-    selected.x = Math.round(Math.max(5, Math.min(95, (e.clientX - r.left) / r.width * 100)));
-    selected.y = Math.round(Math.max(7, Math.min(93, (e.clientY - r.top) / r.height * 100)));
-    e.currentTarget._lock = true; redraw();
-  }
-  $('board').addEventListener('click', e => editing && draft && tapPlace(e, draft, render));
-  $('createBoard').addEventListener('click', e => draft && tapPlace(e, draft, renderCreateBoard));
-
-  // ---------- ขยายพื้นที่ผัง: โต๊ะคงตำแหน่งเดิมเมื่อเทียบกัน ----------
-  const r1 = v => Math.round(v * 10) / 10;
-  function expandLayout(L, side) {
-    const items = [...L.seats, ...L.markers];
-    if (side === 'trim') {
-      if (!items.length) return;
-      for (const k of ['x', 'y']) {
-        const v = items.map(i => i[k]), lo = Math.min(...v), hi = Math.max(...v);
-        for (const i of items) i[k] = hi === lo ? 50 : r1(8 + (i[k] - lo) / (hi - lo) * 84);
-      }
-      return;
-    }
-    const f = .25, k = 1 / (1 + f);
-    for (const i of items) {
-      if (side === 'right') i.x = r1(i.x * k);
-      if (side === 'left') i.x = r1((i.x + 100 * f) * k);
-      if (side === 'bottom') i.y = r1(i.y * k);
-      if (side === 'top') i.y = r1((i.y + 100 * f) * k);
-    }
-  }
-  document.addEventListener('click', e => {
-    const btn = e.target.closest('[data-expand]');
-    if (!btn || !draft) return;
-    expandLayout(draft, btn.dataset.expand);
-    $('board')._lock = $('createBoard')._lock = false;
-    if (!$('createPanel').classList.contains('hidden')) renderCreateBoard(); else render();
-  });
   $('bookName').addEventListener('keydown', e => { if (e.key === 'Enter') $('confirmBook').click(); });
   for (const id of ['joinCode', 'roomCode', 'pinCreate', 'adminPin', 'layoutPin'])
     $(id).addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, ''); });
@@ -1877,7 +2049,7 @@ a.btn{text-decoration:none}
         if (open) notice('เปิดให้จองแล้ว เลือกที่นั่งได้เลย!');
       }
     }, 1000);
-    addEventListener('resize', () => { if (room) { const l = editing && draft ? draft : room.layout; fitBoard($('board'), l); } });
+    addEventListener('resize', () => { setHH(); sizeBoard($('board')); sizeBoard($('createBoard')); });
   })();
 </script>
 </body>
