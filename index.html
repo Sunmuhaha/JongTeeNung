@@ -606,7 +606,7 @@ a.btn{text-decoration:none}
     border-radius: 14px;
     padding: 24px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-    animation: xpop-pop 0.4s ease-out;
+    animation: xpop-pop 0.3s ease;
     text-align:center;
   }
   .xpop-overlay .xpop-title {
@@ -640,8 +640,8 @@ a.btn{text-decoration:none}
   .xpop-overlay .xpop-close:hover { background: #1d4ed8; }
 
   @keyframes xpop-pop {
-    from { transform: scale(0.8); opacity: 0;transform:translateY(200%);}
-    to   { transform: scale(1);   opacity: 1; transform:translateY(0%);}
+    from { transform:translateY(100%) scale(0);}
+    to   { transform:translateY(0%) scale(1);}
   }
 </style>
 </head>
