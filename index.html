@@ -575,6 +575,74 @@ a.btn{text-decoration:none}
 .steps{display:flex;gap:8px;margin:0 0 16px}
 .steps span{flex:1;padding:8px 12px;border-radius:12px;background:var(--panel-alt);border:1px solid var(--border);font-weight:600;font-size:.84rem;color:var(--muted)}
 .steps span.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+
+  /* ===== xpop: ทุก selector ขึ้นต้นด้วย .xpop- เพื่อกันชนกับไฟล์อื่น ===== */
+  .xpop-overlay,
+  .xpop-overlay *,
+  .xpop-overlay *::before,
+  .xpop-overlay *::after {
+    box-sizing: border-box;
+  }
+
+  .xpop-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 2147483000;
+    font-family: inherit;
+    backdrop-filter:blur(5px);
+  }
+  .xpop-overlay.xpop-show { display: flex; }
+
+  .xpop-box {
+    background: #fff;
+    background-color: var(--bg);
+    width: 100%;
+    max-width: 380px;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    animation: xpop-pop 0.4s ease-out;
+    text-align:center;
+  }
+  .xpop-overlay .xpop-title {
+    margin: 0 0 15px;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--shadow-md);
+  }
+  .xpop-overlay .xpop-text {
+    margin: 15px 0 20px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--shadow-xs);
+  }
+  .xpop-overlay .xpop-close {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin: 0;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #fff;
+    font: inherit;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .xpop-a{text-decoration:underline;font-size:15px;font-weight:800;color:var(--shadow-xs);}
+  .xpop-a:hover{text-decoration:none;}
+  .xpop-img{border-radius:15px;box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);}
+  .xpop-overlay .xpop-close:hover { background: #1d4ed8; }
+
+  @keyframes xpop-pop {
+    from { transform: scale(0.8); opacity: 0;transform:translateY(200%);}
+    to   { transform: scale(1);   opacity: 1; transform:translateY(0%);}
+  }
 </style>
 </head>
 <body>
@@ -771,7 +839,8 @@ a.btn{text-decoration:none}
   </div>
 
   <footer>จองที่นั่งห้องเรียน · ข้อมูลอัปเดตให้ทุกคนเห็นพร้อมกันแบบทันที
- <h4 style="line-height:2;">ระบบมีปัญหาใช่ไหม? ติดต่อผู้พัฒนาที่นี่ : <a target="_blank" rel="noopener" href="https://discord.gg/JvHpQBK6">https://discord.gg/JvHpQBK6</a></h4>
+ <h4 style="line-height:2;">ระบบมีปัญหา / เสนอระบบเพิ่มเติม / สร้างระบบของตนเอง คุยกับผู้พัฒนาที่นี่ : <a target="_blank" rel="noopener" href="https://discord.gg/JvHpQBK6">https://discord.gg/JvHpQBK6</a></h4>
+ <a href="#" class="xpop-a" data-xpop-open="xpop-main">☕️ เลี้ยงกาแฟผู้พัฒนา</a>
 </footer>
 </div>
 
@@ -857,6 +926,16 @@ a.btn{text-decoration:none}
   </div>
 </div>
 <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="false"></div>
+
+<!-- ========== Pop-up: เลี้ยงกาแฟ ========== -->
+<div class="xpop-overlay" id="xpop-main" role="dialog" aria-modal="true" aria-labelledby="xpop-main-title">
+  <div class="xpop-box">
+    <h3 class="xpop-title" id="xpop-main-title">☕️ เลี้ยงกาแฟ</h3>
+    <img class="xpop-img" src="https://i.ibb.co/xK7shcXV/004999249083220-20260817-174303-1.jpg" alt="เลี้ยงกาแฟ - promptpay" width="100%"></img>
+    <p class="xpop-text">แสกนคิวอาร์โค้ดด้านบนเพื่อเลี้ยงกาแฟผู้พัฒนา - 🙏 ขอบคุณมากครับ</p>
+    <button class="btn primary block" type="button" data-xpop-close>ปิด</button>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -2051,6 +2130,46 @@ a.btn{text-decoration:none}
     }, 1000);
     addEventListener('resize', () => { setHH(); sizeBoard($('board')); sizeBoard($('createBoard')); });
   })();
+  
+  //เลี้ยงกาแฟ popup
+  (function () {
+  'use strict';
+
+  function openPopup(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.add('xpop-show');
+  }
+  function closePopup(el) {
+    el.classList.remove('xpop-show');
+  }
+
+  // เปิด: ใช้ data-xpop-open="id ของ popup"
+  document.addEventListener('click', function (e) {
+    var opener = e.target.closest('[data-xpop-open]');
+    if (opener) {
+      e.preventDefault();
+      openPopup(opener.getAttribute('data-xpop-open'));
+      return;
+    }
+
+    // ปิด: ปุ่มปิด หรือคลิกพื้นหลัง
+    var closer = e.target.closest('[data-xpop-close]');
+    if (closer) {
+      closePopup(closer.closest('.xpop-overlay'));
+      return;
+    }
+    if (e.target.classList && e.target.classList.contains('xpop-overlay')) {
+      closePopup(e.target);
+    }
+  });
+
+  // กด Esc เพื่อปิด
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    var opened = document.querySelectorAll('.xpop-overlay.xpop-show');
+    for (var i = 0; i < opened.length; i++) closePopup(opened[i]);
+  });
+})();
 </script>
 </body>
 </html>
